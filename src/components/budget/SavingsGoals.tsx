@@ -222,11 +222,12 @@ const SavingsGoals = ({
                     <Progress
                       value={progress}
                       className="h-2"
-                      indicatorClassName={
-                        progress >= 100 ? "bg-green-500" : undefined
+                      style={
+                        {
+                          backgroundColor: `${goal.color}20`,
+                          "--progress-foreground": goal.color,
+                        } as React.CSSProperties
                       }
-                      style={{ backgroundColor: `${goal.color}20` }}
-                      indicatorStyle={{ backgroundColor: goal.color }}
                     />
                   </div>
 

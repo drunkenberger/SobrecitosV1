@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Toaster } from "./components/ui/toaster";
-import { useRoutes, Routes, Route } from "react-router-dom";
+import { useRoutes, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./components/home";
 import Landing from "./pages/Landing";
 import Navbar from "./components/layout/Navbar";
@@ -16,9 +16,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/app" element={<Home />} />
+          <Route path="/preview/:projectId/app" element={<Home />} />
           {import.meta.env.VITE_TEMPO === "true" && (
             <Route path="/tempobook/*" />
           )}
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
       <Toaster />

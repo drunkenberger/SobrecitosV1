@@ -62,9 +62,6 @@ interface BudgetStore {
   };
 }
 
-// Local Storage Keys
-const getStoreKey = (userId: string) => `budget_store_${userId}`;
-
 // Default Data
 const defaultStore: BudgetStore = {
   currency: { code: "USD", symbol: "$", name: "US Dollar" },
@@ -92,96 +89,24 @@ const defaultStore: BudgetStore = {
       budget: 200,
       isRecurring: false,
     },
-    {
-      id: "4",
-      name: "Transportation",
-      color: "#FF9800",
-      budget: 150,
-      isRecurring: true,
-    },
-    {
-      id: "5",
-      name: "Shopping",
-      color: "#E91E63",
-      budget: 250,
-      isRecurring: false,
-    },
   ],
   expenses: [],
-  savingsGoals: [
-    {
-      id: "1",
-      name: "Emergency Fund",
-      targetAmount: 5000,
-      currentAmount: 2000,
-      deadline: new Date("2024-12-31").toISOString(),
-      color: "#4CAF50",
-    },
-    {
-      id: "2",
-      name: "Vacation",
-      targetAmount: 3000,
-      currentAmount: 500,
-      deadline: new Date("2024-08-31").toISOString(),
-      color: "#2196F3",
-    },
-  ],
-  futurePayments: [
-    {
-      id: "1",
-      description: "Rent Payment",
-      amount: 1200,
-      dueDate: new Date("2024-03-01").toISOString(),
-      category: "Housing",
-      isPaid: false,
-    },
-    {
-      id: "2",
-      description: "Car Insurance",
-      amount: 150,
-      dueDate: new Date("2024-03-15").toISOString(),
-      category: "Insurance",
-      isPaid: false,
-    },
-  ],
+  savingsGoals: [],
+  futurePayments: [],
 };
 
 // Store Functions
 export const getStore = (): BudgetStore => {
   try {
-    const currentUser = JSON.parse(
-      localStorage.getItem("budget_current_user") || "null",
-    );
-    if (!currentUser) return defaultStore;
-
-    const stored = localStorage.getItem(getStoreKey(currentUser.id));
-    if (!stored) return defaultStore;
-
-    const parsedStore = JSON.parse(stored);
-    if (!parsedStore.savingsGoals) {
-      parsedStore.savingsGoals = [];
-    }
-    if (!parsedStore.futurePayments) {
-      parsedStore.futurePayments = [];
-    }
-    return parsedStore;
-  } catch (error) {
-    console.error("Error getting store:", error);
+    const stored = localStorage.getItem("budget_store");
+    return stored ? JSON.parse(stored) : defaultStore;
+  } catch {
     return defaultStore;
   }
 };
 
 export const setStore = (store: BudgetStore) => {
-  try {
-    const currentUser = JSON.parse(
-      localStorage.getItem("budget_current_user") || "null",
-    );
-    if (!currentUser) return;
-
-    localStorage.setItem(getStoreKey(currentUser.id), JSON.stringify(store));
-  } catch (error) {
-    console.error("Error setting store:", error);
-  }
+  localStorage.setItem("budget_store", JSON.stringify(store));
 };
 
 // Helper Functions
@@ -229,33 +154,17 @@ export const updateCategory = (id: string, updates: Partial<Category>) => {
 export const deleteCategory = (id: string) => {
   const store = getStore();
   store.categories = store.categories.filter((cat) => cat.id !== id);
-  store.expenses = store.expenses.filter((exp) => exp.category !== id);
   setStore(store);
 };
 
 export const addExpense = (expense: Omit<Expense, "id" | "date">) => {
   const store = getStore();
-  const newExpense = {
+  store.expenses.push({
     ...expense,
     id: Math.random().toString(36).substr(2, 9),
     date: new Date().toISOString(),
-    currency: expense.currency || store.currency,
-  };
-
-  if (expense.isRecurring) {
-    if (expense.recurringType === "monthly") {
-      newExpense.recurringDay = new Date().getDate();
-    } else if (expense.recurringType === "weekly") {
-      newExpense.recurringDay = new Date().getDay();
-    }
-  }
-
-  store.expenses.push(newExpense);
+  });
   setStore(store);
-
-  if (expense.isRecurring) {
-    scheduleRecurringExpense(newExpense);
-  }
 };
 
 export const deleteExpense = (id: string) => {
@@ -264,30 +173,29 @@ export const deleteExpense = (id: string) => {
   setStore(store);
 };
 
-const scheduleRecurringExpense = (expense: Expense) => {
+export const addSavingsGoal = (goal: Omit<SavingsGoal, "id">) => {
   const store = getStore();
-  const today = new Date();
-  let nextDate: Date;
-
-  if (expense.recurringType === "monthly") {
-    nextDate = new Date(
-      today.getFullYear(),
-      today.getMonth() + 1,
-      expense.recurringDay,
-    );
-  } else {
-    // Weekly: Add 7 days to current date
-    nextDate = new Date(today);
-    nextDate.setDate(today.getDate() + 7);
-  }
-
-  const nextExpense = {
-    ...expense,
+  store.savingsGoals.push({
+    ...goal,
     id: Math.random().toString(36).substr(2, 9),
-    date: nextDate.toISOString(),
-  };
+  });
+  setStore(store);
+};
 
-  store.expenses.push(nextExpense);
+export const updateSavingsGoal = (
+  id: string,
+  updates: Partial<SavingsGoal>,
+) => {
+  const store = getStore();
+  store.savingsGoals = store.savingsGoals.map((goal) =>
+    goal.id === id ? { ...goal, ...updates } : goal,
+  );
+  setStore(store);
+};
+
+export const deleteSavingsGoal = (id: string) => {
+  const store = getStore();
+  store.savingsGoals = store.savingsGoals.filter((goal) => goal.id !== id);
   setStore(store);
 };
 
@@ -314,12 +222,41 @@ export const updateFuturePayment = (
   setStore(store);
 };
 
-export const deleteFuturePayment = (id: string) => {
+export const getBudgetAlerts = () => {
   const store = getStore();
-  store.futurePayments = store.futurePayments.filter(
-    (payment) => payment.id !== id,
-  );
-  setStore(store);
+  const alerts = [];
+
+  const totalSpent = store.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+  const totalBudget =
+    store.monthlyBudget +
+    store.additionalIncomes.reduce((sum, inc) => sum + inc.amount, 0);
+
+  if (totalSpent > totalBudget * 0.9) {
+    alerts.push({
+      type: "overall",
+      message: `You've spent ${Math.round((totalSpent / totalBudget) * 100)}% of your total budget`,
+      severity: totalSpent > totalBudget ? "high" : "medium",
+    });
+  }
+
+  store.categories.forEach((cat) => {
+    const categorySpent = store.expenses
+      .filter((exp) => exp.category === cat.name)
+      .reduce((sum, exp) => sum + exp.amount, 0);
+
+    if (categorySpent > cat.budget * 0.9) {
+      alerts.push({
+        type: "category",
+        category: cat.name,
+        message: `You've spent ${Math.round(
+          (categorySpent / cat.budget) * 100,
+        )}% of your ${cat.name} budget`,
+        severity: categorySpent > cat.budget ? "high" : "medium",
+      });
+    }
+  });
+
+  return alerts;
 };
 
 export const calculateRecommendedSavings = () => {
@@ -369,78 +306,4 @@ export const distributeAutoSavings = (amount: number) => {
   });
 
   return amount - remainingAmount;
-};
-
-export const addSavingsGoal = (goal: Omit<SavingsGoal, "id">) => {
-  const store = getStore();
-  if (!store.savingsGoals) {
-    store.savingsGoals = [];
-  }
-  const newGoal = {
-    ...goal,
-    id: Math.random().toString(36).substr(2, 9),
-  };
-  store.savingsGoals.push(newGoal);
-  setStore(store);
-  return newGoal;
-};
-
-export const updateSavingsGoal = (
-  id: string,
-  updates: Partial<SavingsGoal>,
-) => {
-  const store = getStore();
-  if (!store.savingsGoals) {
-    store.savingsGoals = [];
-    return;
-  }
-  store.savingsGoals = store.savingsGoals.map((goal) =>
-    goal.id === id ? { ...goal, ...updates } : goal,
-  );
-  setStore(store);
-};
-
-export const deleteSavingsGoal = (id: string) => {
-  const store = getStore();
-  if (!store.savingsGoals) {
-    store.savingsGoals = [];
-    return;
-  }
-  store.savingsGoals = store.savingsGoals.filter((goal) => goal.id !== id);
-  setStore(store);
-};
-
-export const getBudgetAlerts = () => {
-  const store = getStore();
-  const alerts = [];
-
-  const totalSpent = store.expenses.reduce((sum, exp) => sum + exp.amount, 0);
-  const totalBudget =
-    store.monthlyBudget +
-    store.additionalIncomes.reduce((sum, inc) => sum + inc.amount, 0);
-
-  if (totalSpent > totalBudget * 0.9) {
-    alerts.push({
-      type: "overall",
-      message: `You've spent ${Math.round((totalSpent / totalBudget) * 100)}% of your total budget`,
-      severity: totalSpent > totalBudget ? "high" : "medium",
-    });
-  }
-
-  store.categories.forEach((cat) => {
-    const categorySpent = store.expenses
-      .filter((exp) => exp.category === cat.name)
-      .reduce((sum, exp) => sum + exp.amount, 0);
-
-    if (categorySpent > cat.budget * 0.9) {
-      alerts.push({
-        type: "category",
-        category: cat.name,
-        message: `You've spent ${Math.round((categorySpent / cat.budget) * 100)}% of your ${cat.name} budget`,
-        severity: categorySpent > cat.budget ? "high" : "medium",
-      });
-    }
-  });
-
-  return alerts;
 };

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "../ui/button";
-import { Download, Upload, FileJson } from "lucide-react";
+import { Download, Upload } from "lucide-react";
 import { getStore, setStore } from "@/lib/store";
 
 interface DataManagerProps {
@@ -43,9 +43,7 @@ const DataManager = ({ onDataChange }: DataManagerProps) => {
   return (
     <div className="flex items-center gap-2">
       <Button
-        variant="outline"
-        size="sm"
-        className="flex items-center gap-2"
+        className="gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold"
         onClick={handleExport}
       >
         <Download className="w-4 h-4" /> Export Data
@@ -59,12 +57,13 @@ const DataManager = ({ onDataChange }: DataManagerProps) => {
           id="import-data"
         />
         <Button
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2"
+          className="gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold"
           asChild
         >
-          <label htmlFor="import-data" className="cursor-pointer">
+          <label
+            htmlFor="import-data"
+            className="cursor-pointer flex items-center"
+          >
             <Upload className="w-4 h-4" /> Import Data
           </label>
         </Button>

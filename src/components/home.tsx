@@ -29,15 +29,22 @@ import { Sparkles, Wallet, PieChart, ListChecks } from "lucide-react";
 import FuturePayments from "./budget/FuturePayments";
 
 import { AuthDialog } from "./auth/AuthDialog";
+import { AIInsightsDialog } from "./budget/AIInsightsDialog";
 import { getCurrentUser } from "@/lib/auth";
+import { AIChatWindow } from "./budget/AIChatWindow";
 
 const Home = () => {
   const [showAuth, setShowAuth] = React.useState(!getCurrentUser());
+  const [store, setStore] = React.useState(getStore());
 
   React.useEffect(() => {
     if (!getCurrentUser()) {
       setShowAuth(true);
     }
+  }, []);
+
+  const refreshStore = React.useCallback(() => {
+    setStore(getStore());
   }, []);
 
   if (showAuth) {
@@ -49,35 +56,36 @@ const Home = () => {
       />
     );
   }
-  const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
-  const store = getStore();
 
   const totalBudget =
     store.monthlyBudget +
-    store.additionalIncomes.reduce((sum, inc) => sum + inc.amount, 0);
-  const spentAmount = store.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+    (store.additionalIncomes || []).reduce((sum, inc) => sum + inc.amount, 0);
+  const spentAmount = (store.expenses || []).reduce(
+    (sum, exp) => sum + exp.amount,
+    0,
+  );
   const remainingBalance = totalBudget - spentAmount;
 
-  const chartData = store.categories.map((cat) => ({
+  const chartData = (store.categories || []).map((cat) => ({
     category: cat.name,
-    amount: store.expenses
+    amount: (store.expenses || [])
       .filter((exp) => exp.category === cat.name)
       .reduce((sum, exp) => sum + exp.amount, 0),
   }));
 
   const handleUpdateBudget = (amount: number) => {
     updateMonthlyBudget(amount);
-    forceUpdate();
+    refreshStore();
   };
 
   const handleAddIncome = (income: { description: string; amount: number }) => {
     addIncome(income);
-    forceUpdate();
+    refreshStore();
   };
 
   const handleDeleteIncome = (id: string) => {
     deleteIncome(id);
-    forceUpdate();
+    refreshStore();
   };
 
   const handleAddCategory = (category: {
@@ -86,7 +94,7 @@ const Home = () => {
     budget: number;
   }) => {
     addCategory(category);
-    forceUpdate();
+    refreshStore();
   };
 
   const handleUpdateCategory = (
@@ -94,12 +102,12 @@ const Home = () => {
     updates: { name?: string; color?: string; budget?: number },
   ) => {
     updateCategory(id, updates);
-    forceUpdate();
+    refreshStore();
   };
 
   const handleDeleteCategory = (id: string) => {
     deleteCategory(id);
-    forceUpdate();
+    refreshStore();
   };
 
   const handleAddSavingsGoal = (goal: {
@@ -110,17 +118,17 @@ const Home = () => {
     color: string;
   }) => {
     addSavingsGoal(goal);
-    forceUpdate();
+    refreshStore();
   };
 
   const handleUpdateSavingsGoal = (id: string, updates: any) => {
     updateSavingsGoal(id, updates);
-    forceUpdate();
+    refreshStore();
   };
 
   const handleDeleteSavingsGoal = (id: string) => {
     deleteSavingsGoal(id);
-    forceUpdate();
+    refreshStore();
   };
 
   return (
@@ -145,12 +153,15 @@ const Home = () => {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <DataManager onDataChange={forceUpdate} />
+              <div className="flex items-center gap-4">
+                <DataManager onDataChange={refreshStore} />
+                <AIInsightsDialog />
+              </div>
               <ExpenseForm
-                categories={store.categories}
+                categories={store.categories || []}
                 onSubmit={(expense) => {
                   addExpense(expense);
-                  forceUpdate();
+                  refreshStore();
                 }}
               />
             </div>
@@ -223,22 +234,22 @@ const Home = () => {
                   </h2>
                 </div>
                 <ExpenseForm
-                  categories={store.categories}
+                  categories={store.categories || []}
                   onSubmit={(expense) => {
                     addExpense(expense);
-                    forceUpdate();
+                    refreshStore();
                   }}
                 />
               </div>
               <ExpenseList
-                expenses={store.expenses.map((exp) => ({
+                expenses={(store.expenses || []).map((exp) => ({
                   ...exp,
                   date: new Date(exp.date),
                 }))}
-                categories={store.categories}
+                categories={store.categories || []}
                 onDeleteExpense={(id) => {
                   deleteExpense(id);
-                  forceUpdate();
+                  refreshStore();
                 }}
               />
             </div>
@@ -249,10 +260,12 @@ const Home = () => {
             <div className="bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-xl p-6 border border-amber-100 dark:border-amber-900 shadow-md">
               <BudgetManager
                 monthlyBudget={store.monthlyBudget}
-                additionalIncomes={store.additionalIncomes.map((inc) => ({
-                  ...inc,
-                  date: new Date(inc.date),
-                }))}
+                additionalIncomes={(store.additionalIncomes || []).map(
+                  (inc) => ({
+                    ...inc,
+                    date: new Date(inc.date),
+                  }),
+                )}
                 onUpdateMonthlyBudget={handleUpdateBudget}
                 onAddIncome={handleAddIncome}
                 onDeleteIncome={handleDeleteIncome}
@@ -264,21 +277,21 @@ const Home = () => {
         {/* Future Payments Section */}
         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 border border-blue-100 dark:border-blue-900 shadow-md mb-8">
           <FuturePayments
-            payments={store.futurePayments.map((p) => ({
+            payments={(store.futurePayments || []).map((p) => ({
               ...p,
               dueDate: new Date(p.dueDate),
             }))}
             onPaymentUpdate={(id, isPaid) => {
               updateFuturePayment(id, { isPaid });
-              forceUpdate();
+              refreshStore();
             }}
-            categories={store.categories.map((c) => c.name)}
+            categories={(store.categories || []).map((c) => c.name)}
             onAddPayment={(payment) => {
               addFuturePayment({
                 ...payment,
                 dueDate: payment.dueDate.toISOString(),
               });
-              forceUpdate();
+              refreshStore();
             }}
           />
         </div>
@@ -288,7 +301,7 @@ const Home = () => {
           {/* Category Management Section */}
           <div className="bg-gradient-to-br from-cyan-50 to-teal-50 dark:from-cyan-900/20 dark:to-teal-900/20 rounded-xl p-6 border border-cyan-100 dark:border-cyan-900 shadow-md">
             <CategoryManager
-              categories={store.categories}
+              categories={store.categories || []}
               onAddCategory={handleAddCategory}
               onEditCategory={handleUpdateCategory}
               onDeleteCategory={handleDeleteCategory}
@@ -297,7 +310,7 @@ const Home = () => {
           {/* Savings Goals Section */}
           <div className="bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 rounded-xl p-6 border border-violet-100 dark:border-violet-900 shadow-md">
             <SavingsGoals
-              goals={store.savingsGoals}
+              goals={store.savingsGoals || []}
               onAddGoal={handleAddSavingsGoal}
               onUpdateGoal={handleUpdateSavingsGoal}
               onDeleteGoal={handleDeleteSavingsGoal}
@@ -349,6 +362,9 @@ const Home = () => {
           </div>
         </div>
       </footer>
+
+      {/* AI Chat Window */}
+      <AIChatWindow />
     </div>
   );
 };

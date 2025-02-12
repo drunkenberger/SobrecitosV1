@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { TransferBalanceDialog } from "./TransferBalanceDialog";
 
 interface Category {
   id: string;
@@ -88,76 +89,91 @@ const CategoryManager = ({
         <h2 className="text-2xl font-semibold flex items-center gap-2 text-foreground">
           <Tags className="w-6 h-6" /> Category Management
         </h2>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="flex items-center gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold">
-              <Plus size={16} />
-              Add Category
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Category</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 pt-4">
-              <div>
-                <Input
-                  placeholder="Category Name"
-                  value={newCategoryName}
-                  onChange={(e) => setNewCategoryName(e.target.value)}
-                />
-              </div>
-              <div>
-                <Input
-                  type="number"
-                  placeholder="Budget Amount"
-                  value={newCategoryBudget}
-                  onChange={(e) => setNewCategoryBudget(e.target.value)}
-                />
-              </div>
-              <div>
-                <Input
-                  type="color"
-                  value={newCategoryColor}
-                  onChange={(e) => setNewCategoryColor(e.target.value)}
-                  className="h-10 w-full"
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="recurring"
-                  checked={newCategoryRecurring}
-                  onCheckedChange={(checked) =>
-                    setNewCategoryRecurring(checked as boolean)
-                  }
-                />
-                <label
-                  htmlFor="recurring"
-                  className="text-sm font-medium leading-none text-foreground"
-                >
-                  Recurring Monthly Expense
-                </label>
-              </div>
-              <Button
-                className="w-full bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold"
-                onClick={() => {
-                  onAddCategory({
-                    name: newCategoryName,
-                    budget: Number(newCategoryBudget),
-                    color: newCategoryColor,
-                    isRecurring: newCategoryRecurring,
-                  });
-                  setNewCategoryName("");
-                  setNewCategoryBudget("");
-                  setNewCategoryColor("#000000");
-                  setNewCategoryRecurring(false);
-                }}
-              >
+        <div className="flex items-center gap-2">
+          <TransferBalanceDialog
+            categories={categories}
+            onTransfer={(fromId, toId, amount) => {
+              const fromCategory = categories.find((c) => c.id === fromId);
+              const toCategory = categories.find((c) => c.id === toId);
+              if (fromCategory && toCategory) {
+                onEditCategory(fromId, {
+                  budget: fromCategory.budget - amount,
+                });
+                onEditCategory(toId, { budget: toCategory.budget + amount });
+              }
+            }}
+          />
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="flex items-center gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold">
+                <Plus size={16} />
                 Add Category
               </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Category</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 pt-4">
+                <div>
+                  <Input
+                    placeholder="Category Name"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Input
+                    type="number"
+                    placeholder="Budget Amount"
+                    value={newCategoryBudget}
+                    onChange={(e) => setNewCategoryBudget(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Input
+                    type="color"
+                    value={newCategoryColor}
+                    onChange={(e) => setNewCategoryColor(e.target.value)}
+                    className="h-10 w-full"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="recurring"
+                    checked={newCategoryRecurring}
+                    onCheckedChange={(checked) =>
+                      setNewCategoryRecurring(checked as boolean)
+                    }
+                  />
+                  <label
+                    htmlFor="recurring"
+                    className="text-sm font-medium leading-none text-foreground"
+                  >
+                    Recurring Monthly Expense
+                  </label>
+                </div>
+                <Button
+                  className="w-full bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold"
+                  onClick={() => {
+                    onAddCategory({
+                      name: newCategoryName,
+                      budget: Number(newCategoryBudget),
+                      color: newCategoryColor,
+                      isRecurring: newCategoryRecurring,
+                    });
+                    setNewCategoryName("");
+                    setNewCategoryBudget("");
+                    setNewCategoryColor("#000000");
+                    setNewCategoryRecurring(false);
+                  }}
+                >
+                  Add Category
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <ScrollArea className="h-[300px]">
