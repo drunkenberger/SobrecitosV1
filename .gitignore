@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
 dist
 dist-ssr
@@ -23,15 +24,22 @@ dist-ssr
 *.sln
 *.sw?
 
-!node_modules/.vite
-
-**/tempobook/dynamic/
-**/tempobook/storyboards/
-node_modules
-dist
-dist-ssr
-*.local
+# Environment variables
 .env
 .env.*
 
+# Tempo files
+**/tempobook/dynamic/
+**/tempobook/storyboards/
+
+# Build output
+dist
+dist-ssr
+*.local
+
+# Core
 core
+
+# Next.js
+.next
+.next-tb
