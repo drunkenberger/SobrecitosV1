@@ -4,6 +4,7 @@ export interface AIProvider {
   description: string;
   apiKeyName: string;
   baseUrl?: string;
+  models: AIModel[];
 }
 
 export interface AIModelCapabilities {
@@ -14,25 +15,13 @@ export interface AIModelCapabilities {
   costPer1kTokens: number;
 }
 
-export interface AIProvider {
-  id: string;
-  name: string;
-  description: string;
-  apiKeyName: string;
-  baseUrl?: string;
-  models: {
-    name: string;
-    capabilities: AIModelCapabilities;
-    description: string;
-  }[];
-}
-
 export interface AIModel {
   id: string;
   name: string;
   capabilities: AIModelCapabilities;
   description: string;
   isRecommended?: boolean;
+  localModel?: LocalModelInfo;
 }
 
 export interface LocalModelInfo {
@@ -177,7 +166,8 @@ export const getAISettings = (): AISettings => {
     return {
       enabled: false,
       provider: "openai",
-      apiKey: "",
+      apiKeys: {},
+      model: "gpt-4-turbo",
       baseUrl: "",
     };
   }
