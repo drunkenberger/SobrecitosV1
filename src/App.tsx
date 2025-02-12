@@ -15,7 +15,7 @@ function App() {
     <Suspense fallback={<p>Loading...</p>}>
       <div className="min-h-screen">
         <Navbar />
-        {/* Add tempo routes before the catchall */}
+        {/* Add tempo routes */}
         {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
         <Routes>
           <Route path="/" element={<Landing />} />
@@ -25,6 +25,7 @@ function App() {
           <Route path="/cookies" element={<CookiePolicy />} />
           <Route path="/app" element={<Home />} />
           <Route path="/preview/:projectId/app" element={<Home />} />
+          {/* Add tempo route before the catchall */}
           {import.meta.env.VITE_TEMPO === "true" && (
             <Route path="/tempobook/*" />
           )}

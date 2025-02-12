@@ -27,5 +27,11 @@ dist-ssr
 
 **/tempobook/dynamic/
 **/tempobook/storyboards/
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
 
 core
