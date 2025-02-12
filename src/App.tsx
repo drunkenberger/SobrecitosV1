@@ -3,6 +3,7 @@ import { Toaster } from "./components/ui/toaster";
 import { useRoutes, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./components/home";
 import Landing from "./pages/Landing";
+import Profile from "./pages/Profile";
 import FAQPage from "./components/faq/FAQPage";
 import HelpCenter from "./components/help/HelpCenter";
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
@@ -21,6 +22,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/app" element={<Home />} />
+          <Route path="/app/profile" element={<Profile />} />
           <Route path="/preview/:projectId/app" element={<Home />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/app/faq" element={<FAQPage />} />
