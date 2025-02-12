@@ -43,3 +43,6 @@ core
 # Next.js
 .next
 .next-tb
+
+# GitHub
+.github/workflows/
