@@ -91,7 +91,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {benefits.map((benefit, i) => (
               <Card key={i} className="p-6 hover:shadow-lg transition-shadow">
-                <CheckCircle2 className="w-8 h-8 text-primary mb-4" />
+                <CheckCircle2 className="w-8 h-8 text-[#FFD700] mb-4" />
                 <h3 className="text-xl font-semibold mb-2">{benefit.title}</h3>
                 <p className="text-muted-foreground">{benefit.description}</p>
               </Card>
@@ -275,7 +275,11 @@ export default function Landing() {
                     Help Center
                   </Link>
                 </li>
-                <li>Blog</li>
+                <li>
+                  <Link to="/blog" className="hover:text-primary">
+                    Blog
+                  </Link>
+                </li>
                 <li>Contact</li>
               </ul>
             </div>
