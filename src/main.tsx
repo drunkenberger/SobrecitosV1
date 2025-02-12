@@ -12,10 +12,10 @@ const basename = import.meta.env.BASE_URL;
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ThemeProvider defaultTheme="system" storageKey="budget-theme">
-      <BrowserRouter basename={basename}>
+    <BrowserRouter basename={basename}>
+      <ThemeProvider defaultTheme="light" storageKey="ui-theme">
         <App />
-      </BrowserRouter>
-    </ThemeProvider>
+      </ThemeProvider>
+    </BrowserRouter>
   </React.StrictMode>,
 );

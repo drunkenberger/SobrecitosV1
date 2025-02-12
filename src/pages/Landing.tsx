@@ -265,18 +265,34 @@ export default function Landing() {
             <div>
               <h3 className="font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <Link to="/faq" className="hover:text-primary">
+                    FAQs
+                  </Link>
+                </li>
                 <li>Help Center</li>
                 <li>Blog</li>
-                <li>FAQs</li>
                 <li>Contact</li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold mb-4">Legal</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Privacy Policy</li>
-                <li>Terms of Service</li>
-                <li>Cookie Policy</li>
+                <li>
+                  <Link to="/privacy" className="hover:text-primary">
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/terms" className="hover:text-primary">
+                    Terms of Service
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/cookies" className="hover:text-primary">
+                    Cookie Policy
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>

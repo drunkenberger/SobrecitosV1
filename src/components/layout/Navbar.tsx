@@ -1,7 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Link, useLocation } from "react-router-dom";
-import { Phone, Mail, Facebook, Twitter, Instagram, Home } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  Facebook,
+  Twitter,
+  Instagram,
+  Home,
+  HelpCircle,
+} from "lucide-react";
 import { UserMenu } from "./UserMenu";
 
 export default function Navbar() {
@@ -65,6 +73,13 @@ export default function Navbar() {
 
             <div className="flex items-center gap-4">
               <ThemeToggle />
+              <Link
+                to="/faq"
+                className="text-[#FFD700] hover:text-[#FFD700]/80 flex items-center gap-2"
+              >
+                <HelpCircle className="w-5 h-5" />
+                <span className="hidden sm:inline">FAQ</span>
+              </Link>
               {!isApp ? (
                 <Button
                   className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-medium rounded-full px-6 border-2 border-[#556B2F] shadow-lg hover:shadow-xl transition-all"
