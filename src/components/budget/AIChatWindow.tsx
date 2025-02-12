@@ -35,6 +35,7 @@ export function AIChatWindow() {
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [input, setInput] = React.useState("");
   const [minimized, setMinimized] = React.useState(false);
+  const handleMinimize = () => setMinimized((prev) => !prev);
   const [loading, setLoading] = React.useState(false);
   const [showSettings, setShowSettings] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
@@ -248,7 +249,7 @@ ${context}`,
               variant="ghost"
               size="icon"
               className="h-8 w-8 text-primary-foreground hover:text-primary-foreground/90"
-              onClick={() => setMinimized(!minimized)}
+              onClick={handleMinimize}
             >
               {minimized ? (
                 <Maximize2 className="h-4 w-4" />

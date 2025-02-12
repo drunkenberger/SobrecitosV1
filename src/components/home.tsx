@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import DataManager from "./budget/DataManager";
 import DashboardHeader from "./budget/DashboardHeader";
 import ExpenseChart from "./budget/ExpenseChart";
@@ -342,9 +343,17 @@ const Home = () => {
             <div>
               <h3 className="font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Help Center</li>
+                <li>
+                  <Link to="/app/help" className="hover:text-primary">
+                    Help Center
+                  </Link>
+                </li>
                 <li>Blog</li>
-                <li>FAQs</li>
+                <li>
+                  <Link to="/app/faq" className="hover:text-primary">
+                    FAQs
+                  </Link>
+                </li>
                 <li>Contact</li>
               </ul>
             </div>

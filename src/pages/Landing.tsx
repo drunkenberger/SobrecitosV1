@@ -270,7 +270,11 @@ export default function Landing() {
                     FAQs
                   </Link>
                 </li>
-                <li>Help Center</li>
+                <li>
+                  <Link to="/help" className="hover:text-primary">
+                    Help Center
+                  </Link>
+                </li>
                 <li>Blog</li>
                 <li>Contact</li>
               </ul>
