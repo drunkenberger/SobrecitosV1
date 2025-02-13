@@ -65,7 +65,7 @@ export default function Landing() {
       text: "I use this app and recommend it to all my clients. It's the perfect balance of powerful features and ease of use.",
     },
     {
-      name: "Emily Rodriguez",
+      name: "Emilia Rodriguez",
       role: "Stay-at-home Parent",
       image: "https://api.dicebear.com/9.x/personas/svg?seed=Emily&backgroundColor=ffd5dc&hair=bobBangs&eyes=happy&mouth=smile&skinColor=eeb4a4&clothingColor=f55d81&nose=wrinkles",
       text: "The recurring expenses feature saves me so much time. I can finally keep track of all our family's spending in one place.",
