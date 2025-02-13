@@ -1,7 +1,7 @@
 import Hero from "@/components/landing/Hero";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowRight, Star, CheckCircle2, Users2, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, Star, CheckCircle2, Users2, Calendar, ChevronLeft, ChevronRight, Sparkles, Bot } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getPosts } from "@/lib/wordpress";
@@ -191,7 +191,12 @@ export default function Landing() {
                   why we've designed Sobrecitos to be completely self-contained,
                   giving you full control over your information.
                 </p>
-                <Button variant="default" size="lg" asChild className="w-full">
+                <Button 
+                  variant="default" 
+                  size="lg" 
+                  asChild 
+                  className="w-full bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] dark:bg-[#FFD700] dark:hover:bg-[#FFD700]/90 dark:text-[#556B2F] font-semibold"
+                >
                   <Link
                     to="/app"
                     className="flex items-center justify-center gap-2"
@@ -201,6 +206,125 @@ export default function Landing() {
                 </Button>
               </Card>
             </div>
+          </div>
+        </div>
+      </section>
+      {/* AI Features Section */}
+      <section className="py-20 bg-gradient-to-br from-[#FFD700]/10 to-[#556B2F]/10 dark:from-[#FFD700]/5 dark:to-[#556B2F]/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">AI-Powered Financial Insights</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Optional AI features to help you make smarter financial decisions while keeping your data private. Choose your preferred AI provider and maintain full control.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <Card className="p-6 bg-gradient-to-br from-[#FFD700]/20 to-[#556B2F]/10 dark:from-[#FFD700]/10 dark:to-[#556B2F]/20 border-[#FFD700]/20 dark:border-[#FFD700]/10 shadow-md hover:shadow-lg transition-shadow">
+              <div className="flex items-center gap-3 mb-4">
+                <Sparkles className="w-8 h-8 text-[#FFD700] dark:text-[#FFD700]/90" />
+                <h3 className="text-xl font-medium text-[#556B2F] dark:text-[#FFD700]/90">
+                  AI Financial Assistant
+                </h3>
+              </div>
+              <div className="space-y-4">
+                <p className="text-[#556B2F] dark:text-[#FFD700]/80">
+                  Get personalized financial advice and insights powered by advanced AI technology:
+                </p>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-[#FFD700] dark:text-[#FFD700]/90 mt-1" />
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Real-time budget analysis and recommendations</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-[#FFD700] dark:text-[#FFD700]/90 mt-1" />
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Smart spending pattern detection</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-[#FFD700] dark:text-[#FFD700]/90 mt-1" />
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Savings goals optimization</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-[#FFD700] dark:text-[#FFD700]/90 mt-1" />
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Future payment planning assistance</span>
+                  </li>
+                </ul>
+                <div className="mt-4 p-4 bg-[#FFD700]/5 dark:bg-[#556B2F]/20 rounded-lg border border-[#FFD700]/10 dark:border-[#FFD700]/10">
+                  <h4 className="font-medium text-[#556B2F] dark:text-[#FFD700] mb-2">Choose Your AI Provider:</h4>
+                  <ul className="space-y-2 text-sm text-[#556B2F] dark:text-[#FFD700]/80">
+                    <li className="flex items-center gap-2">
+                      <span className="font-medium">OpenAI:</span> Use GPT models with your API key
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="font-medium">Google:</span> Connect to Gemini models
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="font-medium">Ollama:</span> Run AI locally for complete privacy
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-6 bg-gradient-to-br from-[#556B2F]/10 to-[#FFD700]/20 dark:from-[#556B2F]/20 dark:to-[#FFD700]/10 border-[#556B2F]/20 dark:border-[#556B2F]/10 shadow-md hover:shadow-lg transition-shadow">
+              <div className="flex items-center gap-3 mb-4">
+                <Bot className="w-8 h-8 text-[#556B2F] dark:text-[#FFD700]/90" />
+                <h3 className="text-xl font-medium text-[#556B2F] dark:text-[#FFD700]/90">
+                  Interactive AI Chat
+                </h3>
+              </div>
+              <div className="space-y-4">
+                <p className="text-[#556B2F] dark:text-[#FFD700]/80">
+                  Chat with your personal AI financial assistant that understands your unique situation:
+                </p>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-[#556B2F] dark:text-[#FFD700]/90 mt-1" />
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Ask questions about your finances</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-[#556B2F] dark:text-[#FFD700]/90 mt-1" />
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Get detailed spending analysis</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-[#556B2F] dark:text-[#FFD700]/90 mt-1" />
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Receive custom financial tips</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-[#556B2F] dark:text-[#FFD700]/90 mt-1" />
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Track progress towards goals</span>
+                  </li>
+                </ul>
+                <div className="mt-4 p-4 bg-[#556B2F]/5 dark:bg-[#556B2F]/20 rounded-lg border border-[#556B2F]/10 dark:border-[#FFD700]/10">
+                  <h4 className="font-medium text-[#556B2F] dark:text-[#FFD700] mb-2">Easy Setup:</h4>
+                  <ul className="space-y-2 text-sm text-[#556B2F] dark:text-[#FFD700]/80">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-[#556B2F] dark:text-[#FFD700]/90 mt-0.5" />
+                      <span>Bring your own API key for OpenAI or Gemini</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-[#556B2F] dark:text-[#FFD700]/90 mt-0.5" />
+                      <span>Or use Ollama to run models locally on your device</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-[#556B2F] dark:text-[#FFD700]/90 mt-0.5" />
+                      <span>Full control over AI settings and model selection</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="mt-6">
+                  <Button 
+                    variant="default"
+                    size="lg"
+                    className="w-full bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] dark:bg-[#FFD700] dark:hover:bg-[#FFD700]/90 dark:text-[#556B2F] font-semibold"
+                    asChild
+                  >
+                    <Link to="/app" className="flex items-center justify-center gap-2">
+                      Try AI Features <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
       </section>

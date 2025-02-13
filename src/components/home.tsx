@@ -26,8 +26,9 @@ import {
   addFuturePayment,
   updateFuturePayment,
 } from "@/lib/store";
-import { Sparkles, Wallet, PieChart, ListChecks } from "lucide-react";
+import { Sparkles, Wallet, PieChart, ListChecks, Bot } from "lucide-react";
 import FuturePayments from "./budget/FuturePayments";
+import { Button } from "./ui/button";
 
 import { AuthDialog } from "./auth/AuthDialog";
 import { AIInsightsDialog } from "./budget/AIInsightsDialog";
@@ -37,6 +38,7 @@ import { AIChatWindow } from "./budget/AIChatWindow";
 const Home = () => {
   const [showAuth, setShowAuth] = React.useState(!getCurrentUser());
   const [store, setStore] = React.useState(getStore());
+  const [showSettings, setShowSettings] = React.useState(false);
 
   React.useEffect(() => {
     if (!getCurrentUser()) {
@@ -210,6 +212,74 @@ const Home = () => {
             <p className="text-3xl font-bold text-blue-700 dark:text-blue-200 mt-2">
               ${remainingBalance.toLocaleString()}
             </p>
+          </Card>
+        </div>
+
+        {/* AI Features Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="p-6 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 border-violet-100 dark:border-violet-900 shadow-md hover:shadow-lg transition-shadow">
+            <div className="flex items-center gap-3 mb-4">
+              <Sparkles className="w-6 h-6 text-violet-600 dark:text-violet-400" />
+              <h3 className="text-xl font-medium text-violet-800 dark:text-violet-300">
+                AI-Powered Financial Assistant
+              </h3>
+            </div>
+            <div className="space-y-4">
+              <p className="text-violet-700 dark:text-violet-200">
+                Get personalized financial advice and insights powered by advanced AI technology:
+              </p>
+              <ul className="space-y-2 text-violet-600 dark:text-violet-300">
+                <li className="flex items-center gap-2">
+                  <span className="text-lg">•</span> Real-time budget analysis and recommendations
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-lg">•</span> Smart spending pattern detection
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-lg">•</span> Savings goals optimization
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-lg">•</span> Future payment planning assistance
+                </li>
+              </ul>
+            </div>
+          </Card>
+
+          <Card className="p-6 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 border-indigo-100 dark:border-indigo-900 shadow-md hover:shadow-lg transition-shadow">
+            <div className="flex items-center gap-3 mb-4">
+              <Bot className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+              <h3 className="text-xl font-medium text-indigo-800 dark:text-indigo-300">
+                Interactive AI Chat
+              </h3>
+            </div>
+            <div className="space-y-4">
+              <p className="text-indigo-700 dark:text-indigo-200">
+                Chat with your personal AI financial assistant that understands your unique situation:
+              </p>
+              <ul className="space-y-2 text-indigo-600 dark:text-indigo-300">
+                <li className="flex items-center gap-2">
+                  <span className="text-lg">•</span> Ask questions about your finances
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-lg">•</span> Get detailed spending analysis
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-lg">•</span> Receive custom financial tips
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-lg">•</span> Track progress towards goals
+                </li>
+              </ul>
+              <div className="mt-4">
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-indigo-100 hover:bg-indigo-200 dark:bg-indigo-900/50 dark:hover:bg-indigo-900/70 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800"
+                  onClick={() => setShowSettings(true)}
+                >
+                  Configure AI Assistant
+                </Button>
+              </div>
+            </div>
           </Card>
         </div>
 
