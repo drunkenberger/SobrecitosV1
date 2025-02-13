@@ -12,6 +12,7 @@ import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import TermsOfService from "./pages/legal/TermsOfService";
 import CookiePolicy from "./pages/legal/CookiePolicy";
 import Navbar from "./components/layout/Navbar";
+import Alternatives from "./pages/Alternatives";
 import routes from "tempo-routes";
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
           <Route path="/cookies" element={<CookiePolicy />} />
           <Route path="/help" element={<HelpCenter />} />
           <Route path="/app/help" element={<HelpCenter />} />
+          <Route path="/alternatives" element={<Alternatives />} />
           {/* Add tempo route before the catchall */}
           {import.meta.env.VITE_TEMPO === "true" && (
             <Route path="/tempobook/*" />

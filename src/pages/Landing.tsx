@@ -102,24 +102,6 @@ export default function Landing() {
     },
   ];
 
-  const team = [
-    {
-      name: "Santiago González",
-      role: "Founder & Developer",
-      image: "https://api.dicebear.com/9.x/personas/svg?seed=Alex&backgroundColor=d1d4f9&hair=shortComboverChops&eyes=happy&mouth=smile&skinColor=b16a5b&clothingColor=456dff&facialHair=shadow",
-    },
-    {
-      name: "Sofía Barrios",
-      role: "Head of Product",
-      image: "https://api.dicebear.com/9.x/personas/svg?seed=Lisa&backgroundColor=ffd5dc&hair=bobCut&eyes=happy&mouth=bigSmile&skinColor=d78774&clothingColor=f55d81",
-    },
-    {
-      name: "NEZ",
-      role: "Lead Developer",
-      image: "https://api.dicebear.com/9.x/personas/svg?seed=David&backgroundColor=ffdfbf&hair=buzzcut&eyes=glasses&mouth=smile&skinColor=e5a07e&clothingColor=f3b63a",
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-background">
       <Hero />
@@ -368,6 +350,72 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      {/* Alternatives Preview Section */}
+      <section className="py-20 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Sobrecitos as an Alternative</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              A better way to manage your family budget compared to traditional apps
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <Card className="p-6">
+              <h3 className="text-xl font-semibold mb-4">vs. Mint</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
+                  <span>100% private - data stays local</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
+                  <span>No ads or upsells</span>
+                </li>
+              </ul>
+            </Card>
+            
+            <Card className="p-6">
+              <h3 className="text-xl font-semibold mb-4">vs. YNAB</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
+                  <span>More affordable</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
+                  <span>No learning curve</span>
+                </li>
+              </ul>
+            </Card>
+            
+            <Card className="p-6">
+              <h3 className="text-xl font-semibold mb-4">vs. EveryDollar</h3>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
+                  <span>Smart automation</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
+                  <span>Built-in AI features</span>
+                </li>
+              </ul>
+            </Card>
+          </div>
+          
+          <div className="text-center">
+            <Button 
+              size="lg" 
+              className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold"
+            >
+              <Link to="/alternatives" className="flex items-center">
+                See Full Comparison <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
       {/* Blog Posts Carousel Section */}
       <section className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -461,38 +509,14 @@ export default function Landing() {
           </div>
 
           <div className="text-center mt-12">
-            <Button asChild variant="outline" size="lg">
-              <Link to="/blog" className="font-semibold">
+            <Button 
+              size="lg"
+              className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold"
+            >
+              <Link to="/blog" className="flex items-center">
                 View All Posts <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
-          </div>
-        </div>
-      </section>
-      {/* Team Section */}
-      <section className="py-20 bg-muted/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Meet Our Team</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Dedicated to making family budget management easier for everyone
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {team.map((member, i) => (
-              <Card
-                key={i}
-                className="p-6 text-center hover:shadow-lg transition-shadow"
-              >
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-24 h-24 rounded-full mx-auto mb-4"
-                />
-                <h3 className="font-semibold text-lg">{member.name}</h3>
-                <p className="text-muted-foreground">{member.role}</p>
-              </Card>
-            ))}
           </div>
         </div>
       </section>
@@ -549,6 +573,11 @@ export default function Landing() {
                 <li>
                   <Link to="/blog" className="hover:text-primary">
                     Blog
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/alternatives" className="hover:text-primary">
+                    Alternatives
                   </Link>
                 </li>
                 <li>Contact</li>
