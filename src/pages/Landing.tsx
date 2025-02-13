@@ -53,21 +53,21 @@ export default function Landing() {
 
   const testimonials = [
     {
-      name: "Sarah Johnson",
+      name: "Diana Marshall",
       role: "Working Mom",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=sarah",
+      image: "https://api.dicebear.com/9.x/personas/svg?seed=Sarah&backgroundColor=b6e3f4&hair=long&eyes=happy&mouth=smile&skinColor=e5a07e&clothingColor=456dff",
       text: "This app has completely transformed how I manage our household expenses. The visual charts make it so easy to understand where our money goes.",
     },
     {
-      name: "Michael Chen",
+      name: "William Chen",
       role: "Family Financial Advisor",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=michael",
-      text: "I recommend this app to all my clients. It's the perfect balance of powerful features and ease of use.",
+      image: "https://api.dicebear.com/9.x/personas/svg?seed=Michael&backgroundColor=d1d4f9&hair=shortCombover&eyes=glasses&mouth=bigSmile&skinColor=d78774&clothingColor=7555ca",
+      text: "I use this app and recommend it to all my clients. It's the perfect balance of powerful features and ease of use.",
     },
     {
       name: "Emily Rodriguez",
       role: "Stay-at-home Parent",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=emily",
+      image: "https://api.dicebear.com/9.x/personas/svg?seed=Emily&backgroundColor=ffd5dc&hair=bobBangs&eyes=happy&mouth=smile&skinColor=eeb4a4&clothingColor=f55d81&nose=wrinkles",
       text: "The recurring expenses feature saves me so much time. I can finally keep track of all our family's spending in one place.",
     },
   ];
@@ -104,19 +104,19 @@ export default function Landing() {
 
   const team = [
     {
-      name: "Alex Rivera",
-      role: "Founder & CEO",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=alex",
+      name: "Santiago González",
+      role: "Founder & Developer",
+      image: "https://api.dicebear.com/9.x/personas/svg?seed=Alex&backgroundColor=d1d4f9&hair=shortComboverChops&eyes=happy&mouth=smile&skinColor=b16a5b&clothingColor=456dff&facialHair=shadow",
     },
     {
-      name: "Lisa Wang",
+      name: "Sofía Barrios",
       role: "Head of Product",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=lisa",
+      image: "https://api.dicebear.com/9.x/personas/svg?seed=Lisa&backgroundColor=ffd5dc&hair=bobCut&eyes=happy&mouth=bigSmile&skinColor=d78774&clothingColor=f55d81",
     },
     {
-      name: "David Kumar",
+      name: "NEZ",
       role: "Lead Developer",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=david",
+      image: "https://api.dicebear.com/9.x/personas/svg?seed=David&backgroundColor=ffdfbf&hair=buzzcut&eyes=glasses&mouth=smile&skinColor=e5a07e&clothingColor=f3b63a",
     },
   ];
 

@@ -38,8 +38,8 @@ export default function Hero() {
               </h1>
               <p className="text-xl text-white/80 max-w-xl">
                 Take control of your family's finances with our easy-to-use,
-                privacy-first, self-contained budget tracker. Perfect for busy
-                moms managing household expenses.
+                privacy-first budget tracker. Perfect for busy
+                parents managing household expenses.
               </p>
               <Button
                 size="lg"
