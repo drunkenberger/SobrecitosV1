@@ -1,30 +1,49 @@
-export interface WordPressPost {
-  id: number;
-  date: string;
-  title: {
-    rendered: string;
-  };
-  content: {
-    rendered: string;
-  };
-  excerpt: {
-    rendered: string;
-  };
-  featured_media?: number;
-  _embedded?: {
-    "wp:featuredmedia"?: Array<{
-      source_url: string;
-    }>;
-    author?: Array<{
-      name: string;
-      avatar_urls?: {
-        [key: string]: string;
-      };
-    }>;
-  };
-  link: string;
-  categories: number[];
-  tags: number[];
+import { WordPressPost } from '../types/wordpress';
+
+const WORDPRESS_API_URL = 'https://public-api.wordpress.com/wp/v2/sites/sobrecitos2.wordpress.com';
+
+export async function getPosts(page = 1, perPage = 10): Promise<WordPressPost[]> {
+  try {
+    const url = `${WORDPRESS_API_URL}/posts?page=${page}&per_page=${perPage}&_embed`;
+    console.log('Fetching posts from URL:', url);
+    
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      console.error('Response not OK:', response.status, response.statusText);
+      throw new Error('Failed to fetch posts');
+    }
+
+    const posts = await response.json();
+    console.log('Raw API response:', posts);
+
+    if (!Array.isArray(posts)) {
+      console.error('Posts is not an array:', posts);
+      return [];
+    }
+
+    return posts;
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    return []; // Return empty array instead of throwing
+  }
+}
+
+export async function getPost(id: number): Promise<WordPressPost> {
+  try {
+    const url = `${WORDPRESS_API_URL}/posts/${id}?_embed`;
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch post');
+    }
+
+    const post = await response.json();
+    return post;
+  } catch (error) {
+    console.error('Error fetching post:', error);
+    throw error;
+  }
 }
 
 export interface WordPressCategory {
@@ -34,45 +53,17 @@ export interface WordPressCategory {
   count: number;
 }
 
-import { proxyFetch } from "./proxy";
-
-export const fetchPosts = async (
-  page = 1,
-  perPage = 10,
-): Promise<WordPressPost[]> => {
-  try {
-    console.log(
-      "Fetching posts from:",
-      `${import.meta.env.VITE_WORDPRESS_URL}/posts?_envelope&page=${page}&number=${perPage}`,
-    );
-    const response = await proxyFetch(
-      `${import.meta.env.VITE_WORDPRESS_URL}/posts?_envelope&page=${page}&number=${perPage}`,
-      { method: "GET" },
-    );
-    if (!response.ok) {
-      const text = await response.text();
-      console.error("Response not ok:", response.status, text);
-      throw new Error(`Failed to fetch posts: ${response.status} ${text}`);
-    }
-    const data = await response.json();
-    console.log("Fetched posts:", data);
-    // WordPress.com API returns data in a different format
-    return data.body;
-  } catch (error) {
-    console.error("Error fetching posts:", error);
-    return [];
-  }
-};
-
 export const fetchCategories = async (): Promise<WordPressCategory[]> => {
   try {
-    const response = await proxyFetch(
-      `${import.meta.env.VITE_WORDPRESS_URL}/categories?_envelope`,
-      { method: "GET" },
-    );
-    if (!response.ok) throw new Error("Failed to fetch categories");
-    const data = await response.json();
-    return data.body;
+    const url = `${WORDPRESS_API_URL}/categories`;
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error("Failed to fetch categories");
+    }
+    
+    const categories = await response.json();
+    return categories;
   } catch (error) {
     console.error("Error fetching categories:", error);
     return [];
@@ -85,12 +76,15 @@ export const fetchPostsByCategory = async (
   perPage = 10,
 ): Promise<WordPressPost[]> => {
   try {
-    const response = await proxyFetch(
-      `${import.meta.env.VITE_WORDPRESS_URL}/wp-json/wp/v2/posts?_embed&categories=${categoryId}&page=${page}&per_page=${perPage}`,
-      { method: "GET" },
-    );
-    if (!response.ok) throw new Error("Failed to fetch posts");
-    return response.json();
+    const url = `${WORDPRESS_API_URL}/posts?categories=${categoryId}&page=${page}&per_page=${perPage}&_embed`;
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error("Failed to fetch posts");
+    }
+    
+    const posts = await response.json();
+    return posts;
   } catch (error) {
     console.error("Error fetching posts:", error);
     return [];

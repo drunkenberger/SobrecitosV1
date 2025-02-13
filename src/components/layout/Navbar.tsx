@@ -25,16 +25,10 @@ export default function Navbar() {
           <div className="flex justify-between h-12 items-center text-[#556B2F] text-sm">
             <div className="flex items-center gap-6">
               <a
-                href="mailto:info@sobrecitos.com"
+                href="mailto:info@sobrecitos.net"
                 className="flex items-center gap-2 hover:text-[#556B2F]/80 transition-colors duration-200"
               >
-                <Mail className="w-4 h-4" /> info@sobrecitos.com
-              </a>
-              <a
-                href="tel:+1234567890"
-                className="flex items-center gap-2 hover:text-[#556B2F]/80 transition-colors duration-200"
-              >
-                <Phone className="w-4 h-4" /> (123) 456-7890
+                <Mail className="w-4 h-4" /> info@sobrecitos.net
               </a>
             </div>
             <div className="flex items-center gap-4">
@@ -67,21 +61,12 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20 items-center relative z-20">
             <div className="flex items-center gap-6">
-              <Link to="/">
-                <img
-                  src="https://lime-zygomorphic-vicuna-674.mypinata.cloud/ipfs/bafkreiairtotli5wav7jovqyea4b76kzsvnnccqwvo5ihvnwec426pgqz4"
-                  alt="Sobrecitos"
-                  className="h-10 w-auto transition-transform duration-200 hover:scale-105"
-                />
+              <Link
+                to="/"
+                className="text-white hover:text-white/80 p-2 rounded-full hover:bg-white/10 transition-colors duration-200"
+              >
+                <Home className="w-6 h-6" />
               </Link>
-              {isApp && (
-                <Link
-                  to="/"
-                  className="text-white hover:text-white/80 p-2 rounded-full hover:bg-white/10 transition-colors duration-200"
-                >
-                  <Home className="w-5 h-5" />
-                </Link>
-              )}
             </div>
 
             <div className="flex items-center gap-4">

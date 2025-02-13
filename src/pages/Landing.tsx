@@ -1,10 +1,56 @@
 import Hero from "@/components/landing/Hero";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowRight, Star, CheckCircle2, Users2 } from "lucide-react";
+import { ArrowRight, Star, CheckCircle2, Users2, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { getPosts } from "@/lib/wordpress";
+import { WordPressPost } from "@/types/wordpress";
+import { cn } from "@/lib/utils";
 
 export default function Landing() {
+  const [posts, setPosts] = useState<WordPressPost[]>([]);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const fetchedPosts = await getPosts(1, 6); // Fetch 6 latest posts
+        setPosts(fetchedPosts);
+      } catch (error) {
+        console.error("Error fetching blog posts:", error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % Math.ceil(posts.length / 3));
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => 
+      prev === 0 ? Math.ceil(posts.length / 3) - 1 : prev - 1
+    );
+  };
+
+  const getFeaturedImageUrl = (post: WordPressPost) => {
+    if (post.jetpack_featured_media_url) {
+      return post.jetpack_featured_media_url;
+    }
+
+    const media = post._embedded?.['wp:featuredmedia']?.[0];
+    if (!media) return null;
+
+    const sizes = media.media_details?.sizes;
+    if (sizes) {
+      return sizes.medium?.source_url || sizes.full?.source_url;
+    }
+
+    return media.source_url;
+  };
+
   const testimonials = [
     {
       name: "Sarah Johnson",
@@ -195,6 +241,107 @@ export default function Landing() {
                 <p className="text-muted-foreground">{testimonial.text}</p>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+      {/* Blog Posts Carousel Section */}
+      <section className="py-20 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Latest from Our Blog</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Stay updated with our latest tips and insights on family budget management
+            </p>
+          </div>
+
+          <div className="relative">
+            <div className="overflow-hidden">
+              <div 
+                className="flex transition-transform duration-300 ease-in-out"
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 min-w-full">
+                  {posts.slice(currentSlide * 3, (currentSlide + 1) * 3).map((post) => {
+                    const featuredImageUrl = getFeaturedImageUrl(post);
+                    
+                    return (
+                      <Card
+                        key={post.id}
+                        className="group overflow-hidden hover:shadow-xl transition-all duration-300"
+                      >
+                        <Link to={`/blog/${post.id}`} className="block">
+                          {featuredImageUrl ? (
+                            <div className="relative w-full h-48 overflow-hidden">
+                              <img
+                                src={featuredImageUrl}
+                                alt={post.title.rendered}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-full h-48 bg-muted flex items-center justify-center">
+                              <span className="text-muted-foreground">No image available</span>
+                            </div>
+                          )}
+                          <div className="p-6">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                              <Calendar className="w-4 h-4" />
+                              {new Date(post.date).toLocaleDateString()}
+                            </div>
+                            <h3 
+                              className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors line-clamp-2"
+                              dangerouslySetInnerHTML={{ __html: post.title.rendered }}
+                            />
+                            <div
+                              className={cn(
+                                "text-sm text-muted-foreground line-clamp-3 mb-4",
+                                "prose prose-sm dark:prose-invert"
+                              )}
+                              dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
+                            />
+                            <Button 
+                              variant="ghost" 
+                              className="group-hover:text-primary transition-colors font-semibold pl-0 hover:bg-transparent"
+                            >
+                              Read More <ArrowRight className="w-4 h-4 ml-2" />
+                            </Button>
+                          </div>
+                        </Link>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {posts.length > 3 && (
+              <>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-background shadow-lg hover:bg-background"
+                  onClick={prevSlide}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-background shadow-lg hover:bg-background"
+                  onClick={nextSlide}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </>
+            )}
+          </div>
+
+          <div className="text-center mt-12">
+            <Button asChild variant="outline" size="lg">
+              <Link to="/blog" className="font-semibold">
+                View All Posts <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
