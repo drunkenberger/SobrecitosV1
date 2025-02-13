@@ -7,19 +7,34 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Settings, User, LogOut } from "lucide-react";
+import { Settings, User, LogOut, DollarSign } from "lucide-react";
 import { getCurrentUser, logoutUser } from "@/lib/auth";
 import { useNavigate, Link } from "react-router-dom";
+import { currencies } from "@/lib/currency";
+import { getStore, setStore } from "@/lib/store";
+import { useState } from "react";
 
 export function UserMenu() {
   const user = getCurrentUser();
   const navigate = useNavigate();
+  const [currentCurrency, setCurrentCurrency] = useState(getStore().currency);
 
   const handleLogout = () => {
     logoutUser();
     navigate("/");
+  };
+
+  const handleCurrencyChange = (currency: typeof currencies[0]) => {
+    const store = getStore();
+    store.currency = currency;
+    setStore(store);
+    setCurrentCurrency(currency);
   };
 
   if (!user) return null;
@@ -48,16 +63,43 @@ export function UserMenu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
-            <Link to="/app/profile">
+          <Link to="/app/profile">
+            <DropdownMenuItem>
               <User className="mr-2 h-4 w-4" />
               <span>Profile</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
-          </DropdownMenuItem>
+            </DropdownMenuItem>
+          </Link>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger className="w-full">
+              <div className="flex items-center">
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </div>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                <DropdownMenuLabel className="font-normal px-2">
+                  <div className="flex items-center">
+                    <DollarSign className="mr-2 h-4 w-4" />
+                    <span>Currency</span>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {currencies.map((currency) => (
+                  <DropdownMenuItem
+                    key={currency.code}
+                    onClick={() => handleCurrencyChange(currency)}
+                    className="flex items-center justify-between"
+                  >
+                    <span>{currency.name}</span>
+                    <span className="text-muted-foreground">
+                      {currency.symbol} ({currency.code})
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>

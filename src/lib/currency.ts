@@ -11,6 +11,9 @@ export const currencies: Currency[] = [
   { code: "JPY", symbol: "¥", name: "Japanese Yen" },
   { code: "CAD", symbol: "C$", name: "Canadian Dollar" },
   { code: "AUD", symbol: "A$", name: "Australian Dollar" },
+  { code: "MXN", symbol: "Mex$", name: "Mexican Peso" },
+  { code: "INR", symbol: "₹", name: "Indian Rupee" },
+  { code: "BRL", symbol: "R$", name: "Brazilian Real" },
 ];
 
 interface ExchangeRates {
