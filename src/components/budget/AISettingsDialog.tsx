@@ -40,6 +40,19 @@ export function AISettingsDialog({
 
   const selectedProvider = AI_PROVIDERS.find((p) => p.id === provider);
 
+  // Reset form when dialog opens
+  React.useEffect(() => {
+    if (open) {
+      const currentSettings = getAISettings();
+      setEnabled(currentSettings.enabled);
+      setProvider(currentSettings.provider);
+      setSelectedModel(currentSettings.model);
+      setAutoSelectModel(currentSettings.autoSelectModel ?? true);
+      setApiKeys(currentSettings.apiKeys || {});
+      setBaseUrl(currentSettings.baseUrl);
+    }
+  }, [open]);
+
   const handleSave = () => {
     setAISettings({
       enabled,
@@ -50,6 +63,11 @@ export function AISettingsDialog({
       autoSelectModel,
     });
     onSave();
+    onOpenChange(false);
+  };
+
+  const handleCancel = () => {
+    onOpenChange(false);
   };
 
   return (
@@ -265,7 +283,7 @@ export function AISettingsDialog({
           )}
 
           <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <Button variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
             <Button onClick={handleSave}>Save Settings</Button>
