@@ -48,7 +48,8 @@ export function AIChatWindow() {
 
   // Show settings dialog if AI is not configured
   React.useEffect(() => {
-    if (!settings.enabled || !settings.apiKeys[settings.provider]) {
+    // Only show settings dialog automatically on first load if AI was previously enabled
+    if (settings.enabled && !settings.apiKeys[settings.provider]) {
       setShowSettings(true);
     }
   }, [settings.enabled, settings.apiKeys, settings.provider]);
