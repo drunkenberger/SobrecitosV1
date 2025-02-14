@@ -113,6 +113,8 @@ const ExpenseList = ({
           <div className="relative flex-1">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
+              id="expense-search"
+              name="expense-search"
               placeholder="Search expenses..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

@@ -34,8 +34,18 @@ interface Message {
 export function AIChatWindow() {
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [input, setInput] = React.useState("");
-  const [minimized, setMinimized] = React.useState(false);
-  const handleMinimize = () => setMinimized((prev) => !prev);
+  const [minimized, setMinimized] = React.useState(() => {
+    // Get minimized state from localStorage, default to true (minimized)
+    const saved = localStorage.getItem("ai_chat_minimized");
+    return saved === null ? true : saved === "true";
+  });
+  
+  const handleMinimize = () => {
+    const newState = !minimized;
+    setMinimized(newState);
+    localStorage.setItem("ai_chat_minimized", newState.toString());
+  };
+
   const [loading, setLoading] = React.useState(false);
   const [showSettings, setShowSettings] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);

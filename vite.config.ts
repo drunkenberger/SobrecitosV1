@@ -17,7 +17,8 @@ export default defineConfig({
     },
   },
   server: {
-    // @ts-ignore
-    allowedHosts: process.env.TEMPO === "true" ? true : undefined,
+    port: 4000,
+    strictPort: true,
+    open: true,
   },
 });
