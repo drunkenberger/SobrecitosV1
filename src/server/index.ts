@@ -1,3 +1,12 @@
+import express from 'express';
+import cors from 'cors';
+
+const app = express();
+
+// Enable CORS
+app.use(cors());
+
+// Add security headers
 app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
@@ -20,4 +29,16 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
   next();
-}); 
+});
+
+// Add your routes here
+app.get('/', (req, res) => {
+  res.send('Server is running');
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+export default app; 

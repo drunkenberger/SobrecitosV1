@@ -1,3 +1,21 @@
+import { Link } from "react-router-dom";
+import { Card } from "@/components/ui/card";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Button } from "@/components/ui/button";
+import { Calendar, ArrowRight } from "lucide-react";
+
+interface WordPressPost {
+  title: {
+    rendered: string;
+  };
+  excerpt: {
+    rendered: string;
+  };
+  date: string;
+  slug: string;
+  featured_media_url?: string;
+}
+
 export function BlogCard({ post }: { post: WordPressPost }) {
   return (
     <Card className="overflow-hidden">
@@ -8,7 +26,7 @@ export function BlogCard({ post }: { post: WordPressPost }) {
           className="object-cover w-full h-full"
         />
       </AspectRatio>
-      <CardContent className="p-6">
+      <div className="p-6">
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
           <Calendar className="w-4 h-4" />
           {new Date(post.date).toLocaleDateString("es-ES", {
@@ -28,7 +46,7 @@ export function BlogCard({ post }: { post: WordPressPost }) {
             Leer más <ArrowRight className="w-4 h-4 ml-2" />
           </Link>
         </Button>
-      </CardContent>
+      </div>
     </Card>
   );
 } 
