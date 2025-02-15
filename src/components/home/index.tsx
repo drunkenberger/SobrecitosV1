@@ -38,16 +38,16 @@ export default function Home() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant="warning">
+              <Button variant="secondary">
                 {t('dashboard.header.buttons.exportData')}
               </Button>
-              <Button variant="warning">
+              <Button variant="secondary">
                 {t('dashboard.header.buttons.importData')}
               </Button>
-              <Button variant="warning">
+              <Button variant="secondary">
                 {t('dashboard.header.buttons.aiInsights')}
               </Button>
-              <Button variant="warning">
+              <Button variant="secondary">
                 {t('dashboard.header.buttons.addExpense')}
               </Button>
             </div>
@@ -58,16 +58,16 @@ export default function Home() {
       <div className="container mx-auto p-6 space-y-6">
         {/* Alerts */}
         <div className="space-y-2">
-          <div className="alert">
+          <Alert>
             <AlertCircle className="h-4 w-4" />
-            <h4>{t('dashboard.alerts.utilities.title')}</h4>
-            <p>{t('dashboard.alerts.utilities.message', { percent: 84 })}</p>
-          </div>
-          <div className="alert">
+            <AlertTitle>{t('dashboard.alerts.utilities.title')}</AlertTitle>
+            <AlertDescription>{t('dashboard.alerts.utilities.message', { percent: 84 })}</AlertDescription>
+          </Alert>
+          <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <h4>{t('dashboard.alerts.salad.title')}</h4>
-            <p>{t('dashboard.alerts.salad.message', { percent: 171 })}</p>
-          </div>
+            <AlertTitle>{t('dashboard.alerts.salad.title')}</AlertTitle>
+            <AlertDescription>{t('dashboard.alerts.salad.message', { percent: 171 })}</AlertDescription>
+          </Alert>
         </div>
 
         {/* Budget Overview */}
