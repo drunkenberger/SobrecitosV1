@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from 'react-i18next';
 import { Card } from "../ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import {
@@ -48,6 +49,7 @@ const ExpenseChart = ({
   selectedView = "pie",
   selectedTimeframe = "month",
 }: ExpenseChartProps) => {
+  const { t } = useTranslation();
   const total = data.reduce((sum, item) => sum + item.amount, 0);
 
   // Generate mock trend data
@@ -83,18 +85,18 @@ const ExpenseChart = ({
     <Card className="p-6 w-full h-[400px]">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold text-foreground">
-          Expense Breakdown
+          {t('dashboard.expenseBreakdown.title')}
         </h2>
         <div className="flex gap-4">
           <Select defaultValue={selectedTimeframe}>
             <SelectTrigger className="w-[120px] flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              <SelectValue placeholder="Select timeframe" />
+              <SelectValue placeholder={t('dashboard.expenseBreakdown.timeframe.select')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="week">Week</SelectItem>
-              <SelectItem value="month">Month</SelectItem>
-              <SelectItem value="year">Year</SelectItem>
+              <SelectItem value="week">{t('dashboard.expenseBreakdown.timeframe.week')}</SelectItem>
+              <SelectItem value="month">{t('dashboard.expenseBreakdown.timeframe.month')}</SelectItem>
+              <SelectItem value="year">{t('dashboard.expenseBreakdown.timeframe.year')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -103,19 +105,19 @@ const ExpenseChart = ({
       <Tabs defaultValue={selectedView} className="w-full">
         <TabsList className="mb-4">
           <TabsTrigger value="pie" className="flex items-center gap-2">
-            <PieChart className="w-4 h-4" /> Category Split
+            <PieChart className="w-4 h-4" /> {t('dashboard.expenseBreakdown.tabs.categorySplit')}
           </TabsTrigger>
           <TabsTrigger value="bar" className="flex items-center gap-2">
-            <BarChart3 className="w-4 h-4" /> Amount by Category
+            <BarChart3 className="w-4 h-4" /> {t('dashboard.expenseBreakdown.tabs.amountByCategory')}
           </TabsTrigger>
           <TabsTrigger value="line" className="flex items-center gap-2">
-            <LineChartIcon className="w-4 h-4" /> Daily Spending
+            <LineChartIcon className="w-4 h-4" /> {t('dashboard.expenseBreakdown.tabs.dailySpending')}
           </TabsTrigger>
           <TabsTrigger value="trend" className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4" /> Trends
+            <TrendingUp className="w-4 h-4" /> {t('dashboard.expenseBreakdown.tabs.trends')}
           </TabsTrigger>
           <TabsTrigger value="insights" className="flex items-center gap-2">
-            <Target className="w-4 h-4" /> Insights
+            <Target className="w-4 h-4" /> {t('dashboard.expenseBreakdown.tabs.insights')}
           </TabsTrigger>
         </TabsList>
 
@@ -149,7 +151,7 @@ const ExpenseChart = ({
               }}
             />
           </div>
-          <div className="flex flex-wrap gap-3 justify-center mt-4">
+          <div className="mt-4 grid grid-cols-2 gap-2">
             {data
               .filter((item) => item.amount > 0)
               .map((item, index) => {
@@ -164,6 +166,7 @@ const ExpenseChart = ({
                   "#FFD3B6",
                   "#BEE1E6",
                 ];
+                const percentage = ((item.amount / total) * 100).toFixed(1);
                 return (
                   <div key={item.category} className="flex items-center gap-2">
                     <div
@@ -171,9 +174,7 @@ const ExpenseChart = ({
                       style={{ backgroundColor: colors[index % colors.length] }}
                     />
                     <span className="text-sm text-muted-foreground">
-                      {item.category} (
-                      {((item.amount / total) * 100).toFixed(1)}
-                      %)
+                      {t(`dashboard.categories.${item.category.toLowerCase()}`)} ({percentage}%)
                     </span>
                   </div>
                 );
@@ -294,7 +295,9 @@ const ExpenseChart = ({
               .map((item, index) => (
                 <div key={item.category} className="p-3 border rounded-lg">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="font-medium">{item.category}</span>
+                    <span className="font-medium">
+                      {t(`dashboard.categories.${item.category.toLowerCase()}`)}
+                    </span>
                     <span
                       className={`text-sm ${item.change >= 0 ? "text-red-500" : "text-green-500"}`}
                     >
@@ -309,12 +312,10 @@ const ExpenseChart = ({
                   <Progress
                     value={item.percentage}
                     className="h-2"
-                    indicatorClassName={`bg-[${["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEEAD", "#FF9F80", "#A8E6CF", "#FFD3B6", "#BEE1E6"][index % 9]}]`}
                   />
                   <div className="flex justify-between items-center mt-1">
                     <span className="text-sm text-muted-foreground">
-                      ${item.amount.toLocaleString()} (
-                      {item.percentage.toFixed(1)}% of total)
+                      ${item.amount.toLocaleString()} ({item.percentage.toFixed(1)}%)
                     </span>
                   </div>
                 </div>

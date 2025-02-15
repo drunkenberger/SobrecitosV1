@@ -12,10 +12,13 @@ import {
   LifeBuoy,
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 export default function Navbar() {
   const location = useLocation();
   const isApp = location.pathname.startsWith("/app");
+  const { t } = useTranslation();
 
   return (
     <div className="bg-[#FFD700]">
@@ -70,21 +73,25 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-4">
-              <ThemeToggle />
+              <div className="flex items-center gap-4 bg-[#556B2F]/40 px-3 py-2 rounded-md">
+                <ThemeToggle />
+                <div className="border-l border-white/20 h-6 mx-2" />
+                <LanguageSwitcher />
+              </div>
               <div className="flex items-center gap-4">
                 <Link
                   to="/blog"
                   className="text-white hover:text-white/80 flex items-center gap-2 bg-[#556B2F]/40 px-3 py-2 rounded-md"
                 >
                   <MessageSquare className="w-5 h-5" />
-                  <span className="hidden sm:inline font-medium">Blog</span>
+                  <span className="hidden sm:inline font-medium">{t('navigation.blog')}</span>
                 </Link>
                 <Link
-                  to={isApp ? "/app/help" : "/help"}
+                  to={isApp ? "/app/help" : "/help-center"}
                   className="text-white hover:text-white/80 flex items-center gap-2 bg-[#556B2F]/40 px-3 py-2 rounded-md"
                 >
                   <LifeBuoy className="w-5 h-5" />
-                  <span className="hidden sm:inline font-medium">Help</span>
+                  <span className="hidden sm:inline font-medium">{t('common.help')}</span>
                 </Link>
                 <Link
                   to={isApp ? "/app/faq" : "/faq"}
@@ -99,7 +106,7 @@ export default function Navbar() {
                   className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-medium rounded-full px-6 border-2 border-[#556B2F] shadow-lg hover:shadow-xl transition-all"
                   asChild
                 >
-                  <Link to="/app">Dashboard</Link>
+                  <Link to="/app">{t('common.dashboard')}</Link>
                 </Button>
               ) : (
                 <UserMenu />

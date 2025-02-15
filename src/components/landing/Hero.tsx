@@ -2,8 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslations } from "@/hooks/useTranslations";
 
 export default function Hero() {
+  const { t } = useTranslations();
+
   return (
     <div className="relative overflow-hidden min-h-[600px] flex items-center">
       {/* Background Image with Overlay */}
@@ -34,12 +37,10 @@ export default function Hero() {
               className="space-y-6"
             >
               <h1 className="text-4xl font-bold sm:text-6xl text-white">
-                Family Budget Manager
+                {t('landing.hero.title')}
               </h1>
               <p className="text-xl text-white/80 max-w-xl">
-                Take control of your family's finances with our easy-to-use,
-                privacy-first budget tracker. Perfect for busy
-                parents managing household expenses.
+                {t('landing.hero.subtitle')}
               </p>
               <Button
                 size="lg"
@@ -47,7 +48,7 @@ export default function Hero() {
                 className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all"
               >
                 <Link to="/app" className="flex items-center gap-2">
-                  Get Started <ArrowRight className="w-5 h-5" />
+                  {t('common.getStarted')} <ArrowRight className="w-5 h-5" />
                 </Link>
               </Button>
             </motion.div>

@@ -8,10 +8,32 @@ import { getPosts } from "@/lib/wordpress";
 import { WordPressPost } from "@/types/wordpress";
 import { cn } from "@/lib/utils";
 import SEO from "@/components/SEO";
+import { useTranslations } from "@/hooks/useTranslations";
 
 export default function Landing() {
+  const { t } = useTranslations();
   const [posts, setPosts] = useState<WordPressPost[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [testimonials, setTestimonials] = useState([
+    {
+      name: "Diana Marshall",
+      role: "",
+      image: "https://api.dicebear.com/9.x/personas/svg?seed=Sarah&backgroundColor=b6e3f4&hair=long&eyes=happy&mouth=smile&skinColor=e5a07e&clothingColor=456dff",
+      text: ""
+    },
+    {
+      name: "William Chen",
+      role: "",
+      image: "https://api.dicebear.com/9.x/personas/svg?seed=Michael&backgroundColor=d1d4f9&hair=shortCombover&eyes=glasses&mouth=bigSmile&skinColor=d78774&clothingColor=7555ca",
+      text: ""
+    },
+    {
+      name: "Emilia Rodriguez",
+      role: "",
+      image: "https://api.dicebear.com/9.x/personas/svg?seed=Emily&backgroundColor=ffd5dc&hair=bobBangs&eyes=happy&mouth=smile&skinColor=eeb4a4&clothingColor=f55d81&nose=wrinkles",
+      text: ""
+    }
+  ]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -25,6 +47,29 @@ export default function Landing() {
 
     fetchPosts();
   }, []);
+
+  useEffect(() => {
+    setTestimonials([
+      {
+        name: "Diana Marshall",
+        role: t('testimonials.roles.workingMom'),
+        image: "https://api.dicebear.com/9.x/personas/svg?seed=Sarah&backgroundColor=b6e3f4&hair=long&eyes=happy&mouth=smile&skinColor=e5a07e&clothingColor=456dff",
+        text: t('testimonials.quotes.diana')
+      },
+      {
+        name: "William Chen",
+        role: t('testimonials.roles.advisor'),
+        image: "https://api.dicebear.com/9.x/personas/svg?seed=Michael&backgroundColor=d1d4f9&hair=shortCombover&eyes=glasses&mouth=bigSmile&skinColor=d78774&clothingColor=7555ca",
+        text: t('testimonials.quotes.william')
+      },
+      {
+        name: "Emilia Rodriguez",
+        role: t('testimonials.roles.stayAtHome'),
+        image: "https://api.dicebear.com/9.x/personas/svg?seed=Emily&backgroundColor=ffd5dc&hair=bobBangs&eyes=happy&mouth=smile&skinColor=eeb4a4&clothingColor=f55d81&nose=wrinkles",
+        text: t('testimonials.quotes.emilia')
+      }
+    ]);
+  }, [t]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % Math.ceil(posts.length / 3));
@@ -52,62 +97,38 @@ export default function Landing() {
     return media.source_url;
   };
 
-  const testimonials = [
-    {
-      name: "Diana Marshall",
-      role: "Working Mom",
-      image: "https://api.dicebear.com/9.x/personas/svg?seed=Sarah&backgroundColor=b6e3f4&hair=long&eyes=happy&mouth=smile&skinColor=e5a07e&clothingColor=456dff",
-      text: "This app has completely transformed how I manage our household expenses. The visual charts make it so easy to understand where our money goes.",
-    },
-    {
-      name: "William Chen",
-      role: "Family Financial Advisor",
-      image: "https://api.dicebear.com/9.x/personas/svg?seed=Michael&backgroundColor=d1d4f9&hair=shortCombover&eyes=glasses&mouth=bigSmile&skinColor=d78774&clothingColor=7555ca",
-      text: "I use this app and recommend it to all my clients. It's the perfect balance of powerful features and ease of use.",
-    },
-    {
-      name: "Emilia Rodriguez",
-      role: "Stay-at-home Parent",
-      image: "https://api.dicebear.com/9.x/personas/svg?seed=Emily&backgroundColor=ffd5dc&hair=bobBangs&eyes=happy&mouth=smile&skinColor=eeb4a4&clothingColor=f55d81&nose=wrinkles",
-      text: "The recurring expenses feature saves me so much time. I can finally keep track of all our family's spending in one place.",
-    },
-  ];
-
   const benefits = [
     {
-      title: "100% Private & Secure",
-      description:
-        "All data is stored locally on your device, never in the cloud",
+      title: t('landing.features.private.title'),
+      description: t('landing.features.private.description'),
     },
     {
-      title: "Smart Categorization",
-      description:
-        "Automatically organize expenses into customizable categories",
+      title: t('landing.features.smart.title'),
+      description: t('landing.features.smart.description'),
     },
     {
-      title: "Visual Reports",
-      description:
-        "See your spending patterns with beautiful, intuitive charts",
+      title: t('landing.features.visual.title'),
+      description: t('landing.features.visual.description'),
     },
     {
-      title: "Budget Alerts",
-      description: "Get notified when you're approaching category limits",
+      title: t('landing.features.alerts.title'),
+      description: t('landing.features.alerts.description'),
     },
     {
-      title: "Family Sharing",
-      description: "Collaborate with family members on budget management",
+      title: t('landing.features.sharing.title'),
+      description: t('landing.features.sharing.description'),
     },
     {
-      title: "Savings Goals",
-      description: "Set and track financial goals for your family's future",
-    },
+      title: t('landing.features.goals.title'),
+      description: t('landing.features.goals.description'),
+    }
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <SEO 
         title="Sobrecitos - Smart Family Budget Management Made Simple"
-        description="Take control of your family's finances with Sobrecitos. A secure, private budget manager that helps you track expenses, set goals, and make smarter financial decisions."
+        description={t('landing.hero.subtitle')}
         keywords="family budget app, expense tracker, financial planning, household finances, budget management, savings goals, private budgeting"
       />
       <Hero />
@@ -115,11 +136,9 @@ export default function Landing() {
       <section className="py-20 bg-muted/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Choose Sobrecitos?</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('landing.whyChoose.title')}</h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              It's easy to use and your financial data never leaves your device.
-              Designed for families who value both simplicity and privacy in
-              managing their budget.
+              {t('landing.whyChoose.subtitle')}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -139,30 +158,24 @@ export default function Landing() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl font-bold mb-6">
-                Your Data Stays With You
+                {t('landing.privacy.title')}
               </h2>
               <div className="space-y-4">
                 <p className="text-lg text-muted-foreground">
-                  Unlike traditional budget apps that store your sensitive
-                  financial data in the cloud, Sobrecitos keeps everything
-                  securely on your device.
+                  {t('landing.privacy.description')}
                 </p>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-green-600 mt-1" />
-                    <span>
-                      100% offline storage - your data never leaves your device
-                    </span>
+                    <span>{t('landing.privacy.features.offline')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-green-600 mt-1" />
-                    <span>No third-party data sharing or tracking</span>
+                    <span>{t('landing.privacy.features.noSharing')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-green-600 mt-1" />
-                    <span>
-                      Complete control over your financial information
-                    </span>
+                    <span>{t('landing.privacy.features.control')}</span>
                   </li>
                 </ul>
               </div>
@@ -172,12 +185,10 @@ export default function Landing() {
               <Card className="relative p-8 backdrop-blur-sm bg-white/50 dark:bg-gray-950/50">
                 <Users2 className="w-12 h-12 text-green-600 mb-6" />
                 <h3 className="text-2xl font-semibold mb-4">
-                  Privacy First Design
+                  {t('landing.features.private.title')}
                 </h3>
                 <p className="text-muted-foreground mb-6">
-                  We believe your financial data belongs to you alone. That's
-                  why we've designed Sobrecitos to be completely self-contained,
-                  giving you full control over your information.
+                  {t('landing.features.private.description')}
                 </p>
                 <Button 
                   variant="default" 
@@ -189,7 +200,7 @@ export default function Landing() {
                     to="/app"
                     className="flex items-center justify-center gap-2"
                   >
-                    Try It Now <ArrowRight className="w-4 h-4" />
+                    {t('common.tryItNow')} <ArrowRight className="w-4 h-4" />
                   </Link>
                 </Button>
               </Card>
@@ -201,9 +212,9 @@ export default function Landing() {
       <section className="py-20 bg-gradient-to-br from-[#FFD700]/10 to-[#556B2F]/10 dark:from-[#FFD700]/5 dark:to-[#556B2F]/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">AI-Powered Financial Insights</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('landing.ai.title')}</h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Optional AI features to help you make smarter financial decisions while keeping your data private. Choose your preferred AI provider and maintain full control.
+              {t('landing.ai.subtitle')}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -211,42 +222,42 @@ export default function Landing() {
               <div className="flex items-center gap-3 mb-4">
                 <Sparkles className="w-8 h-8 text-[#FFD700] dark:text-[#FFD700]/90" />
                 <h3 className="text-xl font-medium text-[#556B2F] dark:text-[#FFD700]/90">
-                  AI Financial Assistant
+                  {t('landing.ai.assistant.title')}
                 </h3>
               </div>
               <div className="space-y-4">
                 <p className="text-[#556B2F] dark:text-[#FFD700]/80">
-                  Get personalized financial advice and insights powered by advanced AI technology:
+                  {t('landing.ai.assistant.description')}
                 </p>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-[#FFD700] dark:text-[#FFD700]/90 mt-1" />
-                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Real-time budget analysis and recommendations</span>
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">{t('landing.ai.assistant.features.analysis')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-[#FFD700] dark:text-[#FFD700]/90 mt-1" />
-                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Smart spending pattern detection</span>
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">{t('landing.ai.assistant.features.patterns')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-[#FFD700] dark:text-[#FFD700]/90 mt-1" />
-                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Savings goals optimization</span>
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">{t('landing.ai.assistant.features.optimization')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-[#FFD700] dark:text-[#FFD700]/90 mt-1" />
-                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Future payment planning assistance</span>
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">{t('landing.ai.assistant.features.planning')}</span>
                   </li>
                 </ul>
                 <div className="mt-4 p-4 bg-[#FFD700]/5 dark:bg-[#556B2F]/20 rounded-lg border border-[#FFD700]/10 dark:border-[#FFD700]/10">
-                  <h4 className="font-medium text-[#556B2F] dark:text-[#FFD700] mb-2">Choose Your AI Provider:</h4>
+                  <h4 className="font-medium text-[#556B2F] dark:text-[#FFD700] mb-2">{t('landing.ai.assistant.providers.title')}</h4>
                   <ul className="space-y-2 text-sm text-[#556B2F] dark:text-[#FFD700]/80">
                     <li className="flex items-center gap-2">
-                      <span className="font-medium">OpenAI:</span> Use GPT models with your API key
+                      <span className="font-medium">{t('landing.ai.assistant.providers.openai.name')}:</span> {t('landing.ai.assistant.providers.openai.description')}
                     </li>
                     <li className="flex items-center gap-2">
-                      <span className="font-medium">Google:</span> Connect to Gemini models
+                      <span className="font-medium">{t('landing.ai.assistant.providers.google.name')}:</span> {t('landing.ai.assistant.providers.google.description')}
                     </li>
                     <li className="flex items-center gap-2">
-                      <span className="font-medium">Ollama:</span> Run AI locally for complete privacy
+                      <span className="font-medium">{t('landing.ai.assistant.providers.ollama.name')}:</span> {t('landing.ai.assistant.providers.ollama.description')}
                     </li>
                   </ul>
                 </div>
@@ -257,45 +268,45 @@ export default function Landing() {
               <div className="flex items-center gap-3 mb-4">
                 <Bot className="w-8 h-8 text-[#556B2F] dark:text-[#FFD700]/90" />
                 <h3 className="text-xl font-medium text-[#556B2F] dark:text-[#FFD700]/90">
-                  Interactive AI Chat
+                  {t('landing.ai.chat.title')}
                 </h3>
               </div>
               <div className="space-y-4">
                 <p className="text-[#556B2F] dark:text-[#FFD700]/80">
-                  Chat with your personal AI financial assistant that understands your unique situation:
+                  {t('landing.ai.chat.description')}
                 </p>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-[#556B2F] dark:text-[#FFD700]/90 mt-1" />
-                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Ask questions about your finances</span>
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">{t('landing.ai.chat.features.questions')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-[#556B2F] dark:text-[#FFD700]/90 mt-1" />
-                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Get detailed spending analysis</span>
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">{t('landing.ai.chat.features.analysis')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-[#556B2F] dark:text-[#FFD700]/90 mt-1" />
-                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Receive custom financial tips</span>
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">{t('landing.ai.chat.features.tips')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-[#556B2F] dark:text-[#FFD700]/90 mt-1" />
-                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">Track progress towards goals</span>
+                    <span className="text-[#556B2F] dark:text-[#FFD700]/80">{t('landing.ai.chat.features.tracking')}</span>
                   </li>
                 </ul>
                 <div className="mt-4 p-4 bg-[#556B2F]/5 dark:bg-[#556B2F]/20 rounded-lg border border-[#556B2F]/10 dark:border-[#FFD700]/10">
-                  <h4 className="font-medium text-[#556B2F] dark:text-[#FFD700] mb-2">Easy Setup:</h4>
+                  <h4 className="font-medium text-[#556B2F] dark:text-[#FFD700] mb-2">{t('landing.ai.setup.title')}</h4>
                   <ul className="space-y-2 text-sm text-[#556B2F] dark:text-[#FFD700]/80">
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-4 h-4 text-[#556B2F] dark:text-[#FFD700]/90 mt-0.5" />
-                      <span>Bring your own API key for OpenAI or Gemini</span>
+                      <span>{t('landing.ai.setup.apiKey')}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-4 h-4 text-[#556B2F] dark:text-[#FFD700]/90 mt-0.5" />
-                      <span>Or use Ollama to run models locally on your device</span>
+                      <span>{t('landing.ai.setup.local')}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-4 h-4 text-[#556B2F] dark:text-[#FFD700]/90 mt-0.5" />
-                      <span>Full control over AI settings and model selection</span>
+                      <span>{t('landing.ai.setup.control')}</span>
                     </li>
                   </ul>
                 </div>
@@ -307,7 +318,7 @@ export default function Landing() {
                     asChild
                   >
                     <Link to="/app" className="flex items-center justify-center gap-2">
-                      Try AI Features <ArrowRight className="w-4 h-4" />
+                      {t('common.tryFeatures')} <ArrowRight className="w-4 h-4" />
                     </Link>
                   </Button>
                 </div>
@@ -320,10 +331,9 @@ export default function Landing() {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">What Our Users Say</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('landing.testimonials.title')}</h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Join thousands of satisfied families who have transformed their
-              financial management
+              {t('landing.testimonials.subtitle')}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -360,51 +370,51 @@ export default function Landing() {
       <section className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Sobrecitos as an Alternative</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('landing.alternatives.title')}</h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              A better way to manage your family budget compared to traditional apps
+              {t('landing.alternatives.subtitle')}
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <Card className="p-6">
-              <h3 className="text-xl font-semibold mb-4">vs. Mint</h3>
+              <h3 className="text-xl font-semibold mb-4">{t('landing.alternatives.comparison.mint.title')}</h3>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
-                  <span>100% private - data stays local</span>
+                  <span>{t('landing.alternatives.comparison.mint.private')}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
-                  <span>No ads or upsells</span>
+                  <span>{t('landing.alternatives.comparison.mint.noAds')}</span>
                 </li>
               </ul>
             </Card>
             
             <Card className="p-6">
-              <h3 className="text-xl font-semibold mb-4">vs. YNAB</h3>
+              <h3 className="text-xl font-semibold mb-4">{t('landing.alternatives.comparison.ynab.title')}</h3>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
-                  <span>More affordable</span>
+                  <span>{t('landing.alternatives.comparison.ynab.affordable')}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
-                  <span>No learning curve</span>
+                  <span>{t('landing.alternatives.comparison.ynab.easy')}</span>
                 </li>
               </ul>
             </Card>
             
             <Card className="p-6">
-              <h3 className="text-xl font-semibold mb-4">vs. EveryDollar</h3>
+              <h3 className="text-xl font-semibold mb-4">{t('landing.alternatives.comparison.everyDollar.title')}</h3>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
-                  <span>Smart automation</span>
+                  <span>{t('landing.alternatives.comparison.everyDollar.automation')}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
-                  <span>Built-in AI features</span>
+                  <span>{t('landing.alternatives.comparison.everyDollar.ai')}</span>
                 </li>
               </ul>
             </Card>
@@ -416,7 +426,7 @@ export default function Landing() {
               className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold"
             >
               <Link to="/alternatives" className="flex items-center">
-                See Full Comparison <ArrowRight className="w-4 h-4 ml-2" />
+                {t('landing.alternatives.cta')} <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
           </div>
@@ -426,9 +436,9 @@ export default function Landing() {
       <section className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Latest from Our Blog</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('landing.blog.title')}</h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Stay updated with our latest tips and insights on family budget management
+              {t('landing.blog.subtitle')}
             </p>
           </div>
 
@@ -520,7 +530,7 @@ export default function Landing() {
               className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold"
             >
               <Link to="/blog" className="flex items-center">
-                View All Posts <ArrowRight className="w-4 h-4 ml-2" />
+                {t('landing.blog.cta')} <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
           </div>
@@ -530,15 +540,14 @@ export default function Landing() {
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">
-            Ready to Take Control of Your Family Budget?
+            {t('landing.cta.title')}
           </h2>
           <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
-            Join thousands of families who are already managing their finances
-            smarter with Sobrecitos
+            {t('landing.cta.subtitle')}
           </p>
           <Button size="lg" variant="secondary" className="gap-2" asChild>
             <Link to="/app">
-              Get Started Now <ArrowRight className="w-4 h-4" />
+              {t('landing.cta.button')} <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
         </div>
@@ -548,70 +557,69 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h3 className="font-semibold mb-4">About Sobrecitos</h3>
+              <h3 className="font-semibold mb-4">{t('footer.about.title')}</h3>
               <p className="text-sm text-muted-foreground">
-                Making family budget management simple and effective for
-                everyone.
+                {t('footer.about.description')}
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Features</h3>
+              <h3 className="font-semibold mb-4">{t('footer.features.title')}</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Expense Tracking</li>
-                <li>Budget Planning</li>
-                <li>Visual Reports</li>
-                <li>Family Sharing</li>
+                <li>{t('footer.features.items.tracking')}</li>
+                <li>{t('footer.features.items.planning')}</li>
+                <li>{t('footer.features.items.reports')}</li>
+                <li>{t('footer.features.items.sharing')}</li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Resources</h3>
+              <h3 className="font-semibold mb-4">{t('footer.resources.title')}</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <Link to="/faq" className="hover:text-primary">
-                    FAQs
+                    {t('navigation.faq')}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/help" className="hover:text-primary">
-                    Help Center
+                  <Link to="/help-center" className="hover:text-primary">
+                    {t('navigation.help')}
                   </Link>
                 </li>
                 <li>
                   <Link to="/blog" className="hover:text-primary">
-                    Blog
+                    {t('navigation.blog')}
                   </Link>
                 </li>
                 <li>
                   <Link to="/alternatives" className="hover:text-primary">
-                    Alternatives
+                    {t('navigation.alternatives')}
                   </Link>
                 </li>
-                <li>Contact</li>
+                <li>{t('navigation.contact')}</li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Legal</h3>
+              <h3 className="font-semibold mb-4">{t('footer.legal.title')}</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <Link to="/privacy" className="hover:text-primary">
-                    Privacy Policy
+                    {t('footer.legal.privacy')}
                   </Link>
                 </li>
                 <li>
                   <Link to="/terms" className="hover:text-primary">
-                    Terms of Service
+                    {t('footer.legal.terms')}
                   </Link>
                 </li>
                 <li>
                   <Link to="/cookies" className="hover:text-primary">
-                    Cookie Policy
+                    {t('footer.legal.cookies')}
                   </Link>
                 </li>
               </ul>
             </div>
           </div>
           <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Sobrecitos. All rights reserved.
+            {t('footer.copyright')}
           </div>
         </div>
       </footer>

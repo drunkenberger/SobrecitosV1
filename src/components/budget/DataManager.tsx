@@ -2,12 +2,15 @@ import React from "react";
 import { Button } from "../ui/button";
 import { Download, Upload } from "lucide-react";
 import { getStore, setStore } from "@/lib/store";
+import { useTranslation } from 'react-i18next';
 
 interface DataManagerProps {
   onDataChange?: () => void;
 }
 
 const DataManager = ({ onDataChange }: DataManagerProps) => {
+  const { t } = useTranslation();
+
   const handleExport = () => {
     const data = getStore();
     const blob = new Blob([JSON.stringify(data, null, 2)], {
@@ -46,7 +49,7 @@ const DataManager = ({ onDataChange }: DataManagerProps) => {
         className="gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold"
         onClick={handleExport}
       >
-        <Download className="w-4 h-4" /> Export Data
+        <Download className="w-4 h-4" /> {t('dashboard.header.buttons.exportData')}
       </Button>
       <div className="relative">
         <input
@@ -64,7 +67,7 @@ const DataManager = ({ onDataChange }: DataManagerProps) => {
             htmlFor="import-data"
             className="cursor-pointer flex items-center"
           >
-            <Upload className="w-4 h-4" /> Import Data
+            <Upload className="w-4 h-4" /> {t('dashboard.header.buttons.importData')}
           </label>
         </Button>
       </div>

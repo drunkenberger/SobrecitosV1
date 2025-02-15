@@ -20,6 +20,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { useTranslation } from "react-i18next";
+import { es } from 'date-fns/locale';
 
 interface Income {
   id: string;
@@ -58,6 +60,7 @@ const BudgetManager = ({
   onAddIncome = () => {},
   onDeleteIncome = () => {},
 }: BudgetManagerProps) => {
+  const { t, i18n } = useTranslation();
   const [isEditingBudget, setIsEditingBudget] = React.useState(false);
   const [newBudgetAmount, setNewBudgetAmount] = React.useState(
     monthlyBudget.toString(),
@@ -87,15 +90,15 @@ const BudgetManager = ({
         <div className="flex justify-between items-start">
           <div>
             <h2 className="text-2xl font-semibold flex items-center gap-2 text-foreground">
-              <Wallet className="w-6 h-6" /> Budget Settings
+              <Wallet className="w-6 h-6" /> {t('dashboard.budgetSettings.title')}
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Manage your monthly budget and additional income sources
+              {t('dashboard.budgetSettings.subtitle')}
             </p>
           </div>
           <div className="text-right">
             <p className="text-sm text-muted-foreground">
-              Total Additional Income
+              {t('dashboard.budgetSettings.additionalIncome.totalLabel')}
             </p>
             <p className="text-2xl font-bold text-green-600 dark:text-green-400">
               +${totalAdditionalIncome.toLocaleString()}
@@ -103,39 +106,38 @@ const BudgetManager = ({
           </div>
         </div>
 
-        {/* Monthly Overview Section */}
-        <div className="grid grid-cols-2 gap-4 p-4 rounded-lg bg-card border border-border">
+        <div className="grid grid-cols-2 gap-4 p-4 bg-accent/50 rounded-lg">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-muted-foreground">
               <Calendar className="w-4 h-4" />
-              <span className="text-sm">Days Left in Month</span>
+              <span className="text-sm">{t('dashboard.budgetSettings.monthlyOverview.daysLeft')}</span>
             </div>
             <p className="text-2xl font-bold text-foreground">
               {daysLeftInMonth}
             </p>
             <p className="text-xs text-muted-foreground">
-              Month ends on {lastDayOfMonth.toLocaleDateString()}
+              {t('dashboard.budgetSettings.monthlyOverview.monthEnds')} {lastDayOfMonth.toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US')}
             </p>
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-muted-foreground">
               <TrendingUp className="w-4 h-4" />
-              <span className="text-sm">Daily Budget</span>
+              <span className="text-sm">{t('dashboard.budgetSettings.monthlyOverview.dailyBudget')}</span>
             </div>
             <p className="text-2xl font-bold text-foreground">
               ${dailyBudget.toFixed(2)}
             </p>
             <p className="text-xs text-muted-foreground">
-              ${remainingDailyBudget.toFixed(2)} remaining per day
+              ${remainingDailyBudget.toFixed(2)} {t('dashboard.budgetSettings.monthlyOverview.remainingDaily')}
             </p>
           </div>
         </div>
 
-        <div className="border-t pt-4 border-border">
+        <div className="p-4 bg-accent/50 rounded-lg">
           <div className="flex justify-between items-center">
             <div>
               <h3 className="font-medium text-foreground">
-                Monthly Base Budget
+                {t('dashboard.budgetSettings.monthlyBudget.title')}
               </h3>
               {!isEditingBudget ? (
                 <p className="text-2xl font-bold text-foreground">
@@ -147,7 +149,7 @@ const BudgetManager = ({
                     type="number"
                     value={newBudgetAmount}
                     onChange={(e) => setNewBudgetAmount(e.target.value)}
-                    className="w-32"
+                    className="w-[150px]"
                   />
                   <Button
                     onClick={() => {
@@ -155,7 +157,7 @@ const BudgetManager = ({
                       setIsEditingBudget(false);
                     }}
                   >
-                    Save
+                    {t('common.save')}
                   </Button>
                 </div>
               )}
@@ -164,42 +166,43 @@ const BudgetManager = ({
               <Button
                 variant="outline"
                 onClick={() => setIsEditingBudget(true)}
+                className="w-[150px]"
               >
-                Edit Budget
+                {t('common.edit')}
               </Button>
             )}
           </div>
         </div>
 
-        <div className="border-t pt-4 border-border">
-          <div className="flex justify-between items-center mb-4">
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
             <h3 className="font-medium text-foreground">
-              Additional Income Sources
+              {t('dashboard.budgetSettings.additionalIncome.title')}
             </h3>
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="flex items-center gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold">
-                  <Plus size={16} /> Add Income
+                <Button className="flex items-center gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold w-[180px]">
+                  <Plus size={16} /> {t('dashboard.budgetSettings.additionalIncome.addButton')}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add Additional Income</DialogTitle>
+                  <DialogTitle>{t('dashboard.budgetSettings.additionalIncome.dialog.title')}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 pt-4">
                   <div className="space-y-2">
-                    <Label>Description</Label>
+                    <Label>{t('dashboard.budgetSettings.additionalIncome.dialog.description')}</Label>
                     <Input
-                      placeholder="Income description"
+                      placeholder={t('dashboard.budgetSettings.additionalIncome.dialog.descriptionPlaceholder')}
                       value={newIncomeDescription}
                       onChange={(e) => setNewIncomeDescription(e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Amount ($)</Label>
+                    <Label>{t('dashboard.budgetSettings.additionalIncome.dialog.amount')}</Label>
                     <Input
                       type="number"
-                      placeholder="0.00"
+                      placeholder={t('dashboard.budgetSettings.additionalIncome.dialog.amountPlaceholder')}
                       value={newIncomeAmount}
                       onChange={(e) => setNewIncomeAmount(e.target.value)}
                     />
@@ -215,7 +218,7 @@ const BudgetManager = ({
                       setNewIncomeAmount("");
                     }}
                   >
-                    Add Income
+                    {t('dashboard.budgetSettings.additionalIncome.dialog.addButton')}
                   </Button>
                 </div>
               </DialogContent>
@@ -234,7 +237,7 @@ const BudgetManager = ({
                       {income.description}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {income.date.toLocaleDateString()}
+                      {income.date.toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US')}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">

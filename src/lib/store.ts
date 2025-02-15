@@ -231,10 +231,12 @@ export const getBudgetAlerts = () => {
     store.monthlyBudget +
     store.additionalIncomes.reduce((sum, inc) => sum + inc.amount, 0);
 
+  const totalPercentage = Math.round((totalSpent / totalBudget) * 100);
+  
   if (totalSpent > totalBudget * 0.9) {
     alerts.push({
       type: "overall",
-      message: `You've spent ${Math.round((totalSpent / totalBudget) * 100)}% of your total budget`,
+      percentage: totalPercentage,
       severity: totalSpent > totalBudget ? "high" : "medium",
     });
   }
@@ -243,14 +245,16 @@ export const getBudgetAlerts = () => {
     const categorySpent = store.expenses
       .filter((exp) => exp.category === cat.name)
       .reduce((sum, exp) => sum + exp.amount, 0);
+    
+    const categoryPercentage = Math.round((categorySpent / cat.budget) * 100);
 
     if (categorySpent > cat.budget * 0.9) {
       alerts.push({
         type: "category",
         category: cat.name,
-        message: `You've spent ${Math.round(
-          (categorySpent / cat.budget) * 100,
-        )}% of your ${cat.name} budget`,
+        percentage: categoryPercentage,
+        spent: categorySpent,
+        budget: cat.budget,
         severity: categorySpent > cat.budget ? "high" : "medium",
       });
     }

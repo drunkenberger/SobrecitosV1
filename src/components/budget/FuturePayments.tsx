@@ -1,5 +1,5 @@
 import { Calendar } from "@/components/ui/calendar";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddFuturePaymentDialog } from "./AddFuturePaymentDialog";
 import {
   Table,
@@ -12,6 +12,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays, DollarSign } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { es } from 'date-fns/locale';
+import { format } from "date-fns";
+import { enUS } from 'date-fns/locale';
 
 interface FuturePayment {
   id: string;
@@ -59,10 +63,18 @@ export default function FuturePayments({
   categories = [],
   onAddPayment,
 }: FuturePaymentsProps) {
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const { t, i18n } = useTranslation();
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
-  // Get dates with payments for calendar highlighting
-  const datesWithPayments = payments.map((payment) => payment.dueDate);
+  // Get the appropriate locale based on language
+  const getLocale = () => {
+    return i18n.language === 'es' ? es : enUS;
+  };
+
+  // Format date based on locale
+  const formatDate = (date: Date) => {
+    return format(date, 'PP', { locale: getLocale() });
+  };
 
   // Calculate total upcoming payments
   const totalUpcoming = payments
@@ -70,92 +82,88 @@ export default function FuturePayments({
     .reduce((sum, payment) => sum + payment.amount, 0);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <CalendarDays className="w-5 h-5 text-primary" />
-          <h2 className="text-xl font-semibold">Payment Calendar</h2>
-        </div>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">
+          {t('dashboard.payments.calendar.title')}
+        </h2>
         <AddFuturePaymentDialog
           onAddPayment={onAddPayment}
           categories={categories}
         />
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          className="rounded-md border mt-4"
-          modifiers={{
-            payment: datesWithPayments,
-          }}
-          modifiersStyles={{
-            payment: {
-              fontWeight: "bold",
-              backgroundColor: "hsl(var(--primary))",
-              color: "white",
-            },
-          }}
-        />
-      </Card>
+      </div>
 
-      <Card className="p-6">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-primary" />
-            <h2 className="text-xl font-semibold">Upcoming Payments</h2>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Total Upcoming</p>
-            <p className="text-2xl font-bold">
-              ${totalUpcoming.toLocaleString()}
-            </p>
-          </div>
-        </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('dashboard.payments.calendar.upcomingTitle')}</CardTitle>
+            <CardDescription>
+              {t('dashboard.payments.calendar.totalUpcoming')}: ${totalUpcoming.toLocaleString()}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              locale={getLocale()}
+              weekStartsOn={i18n.language === 'es' ? 1 : 0}
+              className="rounded-md border"
+              formatters={{
+                formatWeekdayName: (date) => {
+                  return format(date, 'EEEEE', { locale: getLocale() });
+                },
+                formatCaption: (date) => {
+                  return format(date, 'LLLL yyyy', { locale: getLocale() });
+                }
+              }}
+            />
+          </CardContent>
+        </Card>
 
-        <div className="border rounded-lg">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Description</TableHead>
-                <TableHead>Due Date</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {payments
-                .sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime())
-                .map((payment) => (
-                  <TableRow key={payment.id}>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{payment.description}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {payment.category}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {payment.dueDate.toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>${payment.amount.toLocaleString()}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={payment.isPaid ? "default" : "secondary"}
-                        className="cursor-pointer"
-                        onClick={() =>
-                          onPaymentUpdate(payment.id, !payment.isPaid)
-                        }
-                      >
-                        {payment.isPaid ? "Paid" : "Pending"}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </div>
-      </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('dashboard.payments.calendar.scheduledPayments')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('dashboard.payments.calendar.tableHeaders.description')}</TableHead>
+                  <TableHead>{t('dashboard.payments.calendar.tableHeaders.dueDate')}</TableHead>
+                  <TableHead>{t('dashboard.payments.calendar.tableHeaders.amount')}</TableHead>
+                  <TableHead>{t('dashboard.payments.calendar.tableHeaders.status')}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {payments
+                  .sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime())
+                  .map((payment) => (
+                    <TableRow key={payment.id}>
+                      <TableCell>{payment.description}</TableCell>
+                      <TableCell>{formatDate(payment.dueDate)}</TableCell>
+                      <TableCell>${payment.amount.toLocaleString()}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={payment.isPaid ? "default" : "secondary"}
+                          className="cursor-pointer"
+                          onClick={() =>
+                            onPaymentUpdate(payment.id, !payment.isPaid)
+                          }
+                        >
+                          {payment.isPaid 
+                            ? t('dashboard.payments.calendar.status.paid')
+                            : t('dashboard.payments.calendar.status.pending')
+                          }
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

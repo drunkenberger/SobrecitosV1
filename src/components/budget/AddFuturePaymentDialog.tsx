@@ -18,6 +18,7 @@ import {
 import { PlusCircle, Plus } from "lucide-react";
 import { useState } from "react";
 import { addCategory } from "@/lib/store";
+import { useTranslation } from "react-i18next";
 
 interface AddFuturePaymentDialogProps {
   onAddPayment: (payment: {
@@ -33,6 +34,7 @@ export function AddFuturePaymentDialog({
   onAddPayment,
   categories,
 }: AddFuturePaymentDialogProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
@@ -65,26 +67,26 @@ export function AddFuturePaymentDialog({
       <DialogTrigger asChild>
         <Button className="gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold">
           <PlusCircle className="w-4 h-4" />
-          Add Future Payment
+          {t('dashboard.payments.calendar.addButton')}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Schedule Future Payment</DialogTitle>
+          <DialogTitle>{t('dashboard.payments.calendar.schedulePayment')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t('dashboard.payments.calendar.description')}</Label>
             <Input
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g., Rent Payment"
+              placeholder={t('dashboard.payments.calendar.descriptionPlaceholder')}
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="amount">Amount ($)</Label>
+            <Label htmlFor="amount">{t('dashboard.payments.calendar.amount')}</Label>
             <Input
               id="amount"
               type="number"
@@ -95,7 +97,7 @@ export function AddFuturePaymentDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="dueDate">Due Date</Label>
+            <Label htmlFor="dueDate">{t('dashboard.payments.calendar.dueDate')}</Label>
             <Input
               id="dueDate"
               type="date"
@@ -105,16 +107,16 @@ export function AddFuturePaymentDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">{t('dashboard.payments.calendar.category')}</Label>
             <div className="flex gap-2">
               <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger className="flex-1">
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={t('dashboard.payments.calendar.selectCategory')} />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((cat) => (
                     <SelectItem key={cat} value={cat}>
-                      {cat}
+                      {t(`dashboard.categories.${cat.toLowerCase()}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -124,7 +126,7 @@ export function AddFuturePaymentDialog({
                 size="icon"
                 variant="outline"
                 onClick={() => {
-                  const name = prompt("Enter new category name");
+                  const name = prompt(t('dashboard.payments.calendar.addCategory'));
                   if (name) {
                     addCategory({
                       name,
@@ -140,7 +142,7 @@ export function AddFuturePaymentDialog({
             </div>
           </div>
           <Button type="submit" className="w-full">
-            Add Payment
+            {t('dashboard.payments.calendar.addPayment')}
           </Button>
         </form>
       </DialogContent>

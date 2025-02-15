@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from 'react-i18next';
 import { Card } from "../ui/card";
 import { ScrollArea } from "../ui/scroll-area";
 import { Receipt, Clock, X, Search } from "lucide-react";
@@ -6,6 +7,7 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Input } from "../ui/input";
 import { formatDistanceToNow } from "date-fns";
+import { es } from 'date-fns/locale';
 import {
   Select,
   SelectContent,
@@ -62,6 +64,7 @@ const ExpenseList = ({
   onDeleteExpense,
   categories = [],
 }: ExpenseListProps) => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = React.useState("");
   const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
   const [sortBy, setSortBy] = React.useState<"date" | "amount">("date");
@@ -93,18 +96,18 @@ const ExpenseList = ({
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
-            <Receipt className="w-5 h-5" /> Recent Expenses
+            <Receipt className="w-5 h-5" /> {t('dashboard.transactions.title')}
           </h2>
           <Select
             value={sortBy}
             onValueChange={(value) => setSortBy(value as "date" | "amount")}
           >
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Sort by" />
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder={t('dashboard.transactions.sortByDate')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="date">Sort by Date</SelectItem>
-              <SelectItem value="amount">Sort by Amount</SelectItem>
+              <SelectItem value="date">{t('dashboard.transactions.sortByDate')}</SelectItem>
+              <SelectItem value="amount">{t('dashboard.transactions.sortByAmount')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -115,41 +118,41 @@ const ExpenseList = ({
             <Input
               id="expense-search"
               name="expense-search"
-              placeholder="Search expenses..."
+              placeholder={t('dashboard.transactions.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8"
             />
           </div>
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Category" />
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder={t('dashboard.transactions.allCategories')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
+              <SelectItem value="all">{t('dashboard.transactions.allCategories')}</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.id} value={category.name}>
-                  {category.name}
+                  {t(`dashboard.categories.${category.name.toLowerCase()}`)}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <Input
             type="number"
-            placeholder="Min $"
+            placeholder={t('dashboard.transactions.filters.minAmount')}
             value={minAmount}
             onChange={(e) => setMinAmount(e.target.value)}
-            className="w-24"
+            className="w-[150px]"
           />
           <Input
             type="number"
-            placeholder="Max $"
+            placeholder={t('dashboard.transactions.filters.maxAmount')}
             value={maxAmount}
             onChange={(e) => setMaxAmount(e.target.value)}
-            className="w-24"
+            className="w-[150px]"
           />
           {(minAmount ||
             maxAmount ||
@@ -164,13 +167,14 @@ const ExpenseList = ({
                 setSelectedCategory("all");
                 setSearchTerm("");
               }}
+              title={t('dashboard.transactions.filters.clearFilters')}
             >
               <X className="h-4 w-4" />
             </Button>
           )}
         </div>
 
-        <ScrollArea className="h-[420px] w-full">
+        <ScrollArea className="h-[400px]">
           <div className="space-y-4">
             {filteredExpenses.map((expense) => {
               const category = categories.find(
@@ -188,17 +192,20 @@ const ExpenseList = ({
                     </span>
                     <span className="text-sm text-muted-foreground flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      {formatDistanceToNow(expense.date, { addSuffix: true })}
+                      {formatDistanceToNow(expense.date, { 
+                        addSuffix: true, 
+                        locale: t('language') === 'es' ? es : undefined 
+                      })}
                     </span>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <Badge
                       style={{
                         backgroundColor: category?.color || "#666",
                         color: "white",
                       }}
                     >
-                      {expense.category}
+                      {t(`dashboard.categories.${expense.category.toLowerCase()}`)}
                     </Badge>
                     <div className="flex items-center gap-3">
                       <span className="font-semibold text-foreground">
@@ -224,7 +231,7 @@ const ExpenseList = ({
             })}
             {filteredExpenses.length === 0 && (
               <div className="text-center text-muted-foreground py-8">
-                No expenses found matching your filters
+                {t('dashboard.transactions.noExpensesFound')}
               </div>
             )}
           </div>

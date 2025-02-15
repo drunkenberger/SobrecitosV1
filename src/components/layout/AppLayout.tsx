@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { getStore } from "@/lib/store";
+import { useTranslation } from 'react-i18next';
 
 // Use the same Account interface as Sidebar
 interface Account {
@@ -14,6 +15,7 @@ interface Account {
 export default function AppLayout() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [sidebarError, setSidebarError] = useState<Error | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const store = getStore();
@@ -50,7 +52,7 @@ export default function AppLayout() {
 
       // Credit Card Debt
       {
-        name: "Credit Card Debt",
+        name: t('accounts.creditCard'),
         balance: (store.futurePayments || [])
           .filter(payment => 
             payment.category?.toLowerCase().includes('credit card') && 
@@ -62,7 +64,7 @@ export default function AppLayout() {
 
       // Store Credit
       {
-        name: "Store Credit",
+        name: t('accounts.storeCredit'),
         balance: (store.futurePayments || [])
           .filter(payment => 
             payment.category?.toLowerCase().includes('store credit') && 
@@ -74,7 +76,7 @@ export default function AppLayout() {
 
       // Other Debt
       {
-        name: "Personal Loan",
+        name: t('accounts.personalLoan'),
         balance: (store.futurePayments || [])
           .filter(payment => 
             payment.category?.toLowerCase().includes('loan') && 
@@ -84,7 +86,7 @@ export default function AppLayout() {
         type: "credit" as const
       },
       {
-        name: "Mortgage",
+        name: t('accounts.mortgage'),
         balance: (store.futurePayments || [])
           .filter(payment => 
             payment.category?.toLowerCase().includes('mortgage') && 

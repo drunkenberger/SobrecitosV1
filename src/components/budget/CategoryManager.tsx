@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { TransferBalanceDialog } from "./TransferBalanceDialog";
+import { useTranslation } from "react-i18next";
 
 interface Category {
   id: string;
@@ -34,35 +35,35 @@ interface CategoryManagerProps {
 const defaultCategories: Category[] = [
   {
     id: "1",
-    name: "Groceries",
+    name: "groceries",
     color: "#4CAF50",
     budget: 500,
     isRecurring: false,
   },
   {
     id: "2",
-    name: "Utilities",
+    name: "utilities",
     color: "#2196F3",
     budget: 300,
     isRecurring: true,
   },
   {
     id: "3",
-    name: "Entertainment",
+    name: "entertainment",
     color: "#9C27B0",
     budget: 200,
     isRecurring: false,
   },
   {
     id: "4",
-    name: "Transportation",
+    name: "transportation",
     color: "#FF9800",
     budget: 150,
     isRecurring: true,
   },
   {
     id: "5",
-    name: "Shopping",
+    name: "shopping",
     color: "#E91E63",
     budget: 250,
     isRecurring: false,
@@ -75,19 +76,39 @@ const CategoryManager = ({
   onEditCategory = () => {},
   onDeleteCategory = () => {},
 }: CategoryManagerProps) => {
-  const [editingCategory, setEditingCategory] = React.useState<string | null>(
-    null,
-  );
+  const { t } = useTranslation();
+  const [editingCategory, setEditingCategory] = React.useState<string | null>(null);
   const [newCategoryName, setNewCategoryName] = React.useState("");
   const [newCategoryBudget, setNewCategoryBudget] = React.useState("");
   const [newCategoryColor, setNewCategoryColor] = React.useState("#000000");
   const [newCategoryRecurring, setNewCategoryRecurring] = React.useState(false);
 
+  // Function to get the display name for a category
+  const getCategoryDisplayName = (categoryName: string) => {
+    return t(`dashboard.categories.${categoryName.toLowerCase()}`);
+  };
+
+  const handleAddCategory = () => {
+    if (!newCategoryName || !newCategoryBudget) return;
+    
+    onAddCategory({
+      name: newCategoryName.toLowerCase().replace(/\s+/g, ''),
+      budget: Number(newCategoryBudget),
+      color: newCategoryColor,
+      isRecurring: newCategoryRecurring,
+    });
+    
+    setNewCategoryName("");
+    setNewCategoryBudget("");
+    setNewCategoryColor("#000000");
+    setNewCategoryRecurring(false);
+  };
+
   return (
     <Card className="w-full h-[400px] p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold flex items-center gap-2 text-foreground">
-          <Tags className="w-6 h-6" /> Category Management
+          <Tags className="w-6 h-6" /> {t('dashboard.categoryManagement.title')}
         </h2>
         <div className="flex items-center gap-2">
           <TransferBalanceDialog
@@ -107,17 +128,17 @@ const CategoryManager = ({
             <DialogTrigger asChild>
               <Button className="flex items-center gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold">
                 <Plus size={16} />
-                Add Category
+                {t('dashboard.categoryManagement.addCategory')}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add New Category</DialogTitle>
+                <DialogTitle>{t('dashboard.categoryManagement.dialog.title')}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 pt-4">
                 <div>
                   <Input
-                    placeholder="Category Name"
+                    placeholder={t('dashboard.categoryManagement.dialog.namePlaceholder')}
                     value={newCategoryName}
                     onChange={(e) => setNewCategoryName(e.target.value)}
                   />
@@ -125,12 +146,15 @@ const CategoryManager = ({
                 <div>
                   <Input
                     type="number"
-                    placeholder="Budget Amount"
+                    placeholder={t('dashboard.categoryManagement.dialog.budgetPlaceholder')}
                     value={newCategoryBudget}
                     onChange={(e) => setNewCategoryBudget(e.target.value)}
                   />
                 </div>
                 <div>
+                  <label className="block text-sm font-medium mb-2">
+                    {t('dashboard.categoryManagement.dialog.color')}
+                  </label>
                   <Input
                     type="color"
                     value={newCategoryColor}
@@ -150,25 +174,14 @@ const CategoryManager = ({
                     htmlFor="recurring"
                     className="text-sm font-medium leading-none text-foreground"
                   >
-                    Recurring Monthly Expense
+                    {t('dashboard.categoryManagement.dialog.recurring')}
                   </label>
                 </div>
                 <Button
                   className="w-full bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold"
-                  onClick={() => {
-                    onAddCategory({
-                      name: newCategoryName,
-                      budget: Number(newCategoryBudget),
-                      color: newCategoryColor,
-                      isRecurring: newCategoryRecurring,
-                    });
-                    setNewCategoryName("");
-                    setNewCategoryBudget("");
-                    setNewCategoryColor("#000000");
-                    setNewCategoryRecurring(false);
-                  }}
+                  onClick={handleAddCategory}
                 >
-                  Add Category
+                  {t('dashboard.categoryManagement.dialog.addButton')}
                 </Button>
               </div>
             </DialogContent>
@@ -188,7 +201,7 @@ const CategoryManager = ({
                   <Input
                     value={category.name}
                     onChange={(e) =>
-                      onEditCategory(category.id, { name: e.target.value })
+                      onEditCategory(category.id, { name: e.target.value.toLowerCase().replace(/\s+/g, '') })
                     }
                     className="w-1/3"
                   />
@@ -224,7 +237,7 @@ const CategoryManager = ({
                       htmlFor={`recurring-${category.id}`}
                       className="text-sm font-medium leading-none text-foreground"
                     >
-                      Recurring
+                      {t('dashboard.categoryManagement.dialog.recurring')}
                     </label>
                   </div>
                   <Button
@@ -242,7 +255,7 @@ const CategoryManager = ({
                       style={{ backgroundColor: category.color }}
                       className="text-white dark:text-black font-semibold"
                     >
-                      {category.name}
+                      {getCategoryDisplayName(category.name)}
                     </Badge>
                     <span className="text-sm text-muted-foreground">
                       ${category.budget.toFixed(2)}

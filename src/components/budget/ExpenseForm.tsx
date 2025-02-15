@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -54,6 +55,7 @@ const ExpenseForm = ({
   onSubmit = () => {},
   categories = defaultCategories,
 }: ExpenseFormProps) => {
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState(controlledOpen ?? false);
   const [amount, setAmount] = React.useState("");
   const [category, setCategory] = React.useState(categories[0]?.name || "");
@@ -135,7 +137,7 @@ const ExpenseForm = ({
       <DialogTrigger asChild>
         <Button className="gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold">
           <PlusCircle className="w-4 h-4" />
-          Add Expense
+          {t('dashboard.header.buttons.addExpense')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

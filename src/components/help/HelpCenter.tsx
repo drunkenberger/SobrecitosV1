@@ -19,121 +19,123 @@ import {
   Shield,
   FileQuestion,
 } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
-const categories = [
+const getCategories = (t: any) => [
   {
     icon: <Wallet className="w-5 h-5" />,
-    title: "Getting Started",
+    title: t('helpCenter.categories.gettingStarted.title'),
     articles: [
       {
-        title: "Setting up your first budget",
-        content:
-          "Learn how to set up your initial monthly budget and categories.",
+        title: t('helpCenter.categories.gettingStarted.articles.firstBudget.title'),
+        content: t('helpCenter.categories.gettingStarted.articles.firstBudget.content'),
       },
       {
-        title: "Understanding the dashboard",
-        content: "Get familiar with the main dashboard and its features.",
+        title: t('helpCenter.categories.gettingStarted.articles.dashboard.title'),
+        content: t('helpCenter.categories.gettingStarted.articles.dashboard.content'),
       },
       {
-        title: "Adding family members",
-        content: "How to share your budget with family members.",
+        title: t('helpCenter.categories.gettingStarted.articles.familyMembers.title'),
+        content: t('helpCenter.categories.gettingStarted.articles.familyMembers.content'),
       },
     ],
   },
   {
     icon: <Receipt className="w-5 h-5" />,
-    title: "Expense Management",
+    title: t('helpCenter.categories.expenseManagement.title'),
     articles: [
       {
-        title: "Adding expenses",
-        content: "Learn how to add and categorize your expenses.",
+        title: t('helpCenter.categories.expenseManagement.articles.addingExpenses.title'),
+        content: t('helpCenter.categories.expenseManagement.articles.addingExpenses.content'),
       },
       {
-        title: "Setting up recurring expenses",
-        content: "Automate your regular monthly payments.",
+        title: t('helpCenter.categories.expenseManagement.articles.recurringExpenses.title'),
+        content: t('helpCenter.categories.expenseManagement.articles.recurringExpenses.content'),
       },
       {
-        title: "Managing receipts",
-        content: "How to attach and organize receipts for your expenses.",
+        title: t('helpCenter.categories.expenseManagement.articles.receipts.title'),
+        content: t('helpCenter.categories.expenseManagement.articles.receipts.content'),
       },
     ],
   },
   {
     icon: <PiggyBank className="w-5 h-5" />,
-    title: "Savings Goals",
+    title: t('helpCenter.categories.savingsGoals.title'),
     articles: [
       {
-        title: "Creating savings goals",
-        content: "Set up and track your financial goals.",
+        title: t('helpCenter.categories.savingsGoals.articles.creating.title'),
+        content: t('helpCenter.categories.savingsGoals.articles.creating.content'),
       },
       {
-        title: "Smart savings distribution",
-        content: "Let AI help you optimize your savings strategy.",
+        title: t('helpCenter.categories.savingsGoals.articles.distribution.title'),
+        content: t('helpCenter.categories.savingsGoals.articles.distribution.content'),
       },
       {
-        title: "Monitoring progress",
-        content: "Track your progress towards savings goals.",
+        title: t('helpCenter.categories.savingsGoals.articles.progress.title'),
+        content: t('helpCenter.categories.savingsGoals.articles.progress.content'),
       },
     ],
   },
   {
     icon: <Settings className="w-5 h-5" />,
-    title: "Account Settings",
+    title: t('helpCenter.categories.accountSettings.title'),
     articles: [
       {
-        title: "Managing your profile",
-        content: "Update your personal information and preferences.",
+        title: t('helpCenter.categories.accountSettings.articles.profile.title'),
+        content: t('helpCenter.categories.accountSettings.articles.profile.content'),
       },
       {
-        title: "Currency settings",
-        content: "Change your preferred currency and format.",
+        title: t('helpCenter.categories.accountSettings.articles.currency.title'),
+        content: t('helpCenter.categories.accountSettings.articles.currency.content'),
       },
       {
-        title: "Notification preferences",
-        content: "Customize your alert and notification settings.",
+        title: t('helpCenter.categories.accountSettings.articles.notifications.title'),
+        content: t('helpCenter.categories.accountSettings.articles.notifications.content'),
       },
     ],
   },
   {
     icon: <Users className="w-5 h-5" />,
-    title: "Family Sharing",
+    title: t('helpCenter.categories.familySharing.title'),
     articles: [
       {
-        title: "Adding family members",
-        content: "Share your budget with family members.",
+        title: t('helpCenter.categories.familySharing.articles.adding.title'),
+        content: t('helpCenter.categories.familySharing.articles.adding.content'),
       },
       {
-        title: "Setting permissions",
-        content: "Manage what family members can view and edit.",
+        title: t('helpCenter.categories.familySharing.articles.permissions.title'),
+        content: t('helpCenter.categories.familySharing.articles.permissions.content'),
       },
       {
-        title: "Activity tracking",
-        content: "Monitor changes made by family members.",
+        title: t('helpCenter.categories.familySharing.articles.activity.title'),
+        content: t('helpCenter.categories.familySharing.articles.activity.content'),
       },
     ],
   },
   {
     icon: <Shield className="w-5 h-5" />,
-    title: "Privacy & Security",
+    title: t('helpCenter.categories.privacySecurity.title'),
     articles: [
       {
-        title: "Data privacy",
-        content: "Understanding how your data is stored and protected.",
+        title: t('helpCenter.categories.privacySecurity.articles.privacy.title'),
+        content: t('helpCenter.categories.privacySecurity.articles.privacy.content'),
       },
       {
-        title: "Security settings",
-        content:
-          "Configure two-factor authentication and other security features.",
+        title: t('helpCenter.categories.privacySecurity.articles.security.title'),
+        content: t('helpCenter.categories.privacySecurity.articles.security.content'),
       },
       {
-        title: "Backup and export",
-        content: "How to backup and export your budget data.",
+        title: t('helpCenter.categories.privacySecurity.articles.backup.title'),
+        content: t('helpCenter.categories.privacySecurity.articles.backup.content'),
       },
     ],
   },
 ];
 
 export default function HelpCenter() {
+  const { t } = useTranslation();
+  const categories = getCategories(t);
+
   return (
     <div className="min-h-screen bg-background py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -141,11 +143,10 @@ export default function HelpCenter() {
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">
             <LifeBuoy className="w-8 h-8 text-primary" />
-            <h1 className="text-4xl font-bold">Help Center</h1>
+            <h1 className="text-4xl font-bold">{t('helpCenter.title')}</h1>
           </div>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Find answers to common questions and learn how to make the most of
-            Sobrecitos
+            {t('helpCenter.subtitle')}
           </p>
         </div>
 
@@ -154,7 +155,7 @@ export default function HelpCenter() {
           <div className="relative">
             <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
             <Input
-              placeholder="Search for help articles..."
+              placeholder={t('helpCenter.searchPlaceholder')}
               className="pl-10 h-12"
             />
           </div>
@@ -190,7 +191,7 @@ export default function HelpCenter() {
         <Card className="p-6">
           <div className="flex items-center gap-2 mb-6">
             <FileQuestion className="w-6 h-6 text-primary" />
-            <h2 className="text-2xl font-semibold">Quick Answers</h2>
+            <h2 className="text-2xl font-semibold">{t('helpCenter.quickAnswers')}</h2>
           </div>
           <Accordion type="single" collapsible className="w-full">
             {categories.flatMap((category, i) =>
@@ -211,9 +212,9 @@ export default function HelpCenter() {
         {/* Contact Support */}
         <div className="text-center mt-12">
           <p className="text-muted-foreground">
-            Still need help?{" "}
+            {t('helpCenter.needHelp')}{" "}
             <Button variant="link" className="p-0">
-              Contact our support team
+              {t('helpCenter.contactSupport')}
             </Button>
           </p>
         </div>

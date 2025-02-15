@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import { Toaster } from "./components/ui/toaster";
 import { useRoutes, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import Home from "./components/home";
 import Landing from "./pages/Landing";
 import Profile from "./pages/Profile";
@@ -18,46 +19,55 @@ import AppLayout from "./components/layout/AppLayout";
 import routes from "tempo-routes";
 
 function App() {
+  const { t, ready } = useTranslation();
+
+  if (!ready) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">{t('common.loading')}</div>
+      </div>
+    );
+  }
+
   return (
     <HelmetProvider>
-      <Suspense fallback={<p>Loading...</p>}>
-        <div className="min-h-screen">
-          <Navbar />
-          {/* Add tempo routes */}
-          {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Landing />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/faq" element={<FAQPage />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<TermsOfService />} />
-            <Route path="/cookies" element={<CookiePolicy />} />
-            <Route path="/alternatives" element={<Alternatives />} />
-            
-            {/* Protected routes with AppLayout */}
-            <Route element={<AppLayout />}>
-              <Route path="/app" element={<Home />} />
-              <Route path="/app/profile" element={<Profile />} />
-              <Route path="/app/faq" element={<FAQPage />} />
-              <Route path="/app/help" element={<HelpCenter />} />
-            </Route>
+      <div className="min-h-screen">
+        <Navbar />
+        {/* Add tempo routes */}
+        {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Landing />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/help-center" element={<HelpCenter />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/cookies" element={<CookiePolicy />} />
+          <Route path="/alternatives" element={<Alternatives />} />
+          
+          {/* Protected routes with AppLayout */}
+          <Route element={<AppLayout />}>
+            <Route path="/app" element={<Home />} />
+            <Route path="/app/profile" element={<Profile />} />
+            <Route path="/app/faq" element={<FAQPage />} />
+            <Route path="/app/help" element={<HelpCenter />} />
+          </Route>
 
-            {/* Preview route */}
-            <Route path="/preview/:projectId/app" element={<Home />} />
+          {/* Preview route */}
+          <Route path="/preview/:projectId/app" element={<Home />} />
 
-            {/* Tempo route */}
-            {import.meta.env.VITE_TEMPO === "true" && (
-              <Route path="/tempobook/*" />
-            )}
-            
-            {/* Catch all */}
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-          <Toaster />
-        </div>
-      </Suspense>
+          {/* Tempo route */}
+          {import.meta.env.VITE_TEMPO === "true" && (
+            <Route path="/tempobook/*" />
+          )}
+          
+          {/* Catch all */}
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+        <Toaster />
+      </div>
     </HelmetProvider>
   );
 }

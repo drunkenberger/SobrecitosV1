@@ -1,0 +1,645 @@
+{
+  "common": {
+    "welcome": "Bienvenido a Sobrecitos",
+    "loading": "Cargando...",
+    "error": "Ha ocurrido un error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "search": "Buscar",
+    "settings": "Configuración",
+    "profile": "Perfil",
+    "logout": "Cerrar sesión",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "dashboard": "Panel de Control",
+    "help": "Ayuda",
+    "getStarted": "Comenzar",
+    "tryItNow": "Pruébalo Ahora",
+    "readMore": "Leer Más",
+    "viewAll": "Ver Todo",
+    "seeMore": "Ver Más",
+    "tryFeatures": "Probar Funciones de IA"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "budget": "Presupuesto",
+    "expenses": "Gastos",
+    "reports": "Informes",
+    "blog": "Blog",
+    "faq": "Preguntas Frecuentes",
+    "help": "Centro de Ayuda",
+    "alternatives": "Alternativas",
+    "contact": "Contacto",
+    "dashboard": "Panel de Control",
+    "transactions": "Transacciones",
+    "cashFlow": "Flujo de Caja",
+    "categories": "Categorías",
+    "recurring": "Recurrentes"
+  },
+  "testimonials": {
+    "roles": {
+      "workingMom": "Madre Trabajadora",
+      "advisor": "Asesor Financiero Familiar",
+      "stayAtHome": "Padre/Madre en Casa"
+    },
+    "quotes": {
+      "diana": "Esta aplicación ha transformado completamente la forma en que administro nuestros gastos del hogar. Los gráficos visuales hacen que sea muy fácil entender a dónde va nuestro dinero.",
+      "william": "Uso esta aplicación y la recomiendo a todos mis clientes. Es el equilibrio perfecto entre funciones potentes y facilidad de uso.",
+      "emilia": "La función de gastos recurrentes me ahorra mucho tiempo. Por fin puedo hacer un seguimiento de todos los gastos de nuestra familia en un solo lugar."
+    }
+  },
+  "landing": {
+    "hero": {
+      "title": "Gestor de Presupuesto Familiar",
+      "subtitle": "Toma el control de las finanzas de tu familia con nuestro gestor de presupuesto fácil de usar y centrado en la privacidad. Perfecto para padres ocupados que gestionan los gastos del hogar."
+    },
+    "whyChoose": {
+      "title": "¿Por qué elegir Sobrecitos?",
+      "subtitle": "Es fácil de usar y tus datos financieros nunca salen de tu dispositivo. Diseñado para familias que valoran tanto la simplicidad como la privacidad en la gestión de su presupuesto."
+    },
+    "features": {
+      "private": {
+        "title": "100% Privado y Seguro",
+        "description": "Todos los datos se almacenan localmente en tu dispositivo, nunca en la nube"
+      },
+      "smart": {
+        "title": "Categorización Inteligente",
+        "description": "Organiza automáticamente los gastos en categorías personalizables"
+      },
+      "visual": {
+        "title": "Informes Visuales",
+        "description": "Visualiza tus patrones de gasto con gráficos hermosos e intuitivos"
+      },
+      "alerts": {
+        "title": "Alertas de Presupuesto",
+        "description": "Recibe notificaciones cuando te acerques a los límites de categoría"
+      },
+      "sharing": {
+        "title": "Compartir en Familia",
+        "description": "Colabora con los miembros de la familia en la gestión del presupuesto"
+      },
+      "goals": {
+        "title": "Objetivos de Ahorro",
+        "description": "Establece y sigue objetivos financieros para el futuro de tu familia"
+      }
+    },
+    "privacy": {
+      "title": "Tus Datos Se Quedan Contigo",
+      "description": "A diferencia de las aplicaciones de presupuesto tradicionales que almacenan tus datos financieros sensibles en la nube, Sobrecitos mantiene todo de forma segura en tu dispositivo.",
+      "features": {
+        "offline": "Almacenamiento 100% sin conexión - tus datos nunca salen de tu dispositivo",
+        "noSharing": "Sin compartir datos con terceros ni seguimiento",
+        "control": "Control total sobre tu información financiera"
+      }
+    },
+    "ai": {
+      "title": "Análisis Financiero con IA",
+      "subtitle": "Funciones opcionales de IA para ayudarte a tomar decisiones financieras más inteligentes mientras mantienes tus datos privados. Elige tu proveedor de IA preferido y mantén el control total.",
+      "assistant": {
+        "title": "Asistente Financiero IA",
+        "description": "Obtén consejos financieros personalizados e información impulsada por tecnología IA avanzada:",
+        "features": {
+          "analysis": "Análisis de presupuesto en tiempo real y recomendaciones",
+          "patterns": "Detección inteligente de patrones de gasto",
+          "optimization": "Optimización de objetivos de ahorro",
+          "planning": "Asistencia en la planificación de pagos futuros"
+        },
+        "providers": {
+          "title": "Elige tu Proveedor de IA:",
+          "openai": {
+            "name": "OpenAI",
+            "description": "Usa modelos GPT con tu clave API"
+          },
+          "google": {
+            "name": "Google",
+            "description": "Conéctate a modelos Gemini"
+          },
+          "ollama": {
+            "name": "Ollama",
+            "description": "Ejecuta IA localmente para privacidad completa"
+          }
+        }
+      },
+      "chat": {
+        "title": "Chat Interactivo con IA",
+        "description": "Chatea con tu asistente financiero personal de IA que entiende tu situación única:",
+        "features": {
+          "questions": "Haz preguntas sobre tus finanzas",
+          "analysis": "Obtén análisis detallados de gastos",
+          "tips": "Recibe consejos financieros personalizados",
+          "tracking": "Sigue el progreso hacia tus objetivos"
+        }
+      },
+      "setup": {
+        "title": "Configuración Fácil:",
+        "apiKey": "Usa tu propia clave API para OpenAI o Gemini",
+        "local": "O usa Ollama para ejecutar modelos localmente en tu dispositivo",
+        "control": "Control total sobre la configuración de IA y selección de modelos"
+      }
+    },
+    "testimonials": {
+      "title": "Lo que Dicen Nuestros Usuarios",
+      "subtitle": "Únete a miles de familias satisfechas que han transformado su gestión financiera"
+    },
+    "alternatives": {
+      "title": "Sobrecitos como Alternativa",
+      "subtitle": "Una mejor manera de gestionar el presupuesto familiar en comparación con las aplicaciones tradicionales",
+      "comparison": {
+        "mint": {
+          "title": "vs. Mint",
+          "private": "100% privado - los datos se quedan locales",
+          "noAds": "Sin anuncios ni ventas adicionales"
+        },
+        "ynab": {
+          "title": "vs. YNAB",
+          "affordable": "Más económico",
+          "easy": "Sin curva de aprendizaje"
+        },
+        "everyDollar": {
+          "title": "vs. EveryDollar",
+          "automation": "Automatización inteligente",
+          "ai": "Funciones de IA integradas"
+        }
+      },
+      "cta": "Ver Comparación Completa"
+    },
+    "blog": {
+      "title": "Últimas Publicaciones del Blog",
+      "subtitle": "Mantente actualizado con nuestros últimos consejos y perspectivas sobre la gestión del presupuesto familiar",
+      "cta": "Ver Todas las Publicaciones"
+    },
+    "cta": {
+      "title": "¿Listo para Tomar el Control de tu Presupuesto Familiar?",
+      "subtitle": "Únete a miles de familias que ya están gestionando sus finanzas de manera más inteligente con Sobrecitos",
+      "button": "Comienza Ahora"
+    }
+  },
+  "footer": {
+    "about": {
+      "title": "Acerca de Sobrecitos",
+      "description": "Haciendo la gestión del presupuesto familiar simple y efectiva para todos."
+    },
+    "features": {
+      "title": "Características",
+      "items": {
+        "tracking": "Seguimiento de Gastos",
+        "planning": "Planificación de Presupuesto",
+        "reports": "Informes Visuales",
+        "sharing": "Compartir en Familia"
+      }
+    },
+    "resources": {
+      "title": "Recursos"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Política de Privacidad",
+      "terms": "Términos de Servicio",
+      "cookies": "Política de Cookies"
+    },
+    "copyright": "Sobrecitos. Todos los derechos reservados."
+  },
+  "routes": {
+    "landing": "Inicio",
+    "blog": "Blog",
+    "blogPost": "Publicación del Blog",
+    "faq": "Preguntas Frecuentes",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "cookies": "Política de Cookies",
+    "alternatives": "Alternativas",
+    "app": {
+      "home": "Inicio",
+      "profile": "Perfil",
+      "faq": "Preguntas Frecuentes",
+      "help": "Centro de Ayuda"
+    },
+    "preview": "Vista Previa",
+    "loading": "Cargando..."
+  },
+  "dashboard": {
+    "header": {
+      "title": "Panel de Presupuesto",
+      "subtitle": "Rastrea y administra tus gastos del hogar",
+      "buttons": {
+        "exportData": "Exportar Datos",
+        "importData": "Importar Datos",
+        "aiInsights": "Análisis IA",
+        "addExpense": "Añadir Gasto"
+      }
+    },
+    "alerts": {
+      "overall": {
+        "title": "Alerta de Presupuesto",
+        "message": "Has gastado el {percent}% de tu presupuesto total"
+      },
+      "utilities": {
+        "title": "Alerta de Servicios",
+        "message": "Has gastado el {percent}% de tu presupuesto de Servicios"
+      },
+      "salud": {
+        "title": "Alerta de Salud",
+        "message": "Has gastado el {percent}% de tu presupuesto de Salud"
+      },
+      "salad": {
+        "title": "Alerta de Ensalada",
+        "message": "Has gastado el {percent}% de tu presupuesto de Ensalada"
+      },
+      "groceries": {
+        "title": "Alerta de Comestibles",
+        "message": "Has gastado el {percent}% de tu presupuesto de Comestibles"
+      },
+      "entertainment": {
+        "title": "Alerta de Entretenimiento",
+        "message": "Has gastado el {percent}% de tu presupuesto de Entretenimiento"
+      },
+      "housing": {
+        "title": "Alerta de Vivienda",
+        "message": "Has gastado el {percent}% de tu presupuesto de Vivienda"
+      },
+      "transportation": {
+        "title": "Alerta de Transporte",
+        "message": "Has gastado el {percent}% de tu presupuesto de Transporte"
+      },
+      "education": {
+        "title": "Alerta de Educación",
+        "message": "Has gastado el {percent}% de tu presupuesto de Educación"
+      },
+      "savings": {
+        "title": "Alerta de Ahorros",
+        "message": "Has gastado el {percent}% de tu presupuesto de Ahorros"
+      },
+      "other": {
+        "title": "Alerta de Otros Gastos",
+        "message": "Has gastado el {percent}% de tu presupuesto de Otros Gastos"
+      }
+    },
+    "overview": {
+      "totalBudget": "Presupuesto Total",
+      "spentAmount": "Cantidad Gastada",
+      "remainingBalance": "Saldo Restante",
+      "currency": "${amount}"
+    },
+    "expenseBreakdown": {
+      "title": "Desglose de Gastos",
+      "timeframe": {
+        "select": "Seleccionar período",
+        "week": "Semana",
+        "month": "Mes",
+        "year": "Año"
+      },
+      "tabs": {
+        "categorySplit": "División por Categoría",
+        "amountByCategory": "Monto por Categoría",
+        "dailySpending": "Gastos Diarios",
+        "trends": "Tendencias",
+        "insights": "Análisis"
+      },
+      "ofTotal": "del total"
+    },
+    "categories": {
+      "groceries": "Comestibles",
+      "utilities": "Servicios",
+      "entertainment": "Entretenimiento",
+      "salad": "Ensalada",
+      "housing": "Vivienda",
+      "transportation": "Transporte",
+      "healthcare": "Salud",
+      "education": "Educación",
+      "savings": "Ahorros",
+      "other": "Otros",
+      "mantenimientocasa": "Mantenimiento Casa",
+      "doctores": "Doctores",
+      "clasesextra": "Clases Extra",
+      "renta": "Renta",
+      "juanis": "Juanis",
+      "salud": "Salud",
+      "servicio": "Servicio",
+      "taxes": "Impuestos",
+      "shopping": "Compras",
+      "medical": "Médico"
+    },
+    "transactions": {
+      "title": "Transacciones Recientes",
+      "recentExpenses": "Gastos Recientes",
+      "addExpense": "Añadir Gasto",
+      "sortByDate": "Ordenar por Fecha",
+      "sortByAmount": "Ordenar por Monto",
+      "allCategories": "Todas las Categorías",
+      "searchPlaceholder": "Buscar gastos...",
+      "noExpensesFound": "No se encontraron gastos que coincidan con tus filtros",
+      "filters": {
+        "minAmount": "Monto Mínimo",
+        "maxAmount": "Monto Máximo",
+        "clearFilters": "Limpiar Filtros"
+      },
+      "daysAgo": "hace {{count}} días",
+      "categories": {
+        "entertainment": "Entretenimiento",
+        "salad": "Ensalada",
+        "utilities": "Servicios",
+        "medical": "Médico",
+        "food": "Comida y Restaurantes"
+      },
+      "expenses": {
+        "cinema": "Cine",
+        "operation": "Operación",
+        "repairs": "Arreglos",
+        "dentist": "Dentista",
+        "diningOut": "Cine y Comida"
+      }
+    },
+    "budgetSettings": {
+      "title": "Configuración de Presupuesto",
+      "subtitle": "Administra tu presupuesto mensual y fuentes de ingresos adicionales",
+      "monthlyOverview": {
+        "daysLeft": "Días Restantes del Mes",
+        "monthEnds": "El mes termina el",
+        "dailyBudget": "Presupuesto Diario",
+        "remainingDaily": "restante por día"
+      },
+      "monthlyBudget": {
+        "title": "Presupuesto Base Mensual",
+        "editButton": "Editar Presupuesto",
+        "saveButton": "Guardar"
+      },
+      "additionalIncome": {
+        "title": "Fuentes de Ingreso Adicional",
+        "totalLabel": "Ingreso Adicional Total",
+        "addButton": "Añadir Ingreso",
+        "dialog": {
+          "title": "Añadir Ingreso Adicional",
+          "description": "Descripción",
+          "descriptionPlaceholder": "Descripción del ingreso",
+          "amount": "Monto ($)",
+          "amountPlaceholder": "0.00",
+          "addButton": "Añadir Ingreso"
+        }
+      },
+      "smartSavings": {
+        "title": "Ahorros Inteligentes",
+        "autoDistribute": "Distribuir Ahorros Automáticamente",
+        "recommended": "Ahorros Mensuales Recomendados",
+        "available": "Disponible para Ahorros",
+        "monthlyIncome": "Ingreso Mensual Total",
+        "savingsRate": "Tasa de Ahorro"
+      }
+    },
+    "payments": {
+      "calendar": {
+        "title": "Calendario de Pagos",
+        "addButton": "Agregar Pago Futuro",
+        "upcomingTitle": "Pagos Próximos",
+        "totalUpcoming": "Total Próximo",
+        "schedulePayment": "Programar Pago Futuro",
+        "scheduledPayments": "Pagos Programados",
+        "description": "Descripción",
+        "descriptionPlaceholder": "ej., Pago de Renta",
+        "amount": "Monto ($)",
+        "dueDate": "Fecha de Vencimiento",
+        "category": "Categoría",
+        "selectCategory": "Seleccionar categoría",
+        "addCategory": "Agregar Categoría",
+        "addPayment": "Agregar Pago",
+        "status": {
+          "paid": "Pagado",
+          "pending": "Pendiente"
+        },
+        "tableHeaders": {
+          "description": "Descripción",
+          "dueDate": "Fecha de Vencimiento",
+          "amount": "Monto",
+          "status": "Estado"
+        }
+      }
+    },
+    "categoryManagement": {
+      "title": "Gestión de Categorías",
+      "addCategory": "Agregar Categoría",
+      "transferBalance": "Transferir Saldo",
+      "dialog": {
+        "title": "Agregar Nueva Categoría",
+        "name": "Nombre de Categoría",
+        "namePlaceholder": "Ingrese nombre de categoría",
+        "budget": "Monto del Presupuesto",
+        "budgetPlaceholder": "Ingrese monto del presupuesto",
+        "color": "Color de Categoría",
+        "recurring": "Gasto Mensual Recurrente",
+        "addButton": "Agregar Categoría"
+      },
+      "transfer": {
+        "title": "Transferir Saldo",
+        "from": "Desde Categoría",
+        "to": "A Categoría",
+        "amount": "Monto a Transferir",
+        "button": "Transferir"
+      }
+    },
+    "savingsGoals": {
+      "title": "Metas de Ahorro",
+      "subtitle": "Sigue tu progreso hacia tus metas financieras",
+      "addGoal": "Agregar Meta",
+      "dialog": {
+        "title": "Agregar Nueva Meta de Ahorro",
+        "name": "Nombre de la Meta",
+        "namePlaceholder": "ej., Fondo de Emergencia",
+        "targetAmount": "Monto Objetivo ($)",
+        "deadline": "Fecha Límite",
+        "color": "Color",
+        "addButton": "Agregar Meta"
+      },
+      "smartSavings": {
+        "title": "Ahorros Inteligentes",
+        "autoDistribute": "Distribuir Ahorros Automáticamente",
+        "recommendedSavings": "Ahorros Mensuales Recomendados",
+        "availableForSavings": "Disponible para Ahorros",
+        "monthlyIncome": "Ingreso Mensual Total",
+        "savingsRate": "Tasa de Ahorro"
+      },
+      "goal": {
+        "daysLeft": "{{count}} días restantes",
+        "progress": "{{current}} de {{target}}",
+        "currentAmount": "Monto actual",
+        "targetAmount": "Monto objetivo",
+        "deadline": "Fecha límite",
+        "color": "Color",
+        "saveChanges": "Guardar Cambios"
+      }
+    }
+  },
+  "accounts": {
+    "upcomingPayments": "Pagos Próximos",
+    "creditCard": "Tarjeta de Crédito",
+    "storeCredit": "Crédito de Tienda",
+    "personalLoan": "Préstamo Personal",
+    "mortgage": "Hipoteca"
+  },
+  "errors": {
+    "sidebarLoading": "Error al cargar la barra lateral. Por favor, actualice la página."
+  },
+  "helpCenter": {
+    "title": "Centro de Ayuda",
+    "subtitle": "Encuentra respuestas a preguntas frecuentes",
+    "searchPlaceholder": "Buscar artículos de ayuda...",
+    "quickAnswers": "Respuestas Rápidas",
+    "needHelp": "¿Aún necesitas ayuda?",
+    "contactSupport": "Contactar Soporte",
+    "categories": {
+      "gettingStarted": {
+        "title": "Primeros Pasos",
+        "articles": {
+          "firstBudget": {
+            "title": "Configurar tu primer presupuesto",
+            "content": "Aprende a configurar tu presupuesto inicial y personalizarlo según tus necesidades."
+          },
+          "dashboard": {
+            "title": "Entendiendo el panel de control",
+            "content": "Familiarízate con el panel principal y sus funciones clave."
+          },
+          "familyMembers": {
+            "title": "Agregar miembros de familia",
+            "content": "Aprende a agregar y gestionar miembros de familia en tu cuenta."
+          }
+        }
+      },
+      "expenseManagement": {
+        "title": "Gestión de Gastos",
+        "articles": {
+          "addingExpenses": {
+            "title": "Agregar gastos",
+            "content": "Aprende a agregar y categorizar tus gastos."
+          },
+          "recurringExpenses": {
+            "title": "Gestionar gastos recurrentes",
+            "content": "Configura y administra tus gastos recurrentes de manera eficiente."
+          },
+          "receipts": {
+            "title": "Manejo de recibos",
+            "content": "Aprende a subir y gestionar tus recibos de gastos."
+          }
+        }
+      },
+      "savingsGoals": {
+        "title": "Metas de Ahorro",
+        "articles": {
+          "creating": {
+            "title": "Crear metas de ahorro",
+            "content": "Configura metas de ahorro personalizadas para tus planes futuros."
+          },
+          "distribution": {
+            "title": "Distribución automática de ahorros",
+            "content": "Aprende a distribuir automáticamente tus ahorros entre diferentes metas."
+          },
+          "progress": {
+            "title": "Seguimiento de progreso",
+            "content": "Monitorea y rastrea tu progreso hacia las metas de ahorro."
+          }
+        }
+      },
+      "accountSettings": {
+        "title": "Configuración de Cuenta",
+        "articles": {
+          "profile": {
+            "title": "Gestionar tu perfil",
+            "content": "Actualiza y administra la configuración de tu perfil de cuenta."
+          },
+          "currency": {
+            "title": "Configuración de moneda",
+            "content": "Cambia tu moneda preferida y configuraciones relacionadas."
+          },
+          "notifications": {
+            "title": "Preferencias de notificación",
+            "content": "Personaliza tus configuraciones de notificaciones y alertas."
+          }
+        }
+      },
+      "familySharing": {
+        "title": "Compartir en Familia",
+        "articles": {
+          "adding": {
+            "title": "Agregar miembros de familia",
+            "content": "Aprende a agregar e invitar miembros de familia a tu cuenta."
+          },
+          "permissions": {
+            "title": "Gestionar permisos",
+            "content": "Configura y administra permisos de acceso para miembros de familia."
+          },
+          "activity": {
+            "title": "Seguimiento de actividad",
+            "content": "Monitorea y revisa las actividades financieras de los miembros de familia."
+          }
+        }
+      },
+      "privacySecurity": {
+        "title": "Privacidad y Seguridad",
+        "articles": {
+          "privacy": {
+            "title": "Configuración de privacidad",
+            "content": "Administra tus preferencias de privacidad y configuración de datos."
+          },
+          "security": {
+            "title": "Funciones de seguridad",
+            "content": "Conoce las funciones de seguridad y mejores prácticas."
+          },
+          "backup": {
+            "title": "Respaldo de datos",
+            "content": "Comprende cómo respaldar y proteger tus datos financieros."
+          }
+        }
+      }
+    }
+  },
+  "faq": {
+    "title": "Preguntas Frecuentes",
+    "subtitle": "Encuentra respuestas a preguntas comunes sobre el uso de Sobrecitos",
+    "questions": {
+      "dataSecurity": {
+        "question": "¿Qué tan segura está mi información financiera?",
+        "answer": "Tus datos están completamente seguros ya que se almacenan localmente en tu dispositivo. Utilizamos encriptación fuerte y nunca enviamos tu información financiera a ningún servidor."
+      },
+      "browserData": {
+        "question": "¿Qué sucede con mis datos si limpio los datos del navegador?",
+        "answer": "Si limpias los datos del navegador, tu información de presupuesto se eliminará. Recomendamos exportar regularmente tus datos como respaldo usando el Administrador de Datos."
+      },
+      "backupData": {
+        "question": "¿Cómo puedo respaldar mis datos de presupuesto?",
+        "answer": "Puedes respaldar fácilmente tus datos usando el botón Exportar Datos en el panel de control. Esto crea un archivo JSON con toda tu información de presupuesto que puedes almacenar de forma segura."
+      },
+      "familySharing": {
+        "question": "¿Puedo compartir mi presupuesto con miembros de la familia?",
+        "answer": "Sí, puedes compartir tu presupuesto con miembros de la familia. Cada miembro puede tener su propio nivel de acceso y permisos para ver o administrar el presupuesto."
+      },
+      "recurringExpenses": {
+        "question": "¿Cómo funcionan los gastos recurrentes?",
+        "answer": "Los gastos recurrentes se repiten automáticamente según el horario especificado (semanal o mensual). El sistema rastreará estos gastos y los incluirá en tus cálculos de presupuesto."
+      },
+      "budgetAlerts": {
+        "question": "¿Puedo configurar alertas de presupuesto?",
+        "answer": "Sí, puedes configurar alertas tanto para el presupuesto general como para categorías individuales. Recibirás notificaciones cuando los gastos alcancen ciertos límites."
+      },
+      "savingsTracking": {
+        "question": "¿Cómo puedo rastrear mis metas de ahorro?",
+        "answer": "Puedes crear y rastrear múltiples metas de ahorro en la sección de Metas de Ahorro. Establece montos objetivo, fechas límite y monitorea tu progreso con indicadores visuales."
+      },
+      "exportData": {
+        "question": "¿Puedo exportar mis datos de presupuesto?",
+        "answer": "Sí, puedes exportar tus datos de presupuesto en cualquier momento usando el Administrador de Datos. Esto crea un archivo JSON con toda tu información de presupuesto que puedes respaldar o transferir."
+      },
+      "aiAssistant": {
+        "question": "¿Cómo ayuda el asistente de IA con el presupuesto?",
+        "answer": "El asistente de IA analiza tus patrones de gasto y proporciona recomendaciones personalizadas para optimización de presupuesto, oportunidades de ahorro y perspectivas financieras."
+      },
+      "categoryLimit": {
+        "question": "¿Hay un límite en la cantidad de categorías que puedo crear?",
+        "answer": "No, no hay límite en el número de categorías de presupuesto que puedes crear. Puedes agregar, editar o eliminar categorías según sea necesario para que coincidan con tu estilo de presupuesto."
+      }
+    },
+    "support": {
+      "stillNeedHelp": "¿Aún tienes preguntas?",
+      "contactSupport": "Contacta a nuestro equipo de soporte"
+    }
+  }
+} 

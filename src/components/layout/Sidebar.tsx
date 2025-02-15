@@ -22,6 +22,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getStore, calculateRecommendedSavings } from "@/lib/store";
+import { useTranslation } from 'react-i18next';
 
 interface Account {
   name: string;
@@ -35,6 +36,8 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ accounts, onError }: SidebarProps) {
+  const { t } = useTranslation();
+
   try {
     const store = getStore();
     const { recommendedSavings, availableForSavings } = calculateRecommendedSavings();
@@ -48,7 +51,7 @@ export default function Sidebar({ accounts, onError }: SidebarProps) {
     const modifiedAccounts = [
       ...accounts,
       {
-        name: "Upcoming Payments",
+        name: t('accounts.upcomingPayments'),
         balance: totalUpcomingPayments,
         type: "upcoming" as const
       }
@@ -78,11 +81,11 @@ export default function Sidebar({ accounts, onError }: SidebarProps) {
     };
 
     const mainNavItems = [
-      { name: "Dashboard", icon: LayoutDashboard, path: "/app" },
-      { name: "Transactions", icon: LayoutList, path: "/app/transactions" },
-      { name: "Cash flow", icon: TrendingUp, path: "/app/cash-flow" },
-      { name: "Categories", icon: BarChart3, path: "/app/categories" },
-      { name: "Recurrings", icon: Clock, path: "/app/recurrings" },
+      { name: t('navigation.dashboard'), icon: LayoutDashboard, path: "/app" },
+      { name: t('navigation.transactions'), icon: LayoutList, path: "/app/transactions" },
+      { name: t('navigation.cashFlow'), icon: TrendingUp, path: "/app/cash-flow" },
+      { name: t('navigation.categories'), icon: BarChart3, path: "/app/categories" },
+      { name: t('navigation.recurring'), icon: Clock, path: "/app/recurrings" },
     ];
 
     return (
@@ -95,7 +98,7 @@ export default function Sidebar({ accounts, onError }: SidebarProps) {
               id="sidebar-search"
               name="sidebar-search"
               type="text"
-              placeholder="Search"
+              placeholder={t('common.search')}
               className="w-full bg-[#1A1F2E] border-none pl-8 text-sm h-9 placeholder:text-gray-500"
             />
           </div>
@@ -107,19 +110,19 @@ export default function Sidebar({ accounts, onError }: SidebarProps) {
             {/* Budget Overview Section */}
             <div className="mb-6 p-3 bg-[#1A1F2E] rounded-lg">
               <h3 className="text-xs font-semibold text-gray-400 uppercase mb-3">
-                Budget Overview
+                {t('dashboard.budgetSettings.title')}
               </h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Total Budget</span>
+                  <span className="text-sm">{t('dashboard.overview.totalBudget')}</span>
                   <span className="font-medium">{formatCurrency(totalBudget)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Spent</span>
+                  <span className="text-sm">{t('dashboard.overview.spentAmount')}</span>
                   <span className="text-red-400">{formatCurrency(totalSpent)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Remaining</span>
+                  <span className="text-sm">{t('dashboard.overview.remainingBalance')}</span>
                   <span className="text-green-400">{formatCurrency(remainingBudget)}</span>
                 </div>
                 <Progress 
@@ -133,23 +136,23 @@ export default function Sidebar({ accounts, onError }: SidebarProps) {
             {/* Savings Overview */}
             <div className="mb-6 p-3 bg-[#1A1F2E] rounded-lg">
               <h3 className="text-xs font-semibold text-gray-400 uppercase mb-3">
-                Savings Overview
+                {t('dashboard.savingsGoals.smartSavings.title')}
               </h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Current Savings</span>
+                  <span className="text-sm">{t('dashboard.savingsGoals.goal.currentAmount')}</span>
                   <span className="text-blue-400">{formatCurrency(recommendedSavings)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Recommended</span>
+                  <span className="text-sm">{t('dashboard.savingsGoals.smartSavings.recommendedSavings')}</span>
                   <span className="text-purple-400">{formatCurrency(recommendedSavings)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Available</span>
+                  <span className="text-sm">{t('dashboard.savingsGoals.smartSavings.availableForSavings')}</span>
                   <span className="text-green-400">{formatCurrency(availableForSavings)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Accumulated Savings</span>
+                  <span className="text-sm">{t('dashboard.savingsGoals.title')}</span>
                   <span className="text-green-400">
                     {formatCurrency(
                       (store.savingsGoals || []).reduce(
@@ -182,9 +185,9 @@ export default function Sidebar({ accounts, onError }: SidebarProps) {
                 <div key={type}>
                   <div className="flex items-center justify-between px-3 mb-2">
                     <h3 className="text-xs font-semibold text-gray-500 uppercase">
-                      {type === "credit" ? "Credit Cards" : 
-                       type === "upcoming" ? "Upcoming Payments" : 
-                       type === "investment" ? "Investments" : ""}
+                      {type === "credit" ? t('accounts.creditCard') : 
+                       type === "upcoming" ? t('accounts.upcomingPayments') : 
+                       type === "investment" ? t('accounts.investments') : ""}
                     </h3>
                     <span className="text-xs">▼</span>
                   </div>
@@ -206,7 +209,7 @@ export default function Sidebar({ accounts, onError }: SidebarProps) {
                     >
                       <div className="flex items-center space-x-3">
                         <CalendarDays className="h-4 w-4 text-yellow-400" />
-                        <span className="text-sm">Total Due</span>
+                        <span className="text-sm">{t('dashboard.payments.calendar.totalUpcoming')}</span>
                       </div>
                       <span className="text-sm text-yellow-400">
                         {formatCurrency(accounts[0].balance)}

@@ -1,0 +1,626 @@
+{
+  "common": {
+    "welcome": "Welcome to Sobrecitos",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "settings": "Settings",
+    "profile": "Profile",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "dashboard": "Dashboard",
+    "help": "Help",
+    "getStarted": "Get Started",
+    "tryItNow": "Try It Now",
+    "readMore": "Read More",
+    "viewAll": "View All",
+    "seeMore": "See More",
+    "tryFeatures": "Try AI Features"
+  },
+  "navigation": {
+    "home": "Home",
+    "budget": "Budget",
+    "expenses": "Expenses",
+    "reports": "Reports",
+    "blog": "Blog",
+    "faq": "FAQ",
+    "help": "Help Center",
+    "alternatives": "Alternatives",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "cashFlow": "Cash Flow",
+    "categories": "Categories",
+    "recurring": "Recurring"
+  },
+  "testimonials": {
+    "roles": {
+      "workingMom": "Working Mom",
+      "advisor": "Family Financial Advisor",
+      "stayAtHome": "Stay-at-home Parent"
+    },
+    "quotes": {
+      "diana": "This app has completely transformed how I manage our household expenses. The visual charts make it so easy to understand where our money goes.",
+      "william": "I use this app and recommend it to all my clients. It's the perfect balance of powerful features and ease of use.",
+      "emilia": "The recurring expenses feature saves me so much time. I can finally keep track of all our family's spending in one place."
+    }
+  },
+  "landing": {
+    "hero": {
+      "title": "Family Budget Manager",
+      "subtitle": "Take control of your family's finances with our easy-to-use, privacy-first budget tracker. Perfect for busy parents managing household expenses."
+    },
+    "whyChoose": {
+      "title": "Why Choose Sobrecitos?",
+      "subtitle": "It's easy to use and your financial data never leaves your device. Designed for families who value both simplicity and privacy in managing their budget."
+    },
+    "features": {
+      "private": {
+        "title": "100% Private & Secure",
+        "description": "All data is stored locally on your device, never in the cloud"
+      },
+      "smart": {
+        "title": "Smart Categorization",
+        "description": "Automatically organize expenses into customizable categories"
+      },
+      "visual": {
+        "title": "Visual Reports",
+        "description": "See your spending patterns with beautiful, intuitive charts"
+      },
+      "alerts": {
+        "title": "Budget Alerts",
+        "description": "Get notified when you're approaching category limits"
+      },
+      "sharing": {
+        "title": "Family Sharing",
+        "description": "Collaborate with family members on budget management"
+      },
+      "goals": {
+        "title": "Savings Goals",
+        "description": "Set and track financial goals for your family's future"
+      }
+    },
+    "privacy": {
+      "title": "Your Data Stays With You",
+      "description": "Unlike traditional budget apps that store your sensitive financial data in the cloud, Sobrecitos keeps everything securely on your device.",
+      "features": {
+        "offline": "100% offline storage - your data never leaves your device",
+        "noSharing": "No third-party data sharing or tracking",
+        "control": "Complete control over your financial information"
+      }
+    },
+    "ai": {
+      "title": "AI-Powered Financial Insights",
+      "subtitle": "Optional AI features to help you make smarter financial decisions while keeping your data private. Choose your preferred AI provider and maintain full control.",
+      "assistant": {
+        "title": "AI Financial Assistant",
+        "description": "Get personalized financial advice and insights powered by advanced AI technology:",
+        "features": {
+          "analysis": "Real-time budget analysis and recommendations",
+          "patterns": "Smart spending pattern detection",
+          "optimization": "Savings goals optimization",
+          "planning": "Future payment planning assistance"
+        },
+        "providers": {
+          "title": "Choose Your AI Provider:",
+          "openai": {
+            "name": "OpenAI",
+            "description": "Use GPT models with your API key"
+          },
+          "google": {
+            "name": "Google",
+            "description": "Connect to Gemini models"
+          },
+          "ollama": {
+            "name": "Ollama",
+            "description": "Run AI locally for complete privacy"
+          }
+        }
+      },
+      "chat": {
+        "title": "Interactive AI Chat",
+        "description": "Chat with your personal AI financial assistant that understands your unique situation:",
+        "features": {
+          "questions": "Ask questions about your finances",
+          "analysis": "Get detailed spending analysis",
+          "tips": "Receive custom financial tips",
+          "tracking": "Track progress towards goals"
+        }
+      },
+      "setup": {
+        "title": "Easy Setup:",
+        "apiKey": "Bring your own API key for OpenAI or Gemini",
+        "local": "Or use Ollama to run models locally on your device",
+        "control": "Full control over AI settings and model selection"
+      }
+    },
+    "testimonials": {
+      "title": "What Our Users Say",
+      "subtitle": "Join thousands of satisfied families who have transformed their financial management"
+    },
+    "alternatives": {
+      "title": "Sobrecitos as an Alternative",
+      "subtitle": "A better way to manage your family budget compared to traditional apps",
+      "comparison": {
+        "mint": {
+          "title": "vs. Mint",
+          "private": "100% private - data stays local",
+          "noAds": "No ads or upsells"
+        },
+        "ynab": {
+          "title": "vs. YNAB",
+          "affordable": "More affordable",
+          "easy": "No learning curve"
+        },
+        "everyDollar": {
+          "title": "vs. EveryDollar",
+          "automation": "Smart automation",
+          "ai": "Built-in AI features"
+        }
+      },
+      "cta": "See Full Comparison"
+    },
+    "blog": {
+      "title": "Latest from Our Blog",
+      "subtitle": "Stay updated with our latest tips and insights on family budget management",
+      "cta": "View All Posts"
+    },
+    "cta": {
+      "title": "Ready to Take Control of Your Family Budget?",
+      "subtitle": "Join thousands of families who are already managing their finances smarter with Sobrecitos",
+      "button": "Get Started Now"
+    }
+  },
+  "footer": {
+    "about": {
+      "title": "About Sobrecitos",
+      "description": "Making family budget management simple and effective for everyone."
+    },
+    "features": {
+      "title": "Features",
+      "items": {
+        "tracking": "Expense Tracking",
+        "planning": "Budget Planning",
+        "reports": "Visual Reports",
+        "sharing": "Family Sharing"
+      }
+    },
+    "resources": {
+      "title": "Resources"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookie Policy"
+    },
+    "copyright": "© 2024 Sobrecitos. All rights reserved."
+  },
+  "routes": {
+    "landing": "Home",
+    "blog": "Blog",
+    "blogPost": "Blog Post",
+    "faq": "FAQ",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "cookies": "Cookie Policy",
+    "alternatives": "Alternatives",
+    "app": {
+      "home": "Home",
+      "profile": "Profile",
+      "faq": "FAQ",
+      "help": "Help Center"
+    },
+    "preview": "Preview",
+    "loading": "Loading..."
+  },
+  "dashboard": {
+    "header": {
+      "title": "Budget Dashboard",
+      "subtitle": "Track and manage your household expenses",
+      "buttons": {
+        "exportData": "Export Data",
+        "importData": "Import Data",
+        "aiInsights": "AI Insights",
+        "addExpense": "Add Expense"
+      }
+    },
+    "alerts": {
+      "utilities": {
+        "title": "Utilities Alert",
+        "message": "You've spent {percent}% of your Utilities budget"
+      },
+      "salad": {
+        "title": "Salad Alert",
+        "message": "You've spent {percent}% of your Salad budget"
+      }
+    },
+    "overview": {
+      "totalBudget": "Total Budget",
+      "spentAmount": "Spent Amount",
+      "remainingBalance": "Remaining Balance",
+      "currency": "${amount}"
+    },
+    "expenseBreakdown": {
+      "title": "Expense Breakdown",
+      "timeframe": {
+        "select": "Select timeframe",
+        "week": "Week",
+        "month": "Month",
+        "year": "Year"
+      },
+      "tabs": {
+        "categorySplit": "Category Split",
+        "amountByCategory": "Amount by Category",
+        "dailySpending": "Daily Spending",
+        "trends": "Trends",
+        "insights": "Insights"
+      },
+      "ofTotal": "of total"
+    },
+    "transactions": {
+      "title": "Recent Transactions",
+      "recentExpenses": "Recent Expenses",
+      "addExpense": "Add Expense",
+      "sortByDate": "Sort by Date",
+      "sortByAmount": "Sort by Amount",
+      "allCategories": "All Categories",
+      "searchPlaceholder": "Search expenses...",
+      "noExpensesFound": "No expenses found matching your filters",
+      "filters": {
+        "minAmount": "Min Amount",
+        "maxAmount": "Max Amount",
+        "clearFilters": "Clear Filters"
+      },
+      "daysAgo": "{{count}} days ago",
+      "categories": {
+        "entertainment": "Entertainment",
+        "salad": "Salad",
+        "utilities": "Utilities",
+        "medical": "Medical",
+        "food": "Food & Dining"
+      },
+      "expenses": {
+        "cinema": "Cinema",
+        "operation": "Operation",
+        "repairs": "Repairs",
+        "dentist": "Dentist",
+        "diningOut": "Dining Out"
+      }
+    },
+    "budgetSettings": {
+      "title": "Budget Settings",
+      "subtitle": "Manage your monthly budget and additional income sources",
+      "monthlyOverview": {
+        "daysLeft": "Days Left in Month",
+        "monthEnds": "Month ends on",
+        "dailyBudget": "Daily Budget",
+        "remainingDaily": "remaining per day"
+      },
+      "monthlyBudget": {
+        "title": "Monthly Base Budget",
+        "editButton": "Edit Budget",
+        "saveButton": "Save"
+      },
+      "additionalIncome": {
+        "title": "Additional Income Sources",
+        "totalLabel": "Total Additional Income",
+        "addButton": "Add Income",
+        "dialog": {
+          "title": "Add Additional Income",
+          "description": "Description",
+          "descriptionPlaceholder": "Income description",
+          "amount": "Amount ($)",
+          "amountPlaceholder": "0.00",
+          "addButton": "Add Income"
+        }
+      },
+      "smartSavings": {
+        "title": "Smart Savings",
+        "autoDistribute": "Auto-Distribute Savings",
+        "recommended": "Recommended Monthly Savings",
+        "available": "Available for Savings",
+        "monthlyIncome": "Total Monthly Income",
+        "savingsRate": "Savings Rate"
+      }
+    },
+    "charts": {
+      "title": "Financial Overview",
+      "spendingTrends": "Spending Trends",
+      "budgetUsage": "Budget Usage",
+      "savingsProgress": "Savings Progress",
+      "noData": "No data available",
+      "loading": "Loading chart data..."
+    },
+    "alerts": {
+      "budgetWarning": {
+        "title": "Budget Warning",
+        "message": "You've used {percent}% of your budget"
+      },
+      "categoryLimit": {
+        "title": "Category Limit",
+        "message": "{category} spending is at {percent}%"
+      },
+      "savingsGoal": {
+        "title": "Savings Goal",
+        "message": "You're {percent}% towards your {goalName} goal"
+      }
+    },
+    "categories": {
+      "groceries": "Groceries",
+      "utilities": "Utilities",
+      "entertainment": "Entertainment",
+      "salad": "Salad",
+      "housing": "Housing",
+      "transportation": "Transportation",
+      "healthcare": "Healthcare",
+      "education": "Education",
+      "savings": "Savings",
+      "other": "Other",
+      "mantenimientocasa": "House Maintenance",
+      "doctores": "Doctors",
+      "clasesextra": "Extra Classes",
+      "renta": "Rent",
+      "juanis": "Juanis"
+    },
+    "payments": {
+      "calendar": {
+        "title": "Payment Calendar",
+        "addButton": "Add Future Payment",
+        "upcomingTitle": "Upcoming Payments",
+        "totalUpcoming": "Total Upcoming",
+        "schedulePayment": "Schedule Future Payment",
+        "scheduledPayments": "Scheduled Payments",
+        "description": "Description",
+        "descriptionPlaceholder": "e.g., Rent Payment",
+        "amount": "Amount ($)",
+        "dueDate": "Due Date",
+        "category": "Category",
+        "selectCategory": "Select category",
+        "addCategory": "Add Category",
+        "addPayment": "Add Payment",
+        "status": {
+          "paid": "Paid",
+          "pending": "Pending"
+        },
+        "tableHeaders": {
+          "description": "Description",
+          "dueDate": "Due Date",
+          "amount": "Amount",
+          "status": "Status"
+        }
+      }
+    },
+    "categoryManagement": {
+      "title": "Category Management",
+      "addCategory": "Add Category",
+      "transferBalance": "Transfer Balance",
+      "dialog": {
+        "title": "Add New Category",
+        "name": "Category Name",
+        "namePlaceholder": "Enter category name",
+        "budget": "Budget Amount",
+        "budgetPlaceholder": "Enter budget amount",
+        "color": "Category Color",
+        "recurring": "Recurring Monthly Expense",
+        "addButton": "Add Category"
+      },
+      "transfer": {
+        "title": "Transfer Balance",
+        "from": "From Category",
+        "to": "To Category",
+        "amount": "Amount to Transfer",
+        "button": "Transfer"
+      }
+    },
+    "savingsGoals": {
+      "title": "Savings Goals",
+      "subtitle": "Track your progress towards financial goals",
+      "addGoal": "Add Goal",
+      "dialog": {
+        "title": "Add New Savings Goal",
+        "name": "Goal Name",
+        "namePlaceholder": "e.g., Emergency Fund",
+        "targetAmount": "Target Amount ($)",
+        "deadline": "Deadline",
+        "color": "Color",
+        "addButton": "Add Goal"
+      },
+      "smartSavings": {
+        "title": "Smart Savings",
+        "autoDistribute": "Auto-Distribute Savings",
+        "recommendedSavings": "Recommended Monthly Savings",
+        "availableForSavings": "Available for Savings",
+        "monthlyIncome": "Total Monthly Income",
+        "savingsRate": "Savings Rate"
+      },
+      "goal": {
+        "daysLeft": "{{count}} days left",
+        "progress": "{{current}} of {{target}}",
+        "currentAmount": "Current amount",
+        "targetAmount": "Target amount",
+        "deadline": "Deadline",
+        "color": "Color",
+        "saveChanges": "Save Changes"
+      }
+    }
+  },
+  "accounts": {
+    "upcomingPayments": "Upcoming Payments",
+    "personalLoan": "Personal Loan",
+    "mortgage": "Mortgage",
+    "creditCard": "Credit Card",
+    "storeCredit": "Store Credit"
+  },
+  "errors": {
+    "sidebarLoading": "Error loading sidebar. Please refresh the page."
+  },
+  "helpCenter": {
+    "title": "Help Center",
+    "subtitle": "Find answers to common questions",
+    "searchPlaceholder": "Search for help articles...",
+    "quickAnswers": "Quick Answers",
+    "needHelp": "Still need help?",
+    "contactSupport": "Contact Support",
+    "categories": {
+      "gettingStarted": {
+        "title": "Getting Started",
+        "articles": {
+          "firstBudget": {
+            "title": "Setting up your first budget",
+            "content": "Learn how to set up your initial budget and customize it to your needs."
+          },
+          "dashboard": {
+            "title": "Understanding the dashboard",
+            "content": "Get familiar with the main dashboard and its key features."
+          },
+          "familyMembers": {
+            "title": "Adding family members",
+            "content": "Learn how to add and manage family members in your account."
+          }
+        }
+      },
+      "expenseManagement": {
+        "title": "Expense Management",
+        "articles": {
+          "addingExpenses": {
+            "title": "Adding expenses",
+            "content": "Learn how to add and categorize your expenses."
+          },
+          "recurringExpenses": {
+            "title": "Managing recurring expenses",
+            "content": "Set up and manage your recurring expenses efficiently."
+          },
+          "receipts": {
+            "title": "Handling receipts",
+            "content": "Learn how to upload and manage your expense receipts."
+          }
+        }
+      },
+      "savingsGoals": {
+        "title": "Savings Goals",
+        "articles": {
+          "creating": {
+            "title": "Creating savings goals",
+            "content": "Set up personalized savings goals for your future plans."
+          },
+          "distribution": {
+            "title": "Auto-distribution of savings",
+            "content": "Learn how to automatically distribute your savings across goals."
+          },
+          "progress": {
+            "title": "Tracking progress",
+            "content": "Monitor and track your progress towards savings goals."
+          }
+        }
+      },
+      "accountSettings": {
+        "title": "Account Settings",
+        "articles": {
+          "profile": {
+            "title": "Managing your profile",
+            "content": "Update and manage your account profile settings."
+          },
+          "currency": {
+            "title": "Currency settings",
+            "content": "Change your preferred currency and related settings."
+          },
+          "notifications": {
+            "title": "Notification preferences",
+            "content": "Customize your notification settings and alerts."
+          }
+        }
+      },
+      "familySharing": {
+        "title": "Family Sharing",
+        "articles": {
+          "adding": {
+            "title": "Adding family members",
+            "content": "Learn how to add and invite family members to your account."
+          },
+          "permissions": {
+            "title": "Managing permissions",
+            "content": "Set up and manage access permissions for family members."
+          },
+          "activity": {
+            "title": "Activity tracking",
+            "content": "Monitor and review family members' financial activities."
+          }
+        }
+      },
+      "privacySecurity": {
+        "title": "Privacy & Security",
+        "articles": {
+          "privacy": {
+            "title": "Privacy settings",
+            "content": "Manage your privacy preferences and data settings."
+          },
+          "security": {
+            "title": "Security features",
+            "content": "Learn about security features and best practices."
+          },
+          "backup": {
+            "title": "Data backup",
+            "content": "Understand how to backup and protect your financial data."
+          }
+        }
+      }
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to common questions about using Sobrecitos",
+    "questions": {
+      "dataSecurity": {
+        "question": "How secure is my financial information?",
+        "answer": "Your data is completely secure as it is stored locally on your device. We use strong encryption and never send your financial information to any servers."
+      },
+      "browserData": {
+        "question": "What happens to my data if I clear browser data?",
+        "answer": "If you clear browser data, your budget information will be deleted. We recommend regularly exporting your data as a backup using the Data Manager."
+      },
+      "backupData": {
+        "question": "How can I backup my budget data?",
+        "answer": "You can easily backup your data using the Export Data button in the dashboard. This creates a JSON file with all your budget information that you can securely store."
+      },
+      "familySharing": {
+        "question": "Can I share my budget with family members?",
+        "answer": "Yes, you can share your budget with family members. Each member can have their own access level and permissions to view or manage the budget."
+      },
+      "recurringExpenses": {
+        "question": "How do recurring expenses work?",
+        "answer": "Recurring expenses automatically repeat based on the specified schedule (weekly or monthly). The system will track these expenses and include them in your budget calculations."
+      },
+      "budgetAlerts": {
+        "question": "Can I set up budget alerts?",
+        "answer": "Yes, you can set up alerts for both overall budget and individual categories. You'll receive notifications when spending reaches certain thresholds."
+      },
+      "savingsTracking": {
+        "question": "How can I track my savings goals?",
+        "answer": "You can create and track multiple savings goals in the Savings Goals section. Set target amounts, deadlines, and monitor your progress with visual indicators."
+      },
+      "exportData": {
+        "question": "Can I export my budget data?",
+        "answer": "Yes, you can export your budget data at any time using the Data Manager. This creates a JSON file with all your budget information that you can backup or transfer."
+      },
+      "aiAssistant": {
+        "question": "How does the AI assistant help with budgeting?",
+        "answer": "The AI assistant analyzes your spending patterns and provides personalized recommendations for budget optimization, savings opportunities, and financial insights."
+      },
+      "categoryLimit": {
+        "question": "Is there a limit to how many categories I can create?",
+        "answer": "No, there is no limit to the number of budget categories you can create. You can add, edit, or remove categories as needed to match your budgeting style."
+      }
+    },
+    "support": {
+      "stillNeedHelp": "Still have questions?",
+      "contactSupport": "Contact our support team"
+    }
+  }
+} 

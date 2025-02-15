@@ -18,12 +18,14 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Alert, AlertDescription } from "../ui/alert";
+import { useTranslation } from "react-i18next";
 
 interface Category {
   id: string;
   name: string;
-  budget: number;
   color: string;
+  budget: number;
+  isRecurring?: boolean;
 }
 
 interface TransferBalanceDialogProps {
@@ -35,97 +37,99 @@ export function TransferBalanceDialog({
   categories,
   onTransfer,
 }: TransferBalanceDialogProps) {
-  const [open, setOpen] = React.useState(false);
-  const [fromCategory, setFromCategory] = React.useState("");
-  const [toCategory, setToCategory] = React.useState("");
-  const [amount, setAmount] = React.useState("");
+  const { t } = useTranslation();
+  const [fromCategory, setFromCategory] = React.useState<string>("");
+  const [toCategory, setToCategory] = React.useState<string>("");
+  const [amount, setAmount] = React.useState<string>("");
+  const [error, setError] = React.useState<string>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!fromCategory || !toCategory || !amount) return;
+  // Function to get the display name for a category
+  const getCategoryDisplayName = (categoryName: string) => {
+    return t(`dashboard.categories.${categoryName.toLowerCase()}`);
+  };
+
+  const handleTransfer = () => {
+    if (!fromCategory || !toCategory || !amount) {
+      setError(t('common.error.fillAllFields'));
+      return;
+    }
+
+    const fromCat = categories.find((c) => c.id === fromCategory);
+    if (!fromCat || fromCat.budget < Number(amount)) {
+      setError(t('common.error.insufficientBalance'));
+      return;
+    }
 
     onTransfer(fromCategory, toCategory, Number(amount));
-    setOpen(false);
     setFromCategory("");
     setToCategory("");
     setAmount("");
+    setError("");
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog>
       <DialogTrigger asChild>
-        <Button className="gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold">
-          Transfer Balance
+        <Button variant="outline" className="flex items-center gap-2">
+          {t('dashboard.categoryManagement.transferBalance')}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Transfer Category Balance</DialogTitle>
+          <DialogTitle>{t('dashboard.categoryManagement.transfer.title')}</DialogTitle>
         </DialogHeader>
-        <Alert>
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            Transferring balances between categories should be used sparingly as
-            it can affect your budget planning. Consider reviewing your budget
-            allocations instead.
-          </AlertDescription>
-        </Alert>
-        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+        <div className="space-y-4 pt-4">
           <div className="space-y-2">
-            <Label>From Category</Label>
+            <Label>{t('dashboard.categoryManagement.transfer.from')}</Label>
             <Select value={fromCategory} onValueChange={setFromCategory}>
               <SelectTrigger>
-                <SelectValue placeholder="Select source category" />
+                <SelectValue placeholder={t('dashboard.categoryManagement.transfer.from')} />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    {cat.name} (${cat.budget})
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {getCategoryDisplayName(category.name)} (${category.budget.toFixed(2)})
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>To Category</Label>
+            <Label>{t('dashboard.categoryManagement.transfer.to')}</Label>
             <Select value={toCategory} onValueChange={setToCategory}>
               <SelectTrigger>
-                <SelectValue placeholder="Select destination category" />
+                <SelectValue placeholder={t('dashboard.categoryManagement.transfer.to')} />
               </SelectTrigger>
               <SelectContent>
                 {categories
-                  .filter((cat) => cat.id !== fromCategory)
-                  .map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.name} (${cat.budget})
+                  .filter((c) => c.id !== fromCategory)
+                  .map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {getCategoryDisplayName(category.name)} (${category.budget.toFixed(2)})
                     </SelectItem>
                   ))}
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Amount ($)</Label>
+            <Label>{t('dashboard.categoryManagement.transfer.amount')}</Label>
             <Input
               type="number"
-              placeholder="0.00"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              min="0"
-              step="0.01"
-              required
+              placeholder="0.00"
             />
           </div>
-          <div className="flex justify-end gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit">Transfer</Button>
-          </div>
-        </form>
+          {error && (
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          <Button onClick={handleTransfer} className="w-full">
+            {t('dashboard.categoryManagement.transfer.button')}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

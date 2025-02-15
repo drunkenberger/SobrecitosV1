@@ -34,8 +34,10 @@ import { AuthDialog } from "./auth/AuthDialog";
 import { AIInsightsDialog } from "./budget/AIInsightsDialog";
 import { getCurrentUser } from "@/lib/auth";
 import { AIChatWindow } from "./budget/AIChatWindow";
+import { useTranslation } from 'react-i18next';
 
 const Home = () => {
+  const { t } = useTranslation();
   const [showAuth, setShowAuth] = React.useState(!getCurrentUser());
   const [store, setStore] = React.useState(getStore());
   const [showSettings, setShowSettings] = React.useState(false);
@@ -148,10 +150,10 @@ const Home = () => {
               />
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tight">
-                  Budget Dashboard
+                  {t('dashboard.header.title')}
                 </h1>
                 <p className="text-blue-100">
-                  Track and manage your household expenses
+                  {t('dashboard.header.subtitle')}
                 </p>
               </div>
             </div>
@@ -184,7 +186,7 @@ const Home = () => {
             <div className="flex items-center gap-3">
               <Wallet className="w-5 h-5 text-green-600 dark:text-green-400" />
               <h3 className="text-lg font-medium text-green-800 dark:text-green-300">
-                Total Budget
+                {t('dashboard.overview.totalBudget')}
               </h3>
             </div>
             <p className="text-3xl font-bold text-green-700 dark:text-green-200 mt-2">
@@ -195,7 +197,7 @@ const Home = () => {
             <div className="flex items-center gap-3">
               <PieChart className="w-5 h-5 text-red-600 dark:text-red-400" />
               <h3 className="text-lg font-medium text-red-800 dark:text-red-300">
-                Spent Amount
+                {t('dashboard.overview.spentAmount')}
               </h3>
             </div>
             <p className="text-3xl font-bold text-red-700 dark:text-red-200 mt-2">
@@ -206,7 +208,7 @@ const Home = () => {
             <div className="flex items-center gap-3">
               <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               <h3 className="text-lg font-medium text-blue-800 dark:text-blue-300">
-                Remaining Balance
+                {t('dashboard.overview.remainingBalance')}
               </h3>
             </div>
             <p className="text-3xl font-bold text-blue-700 dark:text-blue-200 mt-2">
@@ -317,6 +319,7 @@ const Home = () => {
               onAddGoal={handleAddSavingsGoal}
               onUpdateGoal={handleUpdateSavingsGoal}
               onDeleteGoal={handleDeleteSavingsGoal}
+              monthlyIncome={totalBudget}
             />
           </div>
         </div>
@@ -327,49 +330,48 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h3 className="font-semibold mb-4">About Sobrecitos</h3>
+              <h3 className="font-semibold mb-4">{t('footer.about.title')}</h3>
               <p className="text-sm text-muted-foreground">
-                Making family budget management simple and effective for
-                everyone.
+                {t('footer.about.description')}
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Features</h3>
+              <h3 className="font-semibold mb-4">{t('footer.features.title')}</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Expense Tracking</li>
-                <li>Budget Planning</li>
-                <li>Visual Reports</li>
-                <li>Family Sharing</li>
+                <li>{t('footer.features.items.tracking')}</li>
+                <li>{t('footer.features.items.planning')}</li>
+                <li>{t('footer.features.items.reports')}</li>
+                <li>{t('footer.features.items.sharing')}</li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Resources</h3>
+              <h3 className="font-semibold mb-4">{t('footer.resources.title')}</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <Link to="/app/help" className="hover:text-primary">
-                    Help Center
+                  <Link to="/help-center" className="hover:text-primary">
+                    {t('navigation.help')}
                   </Link>
                 </li>
-                <li>Blog</li>
+                <li>{t('navigation.blog')}</li>
                 <li>
                   <Link to="/app/faq" className="hover:text-primary">
-                    FAQs
+                    {t('navigation.faq')}
                   </Link>
                 </li>
-                <li>Contact</li>
+                <li>{t('navigation.contact')}</li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Legal</h3>
+              <h3 className="font-semibold mb-4">{t('footer.legal.title')}</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Privacy Policy</li>
-                <li>Terms of Service</li>
-                <li>Cookie Policy</li>
+                <li>{t('footer.legal.privacy')}</li>
+                <li>{t('footer.legal.terms')}</li>
+                <li>{t('footer.legal.cookies')}</li>
               </ul>
             </div>
           </div>
           <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Sobrecitos. All rights reserved.
+            © {new Date().getFullYear()} {t('footer.copyright')}
           </div>
         </div>
       </footer>

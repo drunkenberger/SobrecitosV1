@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -14,6 +15,7 @@ import { getAIInsights, getAISettings } from "@/lib/ai";
 import { AISettingsDialog } from "./AISettingsDialog";
 
 export function AIInsightsDialog() {
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [insights, setInsights] = React.useState<string | null>(null);
@@ -51,7 +53,7 @@ export function AIInsightsDialog() {
             }}
           >
             <Sparkles className="w-4 h-4" />
-            AI Insights
+            {t('dashboard.header.buttons.aiInsights')}
           </Button>
         </DialogTrigger>
         <DialogContent className="max-w-2xl">
