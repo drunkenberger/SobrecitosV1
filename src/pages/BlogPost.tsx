@@ -4,8 +4,9 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar } from "lucide-react";
 import { WordPressPost } from "@/types/wordpress";
-import { getPost } from "@/lib/wordpress";
+import { getPostBySlug } from "@/lib/wordpress";
 import { cn } from "@/lib/utils";
+import SEO from "@/components/SEO";
 
 const getFeaturedImageUrl = (post: WordPressPost) => {
   const media = post._embedded?.['wp:featuredmedia']?.[0];
@@ -22,17 +23,17 @@ const getFeaturedImageUrl = (post: WordPressPost) => {
 };
 
 export default function BlogPost() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<WordPressPost | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPost = async () => {
-      if (!id) return;
+      if (!slug) return;
       
       try {
         setLoading(true);
-        const postData = await getPost(parseInt(id, 10));
+        const postData = await getPostBySlug(slug);
         setPost(postData);
       } catch (error) {
         console.error("Error fetching post:", error);
@@ -42,7 +43,7 @@ export default function BlogPost() {
     };
 
     fetchPost();
-  }, [id]);
+  }, [slug]);
 
   if (loading) {
     return (
@@ -81,39 +82,49 @@ export default function BlogPost() {
   const featuredImageUrl = getFeaturedImageUrl(post);
 
   return (
-    <div className="min-h-screen bg-background py-16">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Card className="overflow-hidden">
-          <article className="p-8">
-            <div className="text-center space-y-4 mb-8">
-              <h1 
-                className="text-3xl sm:text-4xl font-bold text-foreground leading-tight"
-                dangerouslySetInnerHTML={{ __html: post.title.rendered }}
-              />
-              <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground border-b border-border pb-6">
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  {new Date(post.date).toLocaleDateString()}
-                </span>
-              </div>
-            </div>
-
-            {featuredImageUrl && (
-              <div className="relative w-full h-[400px] overflow-hidden rounded-lg mb-8">
-                <img
-                  src={featuredImageUrl}
-                  alt={post._embedded?.['wp:featuredmedia']?.[0]?.alt_text || post.title.rendered}
-                  className="w-full h-full object-cover"
+    <div>
+      {post && (
+        <SEO 
+          title={`${post.title.rendered} - Sobrecitos Blog`}
+          description={post.excerpt.rendered.replace(/<[^>]*>/g, '').slice(0, 160)}
+          keywords={`family budget, money management, financial planning, ${post.title.rendered.toLowerCase()}, personal finance tips, household budgeting`}
+          image={post._embedded?.['wp:featuredmedia']?.[0]?.source_url}
+        />
+      )}
+      <div className="min-h-screen bg-background py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Card className="overflow-hidden">
+            <article className="p-8">
+              <div className="text-center space-y-4 mb-8">
+                <h1 
+                  className="text-3xl sm:text-4xl font-bold text-foreground leading-tight"
+                  dangerouslySetInnerHTML={{ __html: post.title.rendered }}
                 />
+                <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground border-b border-border pb-6">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-4 h-4" />
+                    {new Date(post.date).toLocaleDateString()}
+                  </span>
+                </div>
               </div>
-            )}
 
-            <div
-              className="wordpress-content"
-              dangerouslySetInnerHTML={{ __html: post.content.rendered }}
-            />
-          </article>
-        </Card>
+              {featuredImageUrl && (
+                <div className="relative w-full h-[400px] overflow-hidden rounded-lg mb-8">
+                  <img
+                    src={featuredImageUrl}
+                    alt={post._embedded?.['wp:featuredmedia']?.[0]?.alt_text || post.title.rendered}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+
+              <div
+                className="wordpress-content"
+                dangerouslySetInnerHTML={{ __html: post.content.rendered }}
+              />
+            </article>
+          </Card>
+        </div>
       </div>
     </div>
   );

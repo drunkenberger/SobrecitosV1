@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, Wallet, PieChart, TrendingUp, Target } from "lucide-react";
 import ExpenseChart from "@/components/budget/ExpenseChart";
+import SEO from "@/components/SEO";
 
 export default function Profile() {
   const user = getCurrentUser();
@@ -41,6 +42,11 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-background py-12">
+      <SEO 
+        title="My Profile - Sobrecitos Budget Manager"
+        description="Manage your Sobrecitos profile settings, preferences, and personal budget configurations. Customize your family finance management experience."
+        keywords="budget profile, personal settings, financial preferences, account management, budget customization, family finance settings"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Profile Header */}
         <div className="flex items-center gap-6 mb-8">

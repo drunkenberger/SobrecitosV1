@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { getPosts } from "@/lib/wordpress";
 import { WordPressPost } from "@/types/wordpress";
 import { cn } from "@/lib/utils";
+import SEO from "@/components/SEO";
 
 export default function Landing() {
   const [posts, setPosts] = useState<WordPressPost[]>([]);
@@ -104,6 +105,11 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Sobrecitos - Smart Family Budget Management Made Simple"
+        description="Take control of your family's finances with Sobrecitos. A secure, private budget manager that helps you track expenses, set goals, and make smarter financial decisions."
+        keywords="family budget app, expense tracker, financial planning, household finances, budget management, savings goals, private budgeting"
+      />
       <Hero />
       {/* Benefits Section */}
       <section className="py-20 bg-muted/50">
@@ -441,7 +447,7 @@ export default function Landing() {
                         key={post.id}
                         className="group overflow-hidden hover:shadow-xl transition-all duration-300"
                       >
-                        <Link to={`/blog/${post.id}`} className="block">
+                        <Link to={`/blog/${post.slug}`} className="block">
                           {featuredImageUrl ? (
                             <div className="relative w-full h-48 overflow-hidden">
                               <img

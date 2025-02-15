@@ -46,6 +46,28 @@ export async function getPost(id: number): Promise<WordPressPost> {
   }
 }
 
+export async function getPostBySlug(slug: string): Promise<WordPressPost> {
+  try {
+    const url = `${WORDPRESS_API_URL}/posts?slug=${slug}&_embed`;
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch post');
+    }
+
+    const posts = await response.json();
+    
+    if (!Array.isArray(posts) || posts.length === 0) {
+      throw new Error('Post not found');
+    }
+
+    return posts[0]; // WordPress returns an array, but we only need the first post
+  } catch (error) {
+    console.error('Error fetching post by slug:', error);
+    throw error;
+  }
+}
+
 export interface WordPressCategory {
   id: number;
   name: string;

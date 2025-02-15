@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CheckCircle2, XCircle, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import SEO from "@/components/SEO";
 
 export default function Alternatives() {
   const comparisons = [
@@ -63,6 +64,11 @@ export default function Alternatives() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Sobrecitos vs Other Budget Apps - Compare Family Budget Tools"
+        description="Compare Sobrecitos with other popular budget management apps. See why our private, family-focused approach to budgeting stands out from alternatives."
+        keywords="budget app comparison, YNAB alternative, Mint alternative, EveryDollar alternative, family budget software, private budgeting apps, budget tool comparison"
+      />
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-[#FFD700]/10 to-[#556B2F]/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
