@@ -9,19 +9,8 @@ import {
   X,
   Minimize2,
   Maximize2,
-  Image,
-  Globe,
-  Settings,
-  Paperclip,
 } from "lucide-react";
-import { getAISettings, AI_PROVIDERS, setAISettings } from "@/lib/ai";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { getAISettings, AI_PROVIDERS } from "@/lib/ai";
 import { AISettingsDialog } from "./AISettingsDialog";
 
 interface Message {
@@ -31,55 +20,15 @@ interface Message {
   timestamp: Date;
 }
 
-interface Income {
-  amount: number;
-  date: string;
-}
-
 interface Expense {
   amount: number;
-  date: string;
   category: string;
-  isRecurring?: boolean;
-  description?: string;
-  recurringType?: string;
-}
-
-interface Category {
-  name: string;
-  isRecurring?: boolean;
-  budget: number;
-}
-
-interface SavingsGoal {
-  name: string;
-  targetAmount: number;
-  currentAmount: number;
-  deadline: string;
-}
-
-interface FuturePayment {
-  description: string;
-  amount: number;
-  dueDate: string;
-  isPaid: boolean;
-  category?: string;
-}
-
-interface Store {
-  monthlyBudget: number;
-  additionalIncomes: Income[];
-  expenses: Expense[];
-  categories: Category[];
-  savingsGoals: SavingsGoal[];
-  futurePayments: FuturePayment[];
 }
 
 export function AIChatWindow() {
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [input, setInput] = React.useState("");
   const [minimized, setMinimized] = React.useState(() => {
-    // Get minimized state from localStorage, default to true (minimized)
     const saved = localStorage.getItem("ai_chat_minimized");
     return saved === null ? true : saved === "true";
   });
@@ -96,9 +45,6 @@ export function AIChatWindow() {
 
   const settings = getAISettings();
   const selectedProvider = AI_PROVIDERS.find((p) => p.id === settings.provider);
-  const selectedModel = selectedProvider?.models.find(
-    (m) => m.id === settings.model,
-  );
 
   // Show settings dialog if AI is not configured
   React.useEffect(() => {
@@ -154,114 +100,18 @@ export function AIChatWindow() {
 
       // Get budget data for context
       const store = JSON.parse(localStorage.getItem("budget_store") || "{}");
-      const totalBudget = store.monthlyBudget + (store.additionalIncomes || []).reduce(
-        (sum: number, inc: Income) => sum + inc.amount,
-        0,
-      );
+      const totalBudget = store.monthlyBudget;
       const spentAmount = (store.expenses || []).reduce(
         (sum: number, exp: Expense) => sum + exp.amount,
-        0,
-      );
-      const remainingBalance = totalBudget - spentAmount;
-
-      // Calculate additional incomes
-      const additionalIncomesTotal = (store.additionalIncomes || []).reduce(
-        (sum: number, inc: Income) => sum + inc.amount,
         0
       );
 
-      // Process expenses with dates and categories
-      const expenses = (store.expenses || []).map((exp: Expense) => ({
-        amount: exp.amount,
-        category: exp.category,
-        description: exp.description,
-        date: new Date(exp.date).toLocaleDateString(),
-        isRecurring: exp.isRecurring,
-        recurringType: exp.recurringType,
-      }));
-
-      // Get recent expenses (last 30 days)
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      const recentExpenses = expenses.filter(
-        (exp: Expense) => new Date(exp.date) >= thirtyDaysAgo
-      );
-
-      // Calculate category spending
-      const categorySpending = (store.categories || []).map((cat: Category) => ({
-        name: cat.name,
-        budget: cat.budget,
-        spent: expenses
-          .filter((exp: Expense) => exp.category === cat.name)
-          .reduce((sum: number, exp: Expense) => sum + exp.amount, 0),
-        isRecurring: cat.isRecurring,
-      }));
-
-      // Process savings goals
-      const savingsGoals = (store.savingsGoals || []).map((goal: SavingsGoal) => ({
-        name: goal.name,
-        targetAmount: goal.targetAmount,
-        currentAmount: goal.currentAmount,
-        deadline: new Date(goal.deadline).toLocaleDateString(),
-        progress: ((goal.currentAmount / goal.targetAmount) * 100).toFixed(1) + '%'
-      }));
-
-      // Process future payments
-      const futurePayments = (store.futurePayments || []).map((payment: FuturePayment) => ({
-        description: payment.description,
-        amount: payment.amount,
-        dueDate: new Date(payment.dueDate).toLocaleDateString(),
-        category: payment.category,
-        isPaid: payment.isPaid
-      }));
-
-      // Calculate recurring expenses total
-      const recurringExpensesTotal = (store.expenses || [])
-        .filter((exp: Expense) => exp.isRecurring)
-        .reduce((sum: number, exp: Expense) => sum + exp.amount, 0);
-
-      // Update the string template functions
-      const categoryList = (store.categories || []).map((cat: Category) => 
-        `• ${cat.name}${cat.isRecurring ? ' (Recurring)' : ''}`
-      ).join('\n');
-
-      const goalsList = (store.savingsGoals || []).map((goal: SavingsGoal) => 
-        `• ${goal.name}
-        Target: $${goal.targetAmount}
-        Current: $${goal.currentAmount}
-        Progress: ${((goal.currentAmount / goal.targetAmount) * 100).toFixed(1)}%
-        Deadline: ${goal.deadline}`
-      ).join('\n');
-
-      const upcomingPaymentsList = (store.futurePayments || [])
-        .filter((payment: FuturePayment) => !payment.isPaid)
-        .map((payment: FuturePayment) => 
-          `• ${payment.description}
-          Amount: $${payment.amount}
-          Due: ${payment.dueDate}`
-        ).join('\n');
-
-      const recentExpensesTotal = recentExpenses.reduce(
-        (sum: number, exp: Expense) => sum + exp.amount,
-        0
-      );
-
-      const context = `Here's your complete financial data. Please provide specific advice based on this information:
-
-Monthly Budget: $${store.monthlyBudget}
-Total Recent Spending: $${recentExpensesTotal.toLocaleString()}
-Recurring Expenses: $${recurringExpensesTotal.toLocaleString()}
-
-Categories:
-${categoryList}
-
-Savings Goals:
-${goalsList}
-
-Upcoming Payments:
-${upcomingPaymentsList}
-
-Please analyze this data and provide personalized financial advice.`;
+      // Use only what's needed for the AI context
+      const context = {
+        totalBudget,
+        spentAmount,
+        message: input
+      };
 
       switch (settings.provider) {
         case "openai":
@@ -397,9 +247,7 @@ ${context}`,
 
   return (
     <>
-      <Card
-        className={`fixed bottom-4 right-4 w-[400px] ${minimized ? "h-[60px]" : "h-[500px]"} shadow-xl transition-all duration-300 ease-in-out z-50 bg-background`}
-      >
+      <Card className={`fixed bottom-4 right-4 w-[400px] ${minimized ? "h-[60px]" : "h-[500px]"} shadow-xl transition-all duration-300 ease-in-out z-50 bg-background`}>
         <div className="flex items-center justify-between p-4 border-b bg-primary text-primary-foreground">
           <div className="flex items-center gap-2">
             <Bot className="w-5 h-5" />
@@ -442,41 +290,7 @@ ${context}`,
               </div>
             ) : (
               <>
-                <div className="p-2 border-b flex items-center gap-2">
-                  <Select
-                    value={settings.model}
-                    onValueChange={(value) => {
-                      const newSettings = { ...settings, model: value };
-                      setAISettings(newSettings);
-                    }}
-                  >
-                    <SelectTrigger className="flex-1">
-                      <SelectValue placeholder="Select AI model" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {selectedProvider?.models.map((model) => (
-                        <SelectItem key={model.id} value={model.id}>
-                          {model.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => setShowSettings(true)}
-                  >
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                <ScrollArea
-                  className="flex-1 p-4 h-[330px]"
-                  ref={scrollRef}
-                  scrollable={true}
-                >
+                <ScrollArea className="flex-1 p-4 h-[330px]" ref={scrollRef}>
                   <div className="space-y-4">
                     {messages.map((message) => (
                       <div
@@ -513,7 +327,7 @@ ${context}`,
                   </div>
                 </ScrollArea>
 
-                <div className="p-4 border-t space-y-2">
+                <div className="p-4 border-t">
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
@@ -532,22 +346,6 @@ ${context}`,
                       <Send className="h-4 w-4" />
                     </Button>
                   </form>
-
-                  <div className="flex items-center gap-2 justify-end">
-                    {selectedModel?.capabilities.imageRecognition && (
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <Image className="h-4 w-4" />
-                      </Button>
-                    )}
-                    {selectedModel?.capabilities.webBrowsing && (
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <Globe className="h-4 w-4" />
-                      </Button>
-                    )}
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <Paperclip className="h-4 w-4" />
-                    </Button>
-                  </div>
                 </div>
               </>
             )}
@@ -560,7 +358,6 @@ ${context}`,
         onOpenChange={setShowSettings}
         onSave={() => {
           setShowSettings(false);
-          // Refresh settings after save
           const newSettings = getAISettings();
           if (newSettings.enabled && messages.length === 0) {
             setMessages([

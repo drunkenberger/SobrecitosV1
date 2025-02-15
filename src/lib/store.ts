@@ -48,6 +48,13 @@ export interface FuturePayment {
   isPaid: boolean;
 }
 
+export interface BudgetAlert {
+  type: 'category' | 'overall';
+  category?: string;
+  percentage: number;
+  severity: 'warning' | 'danger';
+}
+
 interface BudgetStore {
   monthlyBudget: number;
   additionalIncomes: Income[];
@@ -222,46 +229,42 @@ export const updateFuturePayment = (
   setStore(store);
 };
 
-export const getBudgetAlerts = () => {
+export function getBudgetAlerts(): BudgetAlert[] {
   const store = getStore();
-  const alerts = [];
+  const alerts: BudgetAlert[] = [];
 
-  const totalSpent = store.expenses.reduce((sum, exp) => sum + exp.amount, 0);
-  const totalBudget =
-    store.monthlyBudget +
-    store.additionalIncomes.reduce((sum, inc) => sum + inc.amount, 0);
+  // Check overall budget
+  const totalSpent = (store.expenses || []).reduce((sum, exp) => sum + exp.amount, 0);
+  const totalBudget = store.monthlyBudget;
+  const overallPercentage = (totalSpent / totalBudget) * 100;
 
-  const totalPercentage = Math.round((totalSpent / totalBudget) * 100);
-  
-  if (totalSpent > totalBudget * 0.9) {
+  if (overallPercentage >= 90) {
     alerts.push({
-      type: "overall",
-      percentage: totalPercentage,
-      severity: totalSpent > totalBudget ? "high" : "medium",
+      type: 'overall',
+      percentage: overallPercentage,
+      severity: overallPercentage >= 100 ? 'danger' : 'warning'
     });
   }
 
-  store.categories.forEach((cat) => {
-    const categorySpent = store.expenses
-      .filter((exp) => exp.category === cat.name)
+  // Check category budgets
+  (store.categories || []).forEach(category => {
+    const categorySpent = (store.expenses || [])
+      .filter(exp => exp.category === category.name)
       .reduce((sum, exp) => sum + exp.amount, 0);
-    
-    const categoryPercentage = Math.round((categorySpent / cat.budget) * 100);
+    const categoryPercentage = (categorySpent / category.budget) * 100;
 
-    if (categorySpent > cat.budget * 0.9) {
+    if (categoryPercentage >= 90) {
       alerts.push({
-        type: "category",
-        category: cat.name,
+        type: 'category',
+        category: category.name,
         percentage: categoryPercentage,
-        spent: categorySpent,
-        budget: cat.budget,
-        severity: categorySpent > cat.budget ? "high" : "medium",
+        severity: categoryPercentage >= 100 ? 'danger' : 'warning'
       });
     }
   });
 
   return alerts;
-};
+}
 
 export const calculateRecommendedSavings = () => {
   const store = getStore();

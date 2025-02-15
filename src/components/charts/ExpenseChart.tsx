@@ -1,40 +1,33 @@
 import { useTranslation } from 'react-i18next';
 
 interface ExpenseData {
-  groceries: number;
-  utilities: number;
-  entertainment: number;
-  salad: number;
+  [key: string]: number;
 }
-
-const colors = {
-  groceries: '#4CAF50',
-  utilities: '#2196F3',
-  entertainment: '#FFC107',
-  salad: '#F44336'
-};
 
 export function ExpenseChart({ data }: { data: ExpenseData }) {
   const { t } = useTranslation();
-
-  const categories = {
-    groceries: t('dashboard.categories.groceries'),
-    utilities: t('dashboard.categories.utilities'),
-    entertainment: t('dashboard.categories.entertainment'),
-    salad: t('dashboard.categories.salad')
-  };
+  const total = Object.values(data).reduce((sum, amount) => sum + amount, 0);
 
   return (
-    <div>
-      {/* Your chart implementation */}
-      <div className="legend">
-        {Object.entries(categories).map(([key, label]) => (
-          <div key={key} className="legend-item">
-            <span className="legend-color" style={{ backgroundColor: colors[key as keyof typeof colors] }}></span>
-            <span>{label}</span>
+    <div className="space-y-4">
+      {Object.entries(data).map(([category, amount]) => {
+        const percentage = total > 0 ? (amount / total) * 100 : 0;
+        return (
+          <div key={category} className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: `hsl(${Math.random() * 360}, 70%, 50%)` }}
+              />
+              <span>{t(`dashboard.categories.${category.toLowerCase()}`)}</span>
+            </div>
+            <div className="text-right">
+              <div>${amount.toLocaleString()}</div>
+              <div className="text-sm text-muted-foreground">{percentage.toFixed(1)}%</div>
+            </div>
           </div>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 } 

@@ -1,5 +1,6 @@
+import { Card } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddFuturePaymentDialog } from "./AddFuturePaymentDialog";
 import {
   Table,
@@ -10,12 +11,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { CalendarDays, DollarSign } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { es } from 'date-fns/locale';
 import { format } from "date-fns";
-import { enUS } from 'date-fns/locale';
 
 interface FuturePayment {
   id: string;
@@ -66,14 +65,14 @@ export default function FuturePayments({
   const { t, i18n } = useTranslation();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
-  // Get the appropriate locale based on language
-  const getLocale = () => {
-    return i18n.language === 'es' ? es : enUS;
+  // Update the getLocale function
+  const getLocale = (language: string) => {
+    return language === 'es' ? es : undefined;
   };
 
   // Format date based on locale
   const formatDate = (date: Date) => {
-    return format(date, 'PP', { locale: getLocale() });
+    return format(date, 'PP', { locale: getLocale(i18n.language) });
   };
 
   // Calculate total upcoming payments
@@ -106,15 +105,15 @@ export default function FuturePayments({
               mode="single"
               selected={selectedDate}
               onSelect={setSelectedDate}
-              locale={getLocale()}
+              locale={getLocale(i18n.language)}
               weekStartsOn={i18n.language === 'es' ? 1 : 0}
               className="rounded-md border"
               formatters={{
                 formatWeekdayName: (date) => {
-                  return format(date, 'EEEEE', { locale: getLocale() });
+                  return format(date, 'EEEEE', { locale: getLocale(i18n.language) });
                 },
                 formatCaption: (date) => {
-                  return format(date, 'LLLL yyyy', { locale: getLocale() });
+                  return format(date, 'LLLL yyyy', { locale: getLocale(i18n.language) });
                 }
               }}
             />

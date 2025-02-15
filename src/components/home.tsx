@@ -1,15 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import DataManager from "./budget/DataManager";
-import DashboardHeader from "./budget/DashboardHeader";
 import ExpenseChart from "./budget/ExpenseChart";
-import ExpenseForm from "./budget/ExpenseForm";
+import { ExpenseForm } from "@/components/forms/ExpenseForm";
 import CategoryManager from "./budget/CategoryManager";
 import BudgetManager from "./budget/BudgetManager";
 import SavingsGoals from "./budget/SavingsGoals";
 import BudgetAlerts from "./budget/BudgetAlerts";
 import ExpenseList from "./budget/ExpenseList";
-import { Card } from "./ui/card";
+import { Card } from "@/components/ui/card";
 import {
   getStore,
   updateMonthlyBudget,
@@ -18,7 +17,6 @@ import {
   addCategory,
   updateCategory,
   deleteCategory,
-  addExpense,
   deleteExpense,
   addSavingsGoal,
   updateSavingsGoal,
@@ -26,21 +24,21 @@ import {
   addFuturePayment,
   updateFuturePayment,
 } from "@/lib/store";
-import { Sparkles, Wallet, PieChart, ListChecks, Bot } from "lucide-react";
+import { Sparkles, Wallet, PieChart, ListChecks } from "lucide-react";
 import FuturePayments from "./budget/FuturePayments";
-import { Button } from "./ui/button";
-
 import { AuthDialog } from "./auth/AuthDialog";
 import { AIInsightsDialog } from "./budget/AIInsightsDialog";
 import { getCurrentUser } from "@/lib/auth";
 import { AIChatWindow } from "./budget/AIChatWindow";
 import { useTranslation } from 'react-i18next';
+import type { Category } from "@/types/category";
+import type { Expense } from "@/types/expense";
 
 const Home = () => {
   const { t } = useTranslation();
   const [showAuth, setShowAuth] = React.useState(!getCurrentUser());
   const [store, setStore] = React.useState(getStore());
-  const [showSettings, setShowSettings] = React.useState(false);
+  const [categories] = React.useState<Category[]>(store.categories || []);
 
   React.useEffect(() => {
     if (!getCurrentUser()) {
@@ -163,10 +161,9 @@ const Home = () => {
                 <AIInsightsDialog />
               </div>
               <ExpenseForm
-                categories={store.categories || []}
-                onSubmit={(expense) => {
-                  addExpense(expense);
-                  refreshStore();
+                categories={categories}
+                onSubmit={(expense: Expense) => {
+                  console.log('New expense:', expense);
                 }}
               />
             </div>
@@ -239,10 +236,9 @@ const Home = () => {
                   </h2>
                 </div>
                 <ExpenseForm
-                  categories={store.categories || []}
-                  onSubmit={(expense) => {
-                    addExpense(expense);
-                    refreshStore();
+                  categories={categories}
+                  onSubmit={(expense: Expense) => {
+                    console.log('New expense:', expense);
                   }}
                 />
               </div>

@@ -1,11 +1,10 @@
-import { useTranslation } from 'react-i18next';
 import {
   Card,
-  CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from '@/components/ui/card';
+import { useTranslation } from "react-i18next";
 
 interface BudgetOverviewProps {
   totalBudget: number;

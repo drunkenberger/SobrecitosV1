@@ -1,250 +1,200 @@
 import React from "react";
-import { Card } from "../ui/card";
-import { Progress } from "../ui/progress";
 import { Button } from "../ui/button";
+import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { ScrollArea } from "../ui/scroll-area";
-import { Target, Plus, X, Edit2, Save, Calendar, Sparkles } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-import {
-  SavingsGoal,
-  calculateRecommendedSavings,
-  distributeAutoSavings,
-} from "@/lib/store";
-import { useTranslation } from 'react-i18next';
+import { Progress } from "../ui/progress";
+import { X, Edit2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
-interface SavingsGoalsProps {
-  goals?: SavingsGoal[];
-  onAddGoal?: (goal: Omit<SavingsGoal, "id">) => void;
-  onUpdateGoal?: (id: string, updates: Partial<SavingsGoal>) => void;
-  onDeleteGoal?: (id: string) => void;
-  monthlyIncome?: number;
+interface SavingsGoal {
+  id: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  deadline: string;
+  color: string;
 }
 
-const SavingsGoals = ({
-  goals = [],
-  onAddGoal = () => {},
-  onUpdateGoal = () => {},
-  onDeleteGoal = () => {},
-  monthlyIncome = 0,
-}: SavingsGoalsProps) => {
-  const { t } = useTranslation();
-  const [editingGoal, setEditingGoal] = React.useState<string | null>(null);
-  const [open, setOpen] = React.useState(false);
-  const [newGoalName, setNewGoalName] = React.useState("");
-  const [newGoalAmount, setNewGoalAmount] = React.useState("");
-  const [newGoalDeadline, setNewGoalDeadline] = React.useState("");
-  const [newGoalColor, setNewGoalColor] = React.useState("#4CAF50");
-  const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
+interface SavingsGoalsProps {
+  goals: SavingsGoal[];
+  onAddGoal: (goal: Omit<SavingsGoal, "id">) => void;
+  onUpdateGoal: (id: string, updates: Partial<SavingsGoal>) => void;
+  onDeleteGoal: (id: string) => void;
+  monthlyIncome: number;
+}
 
-  const {
-    recommendedSavings,
-    availableForSavings,
-    totalIncome,
-    savingsPercentage,
-  } = calculateRecommendedSavings();
+export default function SavingsGoals({
+  goals,
+  onAddGoal,
+  onUpdateGoal,
+  onDeleteGoal,
+}: SavingsGoalsProps) {
+  const { t } = useTranslation();
+  const [editingId, setEditingId] = React.useState<string | null>(null);
+  const [newGoal, setNewGoal] = React.useState({
+    name: "",
+    targetAmount: 0,
+    currentAmount: 0,
+    deadline: "",
+    color: "#4CAF50",
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newGoalName || !newGoalAmount || !newGoalDeadline) return;
+    if (!newGoal.name || !newGoal.targetAmount || !newGoal.deadline) return;
 
     onAddGoal({
-      name: newGoalName,
-      targetAmount: Number(newGoalAmount),
+      name: newGoal.name,
+      targetAmount: Number(newGoal.targetAmount),
       currentAmount: 0,
-      deadline: new Date(newGoalDeadline).toISOString(),
-      color: newGoalColor,
+      deadline: new Date(newGoal.deadline).toISOString(),
+      color: newGoal.color,
     });
 
-    // Reset form
-    setNewGoalName("");
-    setNewGoalAmount("");
-    setNewGoalDeadline("");
-    setNewGoalColor("#4CAF50");
-    setOpen(false);
+    setNewGoal({
+      name: "",
+      targetAmount: 0,
+      currentAmount: 0,
+      deadline: "",
+      color: "#4CAF50",
+    });
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">{t('dashboard.savingsGoals.title')}</h2>
           <p className="text-gray-600">{t('dashboard.savingsGoals.subtitle')}</p>
         </div>
-        <Button onClick={() => setOpen(true)}>{t('dashboard.savingsGoals.addGoal')}</Button>
+        <Button onClick={() => setEditingId(null)}>{t('dashboard.savingsGoals.addGoal')}</Button>
       </div>
 
-      <Card className="p-4">
-        <h3 className="text-xl font-semibold mb-4">{t('dashboard.savingsGoals.smartSavings.title')}</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-gray-600">{t('dashboard.savingsGoals.smartSavings.monthlyIncome')}</p>
-            <p className="text-lg font-semibold">${monthlyIncome.toFixed(2)}</p>
-          </div>
-          <div>
-            <p className="text-gray-600">{t('dashboard.savingsGoals.smartSavings.availableForSavings')}</p>
-            <p className="text-lg font-semibold">${availableForSavings.toFixed(2)}</p>
-          </div>
-          <div>
-            <p className="text-gray-600">{t('dashboard.savingsGoals.smartSavings.recommendedSavings')}</p>
-            <p className="text-lg font-semibold">${recommendedSavings.toFixed(2)}</p>
-          </div>
-          <div>
-            <p className="text-gray-600">{t('dashboard.savingsGoals.smartSavings.savingsRate')}</p>
-            <p className="text-lg font-semibold">{savingsPercentage.toFixed(1)}%</p>
-          </div>
-        </div>
-        <Button className="mt-4" onClick={() => {
-          const distributed = distributeAutoSavings(recommendedSavings);
-          if (distributed > 0) {
-            forceUpdate();
-          }
-        }}>
-          {t('dashboard.savingsGoals.smartSavings.autoDistribute')}
-        </Button>
-      </Card>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid gap-6">
         {goals.map((goal) => {
           const progress = (goal.currentAmount / goal.targetAmount) * 100;
+          const remaining = goal.targetAmount - goal.currentAmount;
           const deadline = new Date(goal.deadline);
-          const daysLeft = Math.ceil(
-            (deadline.getTime() - new Date().getTime()) /
-              (1000 * 60 * 60 * 24),
-          );
+          const daysLeft = Math.ceil((deadline.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 
           return (
-            <Card key={goal.id} className="p-4 relative">
-              <div className="flex justify-between items-center mb-4">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => setEditingGoal(goal.id)}
-                  className="h-8 w-8 hover:bg-blue-100 hover:text-blue-600"
-                >
-                  <Edit2 size={16} />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={() => onDeleteGoal(goal.id)}
-                  className="h-8 w-8 hover:bg-red-100 hover:text-red-600"
-                >
-                  <X size={16} />
-                </Button>
+            <Card key={goal.id} className="p-6">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <h3 className="text-lg font-semibold">{goal.name}</h3>
+                  <p className="text-sm text-gray-500">
+                    {t('dashboard.savingsGoals.goal.deadline', { date: deadline.toLocaleDateString() })}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => setEditingId(goal.id)}
+                    className="h-8 w-8 hover:bg-blue-100 hover:text-blue-600"
+                  >
+                    <Edit2 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => onDeleteGoal(goal.id)}
+                    className="h-8 w-8 hover:bg-red-100 hover:text-red-600"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="text-xl font-semibold">{goal.name}</h3>
-                <p className="text-gray-600 mt-1">
-                  {t('dashboard.savingsGoals.goal.daysLeft', { count: daysLeft })}
-                </p>
-              </div>
+
               <div className="mt-4">
-                <p className="text-gray-600">{t('dashboard.savingsGoals.goal.progress', {
-                  current: `$${goal.currentAmount.toFixed(2)}`,
-                  target: `$${goal.targetAmount.toFixed(2)}`
-                })}</p>
+                <div className="flex items-center justify-between text-sm">
+                  <span>
+                    ${goal.currentAmount.toLocaleString()} / ${goal.targetAmount.toLocaleString()}
+                  </span>
+                  <span>{Math.round(progress)}%</span>
+                </div>
                 <Progress value={progress} className="mt-2" />
               </div>
-              {editingGoal === goal.id && (
+
+              {editingId === goal.id && (
                 <div className="mt-4 space-y-4">
                   <div className="space-y-2">
-                    <Label>{t('dashboard.savingsGoals.dialog.name')}</Label>
-                    <Input
-                      value={goal.name}
-                      onChange={(e) => onUpdateGoal(goal.id, { name: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>{t('dashboard.savingsGoals.dialog.targetAmount')}</Label>
+                    <Label>{t('dashboard.savingsGoals.goal.currentAmount')}</Label>
                     <Input
                       type="number"
-                      value={goal.targetAmount}
-                      onChange={(e) => onUpdateGoal(goal.id, { targetAmount: Number(e.target.value) })}
+                      value={goal.currentAmount}
+                      onChange={(e) =>
+                        onUpdateGoal(goal.id, {
+                          currentAmount: Number(e.target.value),
+                        })
+                      }
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label>{t('dashboard.savingsGoals.dialog.deadline')}</Label>
-                    <Input
-                      type="date"
-                      value={goal.deadline.split("T")[0]}
-                      onChange={(e) => onUpdateGoal(goal.id, { deadline: new Date(e.target.value).toISOString() })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>{t('dashboard.savingsGoals.dialog.color')}</Label>
-                    <Input
-                      type="color"
-                      value={goal.color}
-                      onChange={(e) => onUpdateGoal(goal.id, { color: e.target.value })}
-                    />
-                  </div>
-                  <Button onClick={() => setEditingGoal(null)}>{t('dashboard.savingsGoals.goal.saveChanges')}</Button>
+                  <Button onClick={() => setEditingId(null)}>
+                    {t('dashboard.savingsGoals.goal.saveChanges')}
+                  </Button>
                 </div>
               )}
+
+              <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-500">{t('dashboard.savingsGoals.goal.remaining')}</span>
+                  <p className="font-medium">${remaining.toLocaleString()}</p>
+                </div>
+                <div>
+                  <span className="text-gray-500">{t('dashboard.savingsGoals.goal.timeLeft')}</span>
+                  <p className="font-medium">
+                    {daysLeft} {t('dashboard.savingsGoals.goal.days')}
+                  </p>
+                </div>
+              </div>
             </Card>
           );
         })}
       </div>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button className="w-full">{t('dashboard.savingsGoals.dialog.title')}</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('dashboard.savingsGoals.dialog.title')}</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-            <div className="space-y-2">
-              <Label>{t('dashboard.savingsGoals.dialog.name')}</Label>
-              <Input
-                placeholder={t('dashboard.savingsGoals.dialog.namePlaceholder')}
-                value={newGoalName}
-                onChange={(e) => setNewGoalName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>{t('dashboard.savingsGoals.dialog.targetAmount')}</Label>
-              <Input
-                type="number"
-                placeholder="0.00"
-                value={newGoalAmount}
-                onChange={(e) => setNewGoalAmount(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>{t('dashboard.savingsGoals.dialog.deadline')}</Label>
-              <Input
-                type="date"
-                value={newGoalDeadline}
-                onChange={(e) => setNewGoalDeadline(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>{t('dashboard.savingsGoals.dialog.color')}</Label>
-              <Input
-                type="color"
-                value={newGoalColor}
-                onChange={(e) => setNewGoalColor(e.target.value)}
-              />
-            </div>
-            <Button type="submit" className="w-full">{t('dashboard.savingsGoals.dialog.addButton')}</Button>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label>{t('dashboard.savingsGoals.dialog.name')}</Label>
+          <Input
+            placeholder={t('dashboard.savingsGoals.dialog.namePlaceholder')}
+            value={newGoal.name}
+            onChange={(e) => setNewGoal({ ...newGoal, name: e.target.value })}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label>{t('dashboard.savingsGoals.dialog.targetAmount')}</Label>
+          <Input
+            type="number"
+            placeholder="0.00"
+            value={newGoal.targetAmount}
+            onChange={(e) => setNewGoal({ ...newGoal, targetAmount: Number(e.target.value) })}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label>{t('dashboard.savingsGoals.dialog.deadline')}</Label>
+          <Input
+            type="date"
+            value={newGoal.deadline}
+            onChange={(e) => setNewGoal({ ...newGoal, deadline: e.target.value })}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label>{t('dashboard.savingsGoals.dialog.color')}</Label>
+          <Input
+            type="color"
+            value={newGoal.color}
+            onChange={(e) => setNewGoal({ ...newGoal, color: e.target.value })}
+          />
+        </div>
+        <Button type="submit" className="w-full">
+          {t('dashboard.savingsGoals.dialog.addButton')}
+        </Button>
+      </form>
     </div>
   );
-};
-
-export default SavingsGoals;
+}

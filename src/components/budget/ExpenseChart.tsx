@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from 'react-i18next';
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -6,7 +5,7 @@ import {
   PieChart,
   BarChart3,
   Calendar,
-  LineChart as LineChartIcon,
+  LineChartIcon,
   TrendingUp,
   DollarSign,
   ArrowUpRight,
@@ -34,6 +33,11 @@ const CHART_COLORS = [
   "#FFD3B6",
   "#BEE1E6",
 ];
+
+interface ChartDataItem {
+  category: string;
+  amount: number;
+}
 
 interface ExpenseChartProps {
   data?: {
@@ -140,13 +144,14 @@ const ExpenseChart = ({
               style={{
                 background: `conic-gradient(${data
                   .filter((item) => item.amount > 0)
-                  .map((item, index) => {
-                    const startPercentage = data
+                  .map((item) => {
+                    return `${CHART_COLORS[data.indexOf(item) % CHART_COLORS.length]} ${data
                       .filter((d) => d.amount > 0)
-                      .slice(0, index)
-                      .reduce((sum, d) => sum + (d.amount / total) * 100, 0);
-                    const percentage = (item.amount / total) * 100;
-                    return `${CHART_COLORS[index % CHART_COLORS.length]} ${startPercentage}% ${startPercentage + percentage}%`;
+                      .slice(0, data.indexOf(item))
+                      .reduce((sum, d) => sum + (d.amount / total) * 100, 0)}% ${data
+                      .filter((d) => d.amount > 0)
+                      .slice(0, data.indexOf(item) + 1)
+                      .reduce((sum, d) => sum + (d.amount / total) * 100, 0)}%`;
                   })
                   .join(",")})`,
               }}
@@ -155,10 +160,13 @@ const ExpenseChart = ({
           <div className="mt-4 grid grid-cols-2 gap-2">
             {data
               .filter((item) => item.amount > 0)
-              .map((item) => {
+              .map((item: ChartDataItem) => {
                 const percentage = ((item.amount / total) * 100).toFixed(1);
                 return (
-                  <div key={item.category} className="flex items-center gap-2">
+                  <div
+                    key={item.category}
+                    className="flex items-center justify-between py-2"
+                  >
                     <div
                       className="w-3 h-3 rounded-full"
                       style={{ backgroundColor: CHART_COLORS[data.indexOf(item) % CHART_COLORS.length] }}
@@ -176,7 +184,7 @@ const ExpenseChart = ({
           <div className="w-full h-full flex items-end justify-between gap-4 pt-8">
             {data
               .filter((item) => item.amount > 0)
-              .map((item, index) => {
+              .map((item) => {
                 const maxAmount = Math.max(...data.map((d) => d.amount));
                 const heightPercentage = (item.amount / maxAmount) * 100;
                 const barHeight = Math.max((heightPercentage * 180) / 100, 20);
@@ -189,7 +197,7 @@ const ExpenseChart = ({
                       className="w-full rounded-t-lg transition-all duration-500"
                       style={{
                         height: `${barHeight}px`,
-                        backgroundColor: CHART_COLORS[index % CHART_COLORS.length],
+                        backgroundColor: CHART_COLORS[data.indexOf(item) % CHART_COLORS.length],
                       }}
                     />
                     <span className="text-sm text-center whitespace-nowrap overflow-hidden text-ellipsis w-full text-muted-foreground">
@@ -271,7 +279,7 @@ const ExpenseChart = ({
           <div className="space-y-4">
             {categoryInsights
               .filter((item) => item.amount > 0)
-              .map((item, index) => (
+              .map((item) => (
                 <div key={item.category} className="p-3 border rounded-lg">
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-medium">

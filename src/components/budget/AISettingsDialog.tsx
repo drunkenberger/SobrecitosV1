@@ -70,6 +70,13 @@ export function AISettingsDialog({
     onOpenChange(false);
   };
 
+  const handleDownload = (localModel: any) => {
+    if (localModel.installCommand) {
+      navigator.clipboard.writeText(localModel.installCommand);
+      alert("Install command copied to clipboard!");
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -161,38 +168,34 @@ export function AISettingsDialog({
                     </p>
 
                     <div className="grid grid-cols-2 gap-2 text-sm">
-                      {"localModel" in model && (
+                      {model?.localModel && (
                         <div className="col-span-2 mb-2 p-2 bg-muted/50 rounded-lg">
                           <p className="font-medium mb-1">Local Deployment:</p>
                           <ul className="space-y-1 text-xs text-muted-foreground">
-                            <li>• Model Size: {model.localModel.size}</li>
-                            <li>
-                              • RAM Required:{" "}
-                              {model.localModel.requirements.ram}
-                            </li>
-                            {model.localModel.requirements.vram && (
-                              <li>
-                                • GPU VRAM: {model.localModel.requirements.vram}
+                            {model.localModel.size && (
+                              <li>• Model Size: {model.localModel.size}</li>
+                            )}
+                            {model.localModel.requirements?.ram && (
+                              <li>• RAM Required: {model.localModel.requirements.ram}</li>
+                            )}
+                            {model.localModel.requirements?.vram && (
+                              <li>• GPU VRAM: {model.localModel.requirements.vram}</li>
+                            )}
+                            {model.localModel.requirements?.disk && (
+                              <li>• Disk Space: {model.localModel.requirements.disk}</li>
+                            )}
+                            {model.localModel.installCommand && (
+                              <li className="pt-1">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="w-full"
+                                  onClick={() => handleDownload(model.localModel)}
+                                >
+                                  Copy Install Command
+                                </Button>
                               </li>
                             )}
-                            <li>
-                              • Disk Space: {model.localModel.requirements.disk}
-                            </li>
-                            <li className="pt-1">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="w-full text-xs"
-                                onClick={() => {
-                                  navigator.clipboard.writeText(
-                                    model.localModel.installCommand,
-                                  );
-                                  alert("Install command copied to clipboard!");
-                                }}
-                              >
-                                Copy Install Command
-                              </Button>
-                            </li>
                           </ul>
                         </div>
                       )}

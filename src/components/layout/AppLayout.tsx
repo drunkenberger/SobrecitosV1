@@ -1,5 +1,4 @@
 import React, { useState, useEffect, ReactNode } from "react";
-import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { getStore } from "@/lib/store";

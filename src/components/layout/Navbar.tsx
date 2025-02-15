@@ -2,14 +2,13 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Link, useLocation } from "react-router-dom";
 import {
-  Phone,
-  Mail,
+  MessageSquare,
   Facebook,
   X,
-  MessageSquare,
   Home,
   HelpCircle,
   LifeBuoy,
+  Mail as MailIcon
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -31,7 +30,7 @@ export default function Navbar() {
                 href="mailto:info@sobrecitos.net"
                 className="flex items-center gap-2 hover:text-[#556B2F]/80 transition-colors duration-200"
               >
-                <Mail className="w-4 h-4" /> info@sobrecitos.net
+                <MailIcon className="w-4 h-4" /> info@sobrecitos.net
               </a>
             </div>
             <div className="flex items-center gap-4">

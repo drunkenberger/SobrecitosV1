@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { getStore } from "@/lib/store";
 import { getCurrentUser } from "@/lib/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,6 +13,21 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
+interface Income {
+  amount: number;
+}
+
+interface Expense {
+  amount: number;
+  category: string;
+}
+
+interface SavingsGoal {
+  targetAmount: number;
+  currentAmount: number;
+  name: string;
+}
+
 export default function Profile() {
   const { t } = useTranslation();
   const user = getCurrentUser();
@@ -21,30 +35,24 @@ export default function Profile() {
 
   const totalBudget =
     store.monthlyBudget +
-    (store.additionalIncomes || []).reduce((sum, inc) => sum + inc.amount, 0);
+    (store.additionalIncomes || []).reduce((sum: number, inc: Income) => sum + inc.amount, 0);
   const spentAmount = (store.expenses || []).reduce(
-    (sum, exp) => sum + exp.amount,
+    (sum: number, exp: Expense) => sum + exp.amount,
     0,
   );
-  const remainingBalance = totalBudget - spentAmount;
 
-  // Calculate savings progress
-  const totalSavingsGoal = (store.savingsGoals || []).reduce(
-    (sum, goal) => sum + goal.targetAmount,
-    0,
-  );
+  // Calculate current savings
   const currentSavings = (store.savingsGoals || []).reduce(
-    (sum, goal) => sum + goal.currentAmount,
+    (sum: number, goal: SavingsGoal) => sum + goal.currentAmount,
     0,
   );
-  const savingsProgress = (currentSavings / totalSavingsGoal) * 100;
 
   // Prepare chart data
   const chartData = (store.categories || []).map((cat) => ({
     category: cat.name,
     amount: (store.expenses || [])
-      .filter((exp) => exp.category === cat.name)
-      .reduce((sum, exp) => sum + exp.amount, 0),
+      .filter((exp: Expense) => exp.category === cat.name)
+      .reduce((sum: number, exp: Expense) => sum + exp.amount, 0),
   }));
 
   return (

@@ -1,4 +1,3 @@
-import React from "react";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { AlertTriangle, AlertCircle } from "lucide-react";
 import { getBudgetAlerts } from "@/lib/store";
@@ -10,7 +9,6 @@ const BudgetAlerts = () => {
 
   if (alerts.length === 0) return null;
 
-  // Helper function to get the translation key for a category
   const getCategoryTranslationKey = (category: string) => {
     // Map English category names to their translation keys
     const categoryMap: Record<string, string> = {
@@ -40,7 +38,9 @@ const BudgetAlerts = () => {
   return (
     <div className="space-y-2">
       {alerts.map((alert, index) => {
-        const categoryKey = alert.type === 'category' ? getCategoryTranslationKey(alert.category) : 'overall';
+        const categoryKey = alert.type === 'category' && alert.category 
+          ? getCategoryTranslationKey(alert.category) 
+          : 'overall';
         
         // Get the percentage from the alert data
         const percentage = alert.percentage;
@@ -51,10 +51,10 @@ const BudgetAlerts = () => {
         return (
           <Alert
             key={index}
-            variant={alert.severity === "high" ? "destructive" : "default"}
-            className={alert.severity === "medium" ? "border-yellow-500" : ""}
+            variant={alert.severity === "danger" ? "destructive" : "default"}
+            className={alert.severity === "warning" ? "border-yellow-500" : ""}
           >
-            {alert.severity === "high" ? (
+            {alert.severity === "danger" ? (
               <AlertCircle className="h-4 w-4" />
             ) : (
               <AlertTriangle className="h-4 w-4" />

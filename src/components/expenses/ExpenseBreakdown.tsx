@@ -8,27 +8,15 @@ import {
 } from '@/components/ui/card';
 import { ExpenseChart } from '@/components/charts/ExpenseChart';
 
-interface Expense {
-  id: string;
-  amount: number;
-  category: string;
-  date: string;
-  description: string;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  budget: number;
-  color: string;
-}
-
 interface ExpenseBreakdownProps {
-  expenses: Expense[];
-  categories: Category[];
+  expenses: {
+    amount: number;
+    category: string;
+    date: Date;
+  }[];
 }
 
-export function ExpenseBreakdown({ expenses, categories }: ExpenseBreakdownProps) {
+export function ExpenseBreakdown({ expenses }: ExpenseBreakdownProps) {
   const { t } = useTranslation();
 
   const categoryTotals = {

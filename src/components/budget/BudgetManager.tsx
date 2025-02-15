@@ -1,16 +1,14 @@
 import React from "react";
-import { Card } from "../ui/card";
 import { Button } from "../ui/button";
+import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { ScrollArea } from "../ui/scroll-area";
 import {
   Plus,
   X,
-  DollarSign,
-  Wallet,
   Calendar,
-  AlertTriangle,
+  Wallet,
   TrendingUp,
 } from "lucide-react";
 import {
@@ -21,7 +19,6 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { useTranslation } from "react-i18next";
-import { es } from 'date-fns/locale';
 
 interface Income {
   id: string;

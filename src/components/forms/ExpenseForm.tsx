@@ -10,22 +10,30 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import type { Category } from "@/types/category";
+import type { Expense } from "@/types/expense";
 
-interface ExpenseFormData {
-  amount: number;
-  category: string;
+export interface ExpenseFormProps {
+  categories: Category[];
+  onSubmit: (expense: Expense) => void;
 }
 
-interface ExpenseFormProps {
-  onSubmit: (data: ExpenseFormData) => void;
-}
+type ExpenseFormData = Omit<Expense, 'id'>;
 
-export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
+export function ExpenseForm({ categories, onSubmit }: ExpenseFormProps) {
   const { t } = useTranslation();
   const { register, handleSubmit } = useForm<ExpenseFormData>();
 
+  const handleFormSubmit = (data: ExpenseFormData) => {
+    onSubmit({
+      ...data,
+      id: crypto.randomUUID(),
+      date: new Date(data.date)
+    });
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="amount">{t('forms.expense.amount')}</Label>
         <Input
@@ -41,14 +49,17 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
             <SelectValue placeholder={t('forms.expense.selectCategory')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="groceries">{t('dashboard.categories.groceries')}</SelectItem>
-            <SelectItem value="utilities">{t('dashboard.categories.utilities')}</SelectItem>
-            <SelectItem value="entertainment">{t('dashboard.categories.entertainment')}</SelectItem>
-            <SelectItem value="salad">{t('dashboard.categories.salad')}</SelectItem>
+            {categories.map((category) => (
+              <SelectItem key={category.id} value={category.name}>
+                {t(`dashboard.categories.${category.name.toLowerCase()}`)}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
       <Button type="submit">{t('common.save')}</Button>
     </form>
   );
-} 
+}
+
+export default ExpenseForm; 
