@@ -1,22 +1,41 @@
 import { useTranslation } from 'react-i18next';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
-export function BudgetOverview({ totalBudget, spentAmount, remainingBalance }) {
+interface BudgetOverviewProps {
+  totalBudget: number;
+  spentAmount: number;
+  remainingBalance: number;
+}
+
+export function BudgetOverview({ totalBudget, spentAmount, remainingBalance }: BudgetOverviewProps) {
   const { t } = useTranslation();
 
   return (
     <div className="grid grid-cols-3 gap-4">
-      <div className="card bg-green-50 p-4">
-        <h3>{t('dashboard.overview.totalBudget')}</h3>
-        <p className="text-2xl font-bold">${totalBudget}</p>
-      </div>
-      <div className="card bg-red-50 p-4">
-        <h3>{t('dashboard.overview.spentAmount')}</h3>
-        <p className="text-2xl font-bold">${spentAmount}</p>
-      </div>
-      <div className="card bg-blue-50 p-4">
-        <h3>{t('dashboard.overview.remainingBalance')}</h3>
-        <p className="text-2xl font-bold">${remainingBalance}</p>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('dashboard.overview.totalBudget')}</CardTitle>
+          <CardDescription>${totalBudget.toLocaleString()}</CardDescription>
+        </CardHeader>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('dashboard.overview.spentAmount')}</CardTitle>
+          <CardDescription>${spentAmount.toLocaleString()}</CardDescription>
+        </CardHeader>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('dashboard.overview.remainingBalance')}</CardTitle>
+          <CardDescription>${remainingBalance.toLocaleString()}</CardDescription>
+        </CardHeader>
+      </Card>
     </div>
   );
 } 
