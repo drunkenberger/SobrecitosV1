@@ -1,10 +1,10 @@
-import React from "react";
+import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { getStore } from "@/lib/store";
 import { getCurrentUser } from "@/lib/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Wallet, PieChart, TrendingUp, Target } from "lucide-react";
+import { PieChart } from "lucide-react";
 import ExpenseChart from "@/components/budget/ExpenseChart";
 import SEO from "@/components/SEO";
 

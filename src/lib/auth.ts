@@ -53,8 +53,9 @@ export const loginUser = (email: string, password: string): User | null => {
   const user = users.find((u) => u.email === email && u.password === password);
   if (user) {
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+    return user;
   }
-  return user;
+  return null;
 };
 
 export const logoutUser = () => {
