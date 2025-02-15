@@ -1,12 +1,11 @@
 import * as React from "react"
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons"
-import { DayPicker, DayPickerDefaultProps } from "react-day-picker"
+import { DayPicker } from "react-day-picker"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
-// Extend the DayPicker props type to be more specific
-export type CalendarProps = Partial<React.ComponentProps<typeof DayPicker>> & {
-  mode?: DayPickerDefaultProps['mode']
+export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
+  mode?: "default" | "single" | "multiple" | "range"
   showOutsideDays?: boolean
   className?: string
   classNames?: Record<string, string>
@@ -16,7 +15,7 @@ function Calendar({
   className,
   classNames,
   showOutsideDays = true,
-  mode = "single",
+  mode = "default",
   ...props
 }: CalendarProps) {
   return (
@@ -43,7 +42,7 @@ function Calendar({
         row: "flex w-full mt-2",
         cell: cn(
           "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent",
-          mode === "range"
+          mode === "default"
             ? "[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md"
             : "[&:has([aria-selected])]:rounded-md"
         ),
@@ -64,8 +63,8 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: ({ ...props }) => <ChevronLeftIcon className="h-4 w-4" {...props} />,
-        IconRight: ({ ...props }) => <ChevronRightIcon className="h-4 w-4" {...props} />,
+        IconLeft: () => <ChevronLeftIcon className="h-4 w-4" />,
+        IconRight: () => <ChevronRightIcon className="h-4 w-4" />,
       }}
       {...props}
     />
