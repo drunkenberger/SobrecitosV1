@@ -31,6 +31,50 @@ interface Message {
   timestamp: Date;
 }
 
+interface Income {
+  amount: number;
+  date: string;
+}
+
+interface Expense {
+  amount: number;
+  date: string;
+  category: string;
+  isRecurring?: boolean;
+  description?: string;
+  recurringType?: string;
+}
+
+interface Category {
+  name: string;
+  isRecurring?: boolean;
+  budget: number;
+}
+
+interface SavingsGoal {
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  deadline: string;
+}
+
+interface FuturePayment {
+  description: string;
+  amount: number;
+  dueDate: string;
+  isPaid: boolean;
+  category?: string;
+}
+
+interface Store {
+  monthlyBudget: number;
+  additionalIncomes: Income[];
+  expenses: Expense[];
+  categories: Category[];
+  savingsGoals: SavingsGoal[];
+  futurePayments: FuturePayment[];
+}
+
 export function AIChatWindow() {
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [input, setInput] = React.useState("");
@@ -111,23 +155,23 @@ export function AIChatWindow() {
       // Get budget data for context
       const store = JSON.parse(localStorage.getItem("budget_store") || "{}");
       const totalBudget = store.monthlyBudget + (store.additionalIncomes || []).reduce(
-        (sum, inc) => sum + inc.amount,
+        (sum: number, inc: Income) => sum + inc.amount,
         0,
       );
       const spentAmount = (store.expenses || []).reduce(
-        (sum, exp) => sum + exp.amount,
+        (sum: number, exp: Expense) => sum + exp.amount,
         0,
       );
       const remainingBalance = totalBudget - spentAmount;
 
       // Calculate additional incomes
       const additionalIncomesTotal = (store.additionalIncomes || []).reduce(
-        (sum, inc) => sum + inc.amount,
+        (sum: number, inc: Income) => sum + inc.amount,
         0
       );
 
       // Process expenses with dates and categories
-      const expenses = (store.expenses || []).map(exp => ({
+      const expenses = (store.expenses || []).map((exp: Expense) => ({
         amount: exp.amount,
         category: exp.category,
         description: exp.description,
@@ -140,21 +184,21 @@ export function AIChatWindow() {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       const recentExpenses = expenses.filter(
-        exp => new Date(exp.date) >= thirtyDaysAgo
+        (exp: Expense) => new Date(exp.date) >= thirtyDaysAgo
       );
 
       // Calculate category spending
-      const categorySpending = (store.categories || []).map((cat) => ({
+      const categorySpending = (store.categories || []).map((cat: Category) => ({
         name: cat.name,
         budget: cat.budget,
         spent: expenses
-          .filter((exp) => exp.category === cat.name)
-          .reduce((sum, exp) => sum + exp.amount, 0),
+          .filter((exp: Expense) => exp.category === cat.name)
+          .reduce((sum: number, exp: Expense) => sum + exp.amount, 0),
         isRecurring: cat.isRecurring,
       }));
 
       // Process savings goals
-      const savingsGoals = (store.savingsGoals || []).map(goal => ({
+      const savingsGoals = (store.savingsGoals || []).map((goal: SavingsGoal) => ({
         name: goal.name,
         targetAmount: goal.targetAmount,
         currentAmount: goal.currentAmount,
@@ -163,7 +207,7 @@ export function AIChatWindow() {
       }));
 
       // Process future payments
-      const futurePayments = (store.futurePayments || []).map(payment => ({
+      const futurePayments = (store.futurePayments || []).map((payment: FuturePayment) => ({
         description: payment.description,
         amount: payment.amount,
         dueDate: new Date(payment.dueDate).toLocaleDateString(),
@@ -172,65 +216,52 @@ export function AIChatWindow() {
       }));
 
       // Calculate recurring expenses total
-      const recurringExpensesTotal = expenses
-        .filter(exp => exp.isRecurring)
-        .reduce((sum, exp) => sum + exp.amount, 0);
+      const recurringExpensesTotal = (store.expenses || [])
+        .filter((exp: Expense) => exp.isRecurring)
+        .reduce((sum: number, exp: Expense) => sum + exp.amount, 0);
+
+      // Update the string template functions
+      const categoryList = (store.categories || []).map((cat: Category) => 
+        `• ${cat.name}${cat.isRecurring ? ' (Recurring)' : ''}`
+      ).join('\n');
+
+      const goalsList = (store.savingsGoals || []).map((goal: SavingsGoal) => 
+        `• ${goal.name}
+        Target: $${goal.targetAmount}
+        Current: $${goal.currentAmount}
+        Progress: ${((goal.currentAmount / goal.targetAmount) * 100).toFixed(1)}%
+        Deadline: ${goal.deadline}`
+      ).join('\n');
+
+      const upcomingPaymentsList = (store.futurePayments || [])
+        .filter((payment: FuturePayment) => !payment.isPaid)
+        .map((payment: FuturePayment) => 
+          `• ${payment.description}
+          Amount: $${payment.amount}
+          Due: ${payment.dueDate}`
+        ).join('\n');
+
+      const recentExpensesTotal = recentExpenses.reduce(
+        (sum: number, exp: Expense) => sum + exp.amount,
+        0
+      );
 
       const context = `Here's your complete financial data. Please provide specific advice based on this information:
 
-💰 Financial Overview
-• Monthly Base Budget: ${store.monthlyBudget.toLocaleString()}
-• Additional Income: ${additionalIncomesTotal.toLocaleString()}
-• Total Monthly Budget: ${totalBudget.toLocaleString()}
-• Total Spent: ${spentAmount.toLocaleString()}
-• Remaining Balance: ${remainingBalance.toLocaleString()}
-• Recurring Expenses: ${recurringExpensesTotal.toLocaleString()}
+Monthly Budget: $${store.monthlyBudget}
+Total Recent Spending: $${recentExpensesTotal.toLocaleString()}
+Recurring Expenses: $${recurringExpensesTotal.toLocaleString()}
 
-📊 Category Breakdown
-${categorySpending
-  .map(
-    (cat) => `• ${cat.name}${cat.isRecurring ? ' (Recurring)' : ''}
-  Budget: ${cat.budget.toLocaleString()}
-  Spent: ${cat.spent.toLocaleString()} (${((cat.spent / cat.budget) * 100).toFixed(1)}%)`
-  )
-  .join("\n")}
+Categories:
+${categoryList}
 
-🎯 Savings Goals
-${savingsGoals.length > 0 ? savingsGoals
-  .map(
-    (goal) => `• ${goal.name}
-  Target: ${goal.targetAmount.toLocaleString()}
-  Current: ${goal.currentAmount.toLocaleString()}
-  Progress: ${goal.progress}
-  Deadline: ${goal.deadline}`
-  )
-  .join("\n") : "No savings goals set"}
+Savings Goals:
+${goalsList}
 
-📅 Upcoming Payments
-${futurePayments.length > 0 ? futurePayments
-  .filter(payment => !payment.isPaid)
-  .map(
-    (payment) => `• ${payment.description}
-  Amount: ${payment.amount.toLocaleString()}
-  Due: ${payment.dueDate}
-  Category: ${payment.category}`
-  )
-  .join("\n") : "No upcoming payments"}
+Upcoming Payments:
+${upcomingPaymentsList}
 
-📈 Recent Activity (Last 30 Days)
-• Number of Transactions: ${recentExpenses.length}
-• Total Recent Spending: ${recentExpenses.reduce((sum, exp) => sum + exp.amount, 0).toLocaleString()}
-
-💱 Currency: ${store.currency?.name || 'US Dollar'} (${store.currency?.symbol || '$'})
-
-❓ User Question: ${input}
-
-Please analyze this data and provide specific, actionable advice. Format your response with clear sections using emojis and bullet points for readability. Consider:
-• Budget utilization and overspending risks
-• Savings goals progress and recommendations
-• Upcoming payment planning
-• Spending patterns and areas for improvement
-• Long-term financial health suggestions`;
+Please analyze this data and provide personalized financial advice.`;
 
       switch (settings.provider) {
         case "openai":
@@ -337,15 +368,28 @@ ${context}`,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, aiMessage]);
-    } catch (error) {
-      console.error("Error getting AI response:", error);
-      const errorMessage: Message = {
-        id: Math.random().toString(36).substring(7),
-        text: `Error: ${error.message}. Please check your AI settings and try again.`,
-        sender: "ai",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setMessages(prev => [
+          ...prev,
+          {
+            id: Math.random().toString(36).substring(7),
+            text: `Error: ${error.message}. Please check your AI settings and try again.`,
+            sender: "ai",
+            timestamp: new Date()
+          }
+        ]);
+      } else {
+        setMessages(prev => [
+          ...prev,
+          {
+            id: Math.random().toString(36).substring(7),
+            text: "An unknown error occurred. Please try again.",
+            sender: "ai",
+            timestamp: new Date()
+          }
+        ]);
+      }
     } finally {
       setLoading(false);
     }
