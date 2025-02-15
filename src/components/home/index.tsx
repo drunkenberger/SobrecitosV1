@@ -1,7 +1,29 @@
 import { useTranslation } from 'react-i18next';
+import { AlertCircle } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 export default function Home() {
   const { t } = useTranslation();
+  
+  // TODO: Replace with actual data from your state management
+  const totalBudget = 5000;
+  const spentAmount = 3250;
+  const remainingBalance = totalBudget - spentAmount;
 
   return (
     <div className="min-h-screen bg-background">

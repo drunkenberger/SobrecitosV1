@@ -1,26 +1,54 @@
 import { useTranslation } from 'react-i18next';
+import { useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-export function ExpenseForm({ onSubmit }) {
+interface ExpenseFormData {
+  amount: number;
+  category: string;
+}
+
+interface ExpenseFormProps {
+  onSubmit: (data: ExpenseFormData) => void;
+}
+
+export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
   const { t } = useTranslation();
+  const { register, handleSubmit } = useForm<ExpenseFormData>();
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="space-y-4">
-        <div>
-          <label>{t('forms.expense.amount')}</label>
-          <input type="number" />
-        </div>
-        <div>
-          <label>{t('forms.expense.category')}</label>
-          <select>
-            <option value="groceries">{t('dashboard.categories.groceries')}</option>
-            <option value="utilities">{t('dashboard.categories.utilities')}</option>
-            <option value="entertainment">{t('dashboard.categories.entertainment')}</option>
-            <option value="salad">{t('dashboard.categories.salad')}</option>
-          </select>
-        </div>
-        <Button type="submit">{t('common.save')}</Button>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="amount">{t('forms.expense.amount')}</Label>
+        <Input
+          id="amount"
+          type="number"
+          {...register('amount', { required: true, min: 0 })}
+        />
       </div>
+      <div className="space-y-2">
+        <Label htmlFor="category">{t('forms.expense.category')}</Label>
+        <Select {...register('category', { required: true })}>
+          <SelectTrigger>
+            <SelectValue placeholder={t('forms.expense.selectCategory')} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="groceries">{t('dashboard.categories.groceries')}</SelectItem>
+            <SelectItem value="utilities">{t('dashboard.categories.utilities')}</SelectItem>
+            <SelectItem value="entertainment">{t('dashboard.categories.entertainment')}</SelectItem>
+            <SelectItem value="salad">{t('dashboard.categories.salad')}</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <Button type="submit">{t('common.save')}</Button>
     </form>
   );
 } 
