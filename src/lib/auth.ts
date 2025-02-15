@@ -1,7 +1,9 @@
 interface User {
+  id: string;
   email: string;
   name: string;
-  // Add other user properties as needed
+  password: string;
+  createdAt: string;
 }
 
 const USERS_KEY = "budget_users";
@@ -33,7 +35,7 @@ export const registerUser = (
     return null; // User already exists
   }
 
-  const newUser = {
+  const newUser: User = {
     id: Math.random().toString(36).substr(2, 9),
     email,
     password, // In a real app, this should be hashed
@@ -43,13 +45,18 @@ export const registerUser = (
 
   users.push(newUser);
   localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(newUser));
   return newUser;
 };
 
 export const loginUser = (email: string, password: string): User | null => {
   const users = getUsers();
   const user = users.find((u) => u.email === email && u.password === password);
-  return user || null;
+  if (user) {
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+    return user;
+  }
+  return null;
 };
 
 export const logoutUser = () => {
