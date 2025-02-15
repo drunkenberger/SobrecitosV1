@@ -1,9 +1,7 @@
-export interface User {
-  id: string;
+interface User {
   email: string;
   name: string;
-  password: string; // In a real app, this should be hashed
-  createdAt: string;
+  // Add other user properties as needed
 }
 
 const USERS_KEY = "budget_users";
@@ -51,11 +49,7 @@ export const registerUser = (
 export const loginUser = (email: string, password: string): User | null => {
   const users = getUsers();
   const user = users.find((u) => u.email === email && u.password === password);
-  if (user) {
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-    return user;
-  }
-  return null;
+  return user || null;
 };
 
 export const logoutUser = () => {

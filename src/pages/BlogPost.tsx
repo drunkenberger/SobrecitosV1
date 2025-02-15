@@ -5,7 +5,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar } from "lucide-react";
 import { WordPressPost } from "@/types/wordpress";
 import { getPostBySlug } from "@/lib/wordpress";
-import { cn } from "@/lib/utils";
 import SEO from "@/components/SEO";
 
 const getFeaturedImageUrl = (post: WordPressPost) => {
