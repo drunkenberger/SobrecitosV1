@@ -32,6 +32,11 @@ interface ExpenseFormProps {
     date: Date;
     isRecurring?: boolean;
     recurringType?: string;
+    receipt?: {
+      name: string;
+      size: number;
+      type: string;
+    };
   }) => void;
   categories: Array<{
     id: string;
@@ -68,6 +73,11 @@ const ExpenseForm = ({
       date: new Date(date),
       isRecurring,
       recurringType: isRecurring ? recurringType : undefined,
+      receipt: receipt ? {
+        name: receipt.name,
+        size: receipt.size,
+        type: receipt.type
+      } : undefined
     });
 
     // Reset form

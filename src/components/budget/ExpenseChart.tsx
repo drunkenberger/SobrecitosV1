@@ -155,13 +155,13 @@ const ExpenseChart = ({
           <div className="mt-4 grid grid-cols-2 gap-2">
             {data
               .filter((item) => item.amount > 0)
-              .map((item, index) => {
+              .map((item) => {
                 const percentage = ((item.amount / total) * 100).toFixed(1);
                 return (
                   <div key={item.category} className="flex items-center gap-2">
                     <div
                       className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
+                      style={{ backgroundColor: CHART_COLORS[data.indexOf(item) % CHART_COLORS.length] }}
                     />
                     <span className="text-sm text-muted-foreground">
                       {t(`dashboard.categories.${item.category.toLowerCase()}`)} ({percentage}%)
