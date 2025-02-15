@@ -11,10 +11,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { es } from 'date-fns/locale';
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 interface FuturePayment {
   id: string;
@@ -37,12 +37,22 @@ interface FuturePaymentsProps {
   }) => void;
 }
 
+// Safely create dates
+const createSafeDate = (dateString: string): Date => {
+  try {
+    return parseISO(dateString);
+  } catch (error) {
+    console.error('Error parsing date:', error);
+    return new Date();
+  }
+};
+
 const defaultPayments: FuturePayment[] = [
   {
     id: "1",
     description: "Rent Payment",
     amount: 1200,
-    dueDate: new Date("2024-03-01"),
+    dueDate: createSafeDate("2024-03-01"),
     category: "Housing",
     isPaid: false,
   },
@@ -50,7 +60,7 @@ const defaultPayments: FuturePayment[] = [
     id: "2",
     description: "Car Insurance",
     amount: 150,
-    dueDate: new Date("2024-03-15"),
+    dueDate: createSafeDate("2024-03-15"),
     category: "Insurance",
     isPaid: false,
   },
@@ -63,22 +73,37 @@ export default function FuturePayments({
   onAddPayment,
 }: FuturePaymentsProps) {
   const { t, i18n } = useTranslation();
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
-  // Update the getLocale function
+  // Initialize the selected date safely
+  useEffect(() => {
+    setSelectedDate(new Date());
+  }, []);
+
+  // Safe locale getter
   const getLocale = (language: string) => {
-    return language === 'es' ? es : undefined;
+    try {
+      return language === 'es' ? es : undefined;
+    } catch (error) {
+      console.error('Error getting locale:', error);
+      return undefined;
+    }
   };
 
-  // Format date based on locale
+  // Safe date formatter
   const formatDate = (date: Date) => {
-    return format(date, 'PP', { locale: getLocale(i18n.language) });
+    try {
+      return format(date, 'PP', { locale: getLocale(i18n.language) });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return date.toLocaleDateString();
+    }
   };
 
-  // Calculate total upcoming payments
+  // Calculate total upcoming payments safely
   const totalUpcoming = payments
     .filter((payment) => !payment.isPaid)
-    .reduce((sum, payment) => sum + payment.amount, 0);
+    .reduce((sum, payment) => sum + (typeof payment.amount === 'number' ? payment.amount : 0), 0);
 
   return (
     <div className="space-y-4">
@@ -101,22 +126,32 @@ export default function FuturePayments({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              locale={getLocale(i18n.language)}
-              weekStartsOn={i18n.language === 'es' ? 1 : 0}
-              className="rounded-md border"
-              formatters={{
-                formatWeekdayName: (date) => {
-                  return format(date, 'EEEEE', { locale: getLocale(i18n.language) });
-                },
-                formatCaption: (date) => {
-                  return format(date, 'LLLL yyyy', { locale: getLocale(i18n.language) });
-                }
-              }}
-            />
+            {selectedDate && (
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                locale={getLocale(i18n.language)}
+                weekStartsOn={i18n.language === 'es' ? 1 : 0}
+                className="rounded-md border"
+                formatters={{
+                  formatWeekdayName: (date) => {
+                    try {
+                      return format(date, 'EEEEE', { locale: getLocale(i18n.language) });
+                    } catch (error) {
+                      return format(date, 'EEEEE');
+                    }
+                  },
+                  formatCaption: (date) => {
+                    try {
+                      return format(date, 'LLLL yyyy', { locale: getLocale(i18n.language) });
+                    } catch (error) {
+                      return format(date, 'LLLL yyyy');
+                    }
+                  }
+                }}
+              />
+            )}
           </CardContent>
         </Card>
 
