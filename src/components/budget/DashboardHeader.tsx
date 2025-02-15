@@ -1,8 +1,8 @@
 import React from "react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../ui/card";
-import { Progress } from "../ui/progress";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import {
   Select,
@@ -10,7 +10,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "@/components/ui/select";
 import { useTranslation } from "react-i18next";
 
 interface DashboardHeaderProps {

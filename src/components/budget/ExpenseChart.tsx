@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import { Card } from "../ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   PieChart,
   BarChart3,
@@ -19,8 +19,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Progress } from "../ui/progress";
+} from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
 import LineChart from "./charts/LineChart";
 
 const CHART_COLORS = [
