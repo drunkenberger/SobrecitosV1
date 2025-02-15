@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 });
 
 // Add your routes here
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.send('Server is running');
 });
 
