@@ -23,84 +23,58 @@ import { PlusCircle, Upload, RepeatIcon, X } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 interface ExpenseFormProps {
-  open?: boolean;
-  onSubmit?: (data: ExpenseData) => void;
-  categories?: Array<{
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  onAddExpense: (expense: {
+    amount: number;
+    category: string;
+    description: string;
+    date: Date;
+    isRecurring?: boolean;
+    recurringType?: string;
+  }) => void;
+  categories: Array<{
     id: string;
     name: string;
+    color: string;
     isRecurring?: boolean;
   }>;
 }
 
-interface ExpenseData {
-  amount: number;
-  category: string;
-  description: string;
-  receipt?: string;
-  isRecurring?: boolean;
-  recurringType?: "weekly" | "monthly";
-}
-
-const defaultCategories = [
-  { id: "1", name: "Groceries", isRecurring: false },
-  { id: "2", name: "Utilities", isRecurring: true },
-  { id: "3", name: "Kids's Activities", isRecurring: false },
-  { id: "4", name: "Transportation", isRecurring: true },
-  { id: "5", name: "Entertainment", isRecurring: false },
-  { id: "6", name: "Shopping", isRecurring: false },
-];
-
 const ExpenseForm = ({
-  open: controlledOpen,
-  onSubmit = () => {},
-  categories = defaultCategories,
+  open,
+  setOpen,
+  onAddExpense,
+  categories = [],
 }: ExpenseFormProps) => {
   const { t } = useTranslation();
-  const [open, setOpen] = React.useState(controlledOpen ?? false);
   const [amount, setAmount] = React.useState("");
-  const [category, setCategory] = React.useState(categories[0]?.name || "");
+  const [category, setCategory] = React.useState("");
   const [description, setDescription] = React.useState("");
+  const [date, setDate] = React.useState(new Date().toISOString().split("T")[0]);
   const [isRecurring, setIsRecurring] = React.useState(false);
-  const [recurringType, setRecurringType] = React.useState<
-    "weekly" | "monthly"
-  >("monthly");
+  const [recurringType, setRecurringType] = React.useState("monthly");
   const [receipt, setReceipt] = React.useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
 
-  const selectedCategory = categories.find((cat) => cat.name === category);
-
-  React.useEffect(() => {
-    if (selectedCategory) {
-      setIsRecurring(selectedCategory.isRecurring || false);
-    }
-  }, [category, selectedCategory]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!amount || !category || !description) return;
+    if (!amount || !category || !description || !date) return;
 
-    let receiptData = null;
-    if (receipt) {
-      receiptData = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(receipt);
-      });
-    }
-
-    onSubmit({
+    onAddExpense({
       amount: Number(amount),
       category,
       description,
-      receipt: receiptData as string,
+      date: new Date(date),
       isRecurring,
       recurringType: isRecurring ? recurringType : undefined,
     });
 
     // Reset form
     setAmount("");
-    setCategory(categories[0]?.name || "");
+    setCategory("");
     setDescription("");
+    setDate(new Date().toISOString().split("T")[0]);
     setIsRecurring(false);
     setRecurringType("monthly");
     setReceipt(null);

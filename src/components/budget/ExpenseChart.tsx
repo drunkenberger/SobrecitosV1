@@ -23,6 +23,18 @@ import {
 import { Progress } from "../ui/progress";
 import LineChart from "./charts/LineChart";
 
+const CHART_COLORS = [
+  "#FF6B6B",
+  "#4ECDC4",
+  "#45B7D1",
+  "#96CEB4",
+  "#FFEEAD",
+  "#FF9F80",
+  "#A8E6CF",
+  "#FFD3B6",
+  "#BEE1E6",
+];
+
 interface ExpenseChartProps {
   data?: {
     category: string;
@@ -129,23 +141,12 @@ const ExpenseChart = ({
                 background: `conic-gradient(${data
                   .filter((item) => item.amount > 0)
                   .map((item, index) => {
-                    const colors = [
-                      "#FF6B6B",
-                      "#4ECDC4",
-                      "#45B7D1",
-                      "#96CEB4",
-                      "#FFEEAD",
-                      "#FF9F80",
-                      "#A8E6CF",
-                      "#FFD3B6",
-                      "#BEE1E6",
-                    ];
                     const startPercentage = data
                       .filter((d) => d.amount > 0)
                       .slice(0, index)
                       .reduce((sum, d) => sum + (d.amount / total) * 100, 0);
                     const percentage = (item.amount / total) * 100;
-                    return `${colors[index % colors.length]} ${startPercentage}% ${startPercentage + percentage}%`;
+                    return `${CHART_COLORS[index % CHART_COLORS.length]} ${startPercentage}% ${startPercentage + percentage}%`;
                   })
                   .join(",")})`,
               }}
@@ -155,23 +156,12 @@ const ExpenseChart = ({
             {data
               .filter((item) => item.amount > 0)
               .map((item, index) => {
-                const colors = [
-                  "#FF6B6B",
-                  "#4ECDC4",
-                  "#45B7D1",
-                  "#96CEB4",
-                  "#FFEEAD",
-                  "#FF9F80",
-                  "#A8E6CF",
-                  "#FFD3B6",
-                  "#BEE1E6",
-                ];
                 const percentage = ((item.amount / total) * 100).toFixed(1);
                 return (
                   <div key={item.category} className="flex items-center gap-2">
                     <div
                       className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: colors[index % colors.length] }}
+                      style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
                     />
                     <span className="text-sm text-muted-foreground">
                       {t(`dashboard.categories.${item.category.toLowerCase()}`)} ({percentage}%)
@@ -187,17 +177,6 @@ const ExpenseChart = ({
             {data
               .filter((item) => item.amount > 0)
               .map((item, index) => {
-                const colors = [
-                  "#FF6B6B",
-                  "#4ECDC4",
-                  "#45B7D1",
-                  "#96CEB4",
-                  "#FFEEAD",
-                  "#FF9F80",
-                  "#A8E6CF",
-                  "#FFD3B6",
-                  "#BEE1E6",
-                ];
                 const maxAmount = Math.max(...data.map((d) => d.amount));
                 const heightPercentage = (item.amount / maxAmount) * 100;
                 const barHeight = Math.max((heightPercentage * 180) / 100, 20);
@@ -210,7 +189,7 @@ const ExpenseChart = ({
                       className="w-full rounded-t-lg transition-all duration-500"
                       style={{
                         height: `${barHeight}px`,
-                        backgroundColor: colors[index % colors.length],
+                        backgroundColor: CHART_COLORS[index % CHART_COLORS.length],
                       }}
                     />
                     <span className="text-sm text-center whitespace-nowrap overflow-hidden text-ellipsis w-full text-muted-foreground">
