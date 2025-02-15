@@ -3,7 +3,6 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons"
 import { DayPicker } from "react-day-picker"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
-import { useTranslation } from "react-i18next"
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
@@ -13,8 +12,6 @@ function Calendar({
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
-  const { i18n } = useTranslation();
-
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -66,6 +63,7 @@ function Calendar({
     />
   )
 }
+
 Calendar.displayName = "Calendar"
 
 export { Calendar }

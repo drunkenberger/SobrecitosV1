@@ -9,6 +9,7 @@ import ExpenseChart from "@/components/budget/ExpenseChart";
 import SEO from "@/components/SEO";
 
 export default function Profile() {
+  const { t } = useTranslation();
   const user = getCurrentUser();
   const store = getStore();
 
