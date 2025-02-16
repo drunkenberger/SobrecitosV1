@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { es } from 'date-fns/locale';
-import { format, parseISO } from "date-fns";
+import { format, parseISO, isValid } from "date-fns";
 
 interface FuturePayment {
   id: string;
@@ -37,10 +37,11 @@ interface FuturePaymentsProps {
   }) => void;
 }
 
-// Safely create dates
+// Safely create dates with validation
 const createSafeDate = (dateString: string): Date => {
   try {
-    return parseISO(dateString);
+    const parsedDate = parseISO(dateString);
+    return isValid(parsedDate) ? parsedDate : new Date();
   } catch (error) {
     console.error('Error parsing date:', error);
     return new Date();
@@ -74,36 +75,59 @@ export default function FuturePayments({
 }: FuturePaymentsProps) {
   const { t, i18n } = useTranslation();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [error, setError] = useState<string | null>(null);
 
   // Initialize the selected date safely
   useEffect(() => {
-    setSelectedDate(new Date());
+    try {
+      const now = new Date();
+      if (isValid(now)) {
+        setSelectedDate(now);
+      }
+    } catch (error) {
+      console.error('Error initializing date:', error);
+      setError('Error initializing calendar');
+    }
   }, []);
 
-  // Safe locale getter
+  // Safe locale getter with error handling
   const getLocale = (language: string) => {
     try {
-      return language === 'es' ? es : undefined;
+      if (language === 'es') {
+        return es;
+      }
+      return undefined;
     } catch (error) {
       console.error('Error getting locale:', error);
       return undefined;
     }
   };
 
-  // Safe date formatter
+  // Safe date formatter with validation
   const formatDate = (date: Date) => {
     try {
+      if (!isValid(date)) {
+        throw new Error('Invalid date');
+      }
       return format(date, 'PP', { locale: getLocale(i18n.language) });
     } catch (error) {
       console.error('Error formatting date:', error);
-      return date.toLocaleDateString();
+      return 'Invalid date';
     }
   };
 
   // Calculate total upcoming payments safely
   const totalUpcoming = payments
-    .filter((payment) => !payment.isPaid)
-    .reduce((sum, payment) => sum + (typeof payment.amount === 'number' ? payment.amount : 0), 0);
+    .filter((payment) => !payment.isPaid && payment.amount && typeof payment.amount === 'number')
+    .reduce((sum, payment) => sum + payment.amount, 0);
+
+  if (error) {
+    return (
+      <div className="p-4 text-red-500">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -130,23 +154,33 @@ export default function FuturePayments({
               <Calendar
                 mode="single"
                 selected={selectedDate}
-                onSelect={setSelectedDate}
+                onSelect={(date) => {
+                  try {
+                    if (date && isValid(date)) {
+                      setSelectedDate(date);
+                    }
+                  } catch (error) {
+                    console.error('Error selecting date:', error);
+                  }
+                }}
                 locale={getLocale(i18n.language)}
                 weekStartsOn={i18n.language === 'es' ? 1 : 0}
                 className="rounded-md border"
                 formatters={{
                   formatWeekdayName: (date) => {
                     try {
+                      if (!isValid(date)) return '';
                       return format(date, 'EEEEE', { locale: getLocale(i18n.language) });
                     } catch (error) {
-                      return format(date, 'EEEEE');
+                      return '';
                     }
                   },
                   formatCaption: (date) => {
                     try {
+                      if (!isValid(date)) return '';
                       return format(date, 'LLLL yyyy', { locale: getLocale(i18n.language) });
                     } catch (error) {
-                      return format(date, 'LLLL yyyy');
+                      return '';
                     }
                   }
                 }}
@@ -171,7 +205,13 @@ export default function FuturePayments({
               </TableHeader>
               <TableBody>
                 {payments
-                  .sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime())
+                  .sort((a, b) => {
+                    try {
+                      return a.dueDate.getTime() - b.dueDate.getTime();
+                    } catch (error) {
+                      return 0;
+                    }
+                  })
                   .map((payment) => (
                     <TableRow key={payment.id}>
                       <TableCell>{payment.description}</TableCell>

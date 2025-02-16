@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from '@/components/ui/card';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 interface BudgetOverviewProps {
   totalBudget: number;
@@ -16,25 +10,31 @@ export function BudgetOverview({ totalBudget, spentAmount, remainingBalance }: B
   const { t } = useTranslation();
 
   return (
-    <div className="grid grid-cols-3 gap-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('dashboard.overview.totalBudget')}</CardTitle>
-          <CardDescription>${totalBudget.toLocaleString()}</CardDescription>
-        </CardHeader>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('dashboard.overview.spentAmount')}</CardTitle>
-          <CardDescription>${spentAmount.toLocaleString()}</CardDescription>
-        </CardHeader>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('dashboard.overview.remainingBalance')}</CardTitle>
-          <CardDescription>${remainingBalance.toLocaleString()}</CardDescription>
-        </CardHeader>
-      </Card>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="p-6 bg-white rounded-lg shadow">
+        <h3 className="text-lg font-medium text-gray-900">
+          {t('dashboard.overview.totalBudget')}
+        </h3>
+        <p className="text-3xl font-bold text-gray-700 mt-2">
+          ${totalBudget.toLocaleString()}
+        </p>
+      </div>
+      <div className="p-6 bg-white rounded-lg shadow">
+        <h3 className="text-lg font-medium text-gray-900">
+          {t('dashboard.overview.spentAmount')}
+        </h3>
+        <p className="text-3xl font-bold text-gray-700 mt-2">
+          ${spentAmount.toLocaleString()}
+        </p>
+      </div>
+      <div className="p-6 bg-white rounded-lg shadow">
+        <h3 className="text-lg font-medium text-gray-900">
+          {t('dashboard.overview.remainingBalance')}
+        </h3>
+        <p className="text-3xl font-bold text-gray-700 mt-2">
+          ${remainingBalance.toLocaleString()}
+        </p>
+      </div>
     </div>
   );
 } 

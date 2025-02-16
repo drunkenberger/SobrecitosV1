@@ -1,4 +1,5 @@
-import React, { useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect } from "react";
+import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { getStore } from "@/lib/store";
@@ -11,11 +12,7 @@ interface Account {
   type: "credit" | "depository" | "investment" | "upcoming" | "savings";
 }
 
-interface AppLayoutProps {
-  children: ReactNode;
-}
-
-export default function AppLayout({ children }: AppLayoutProps) {
+export default function AppLayout() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [sidebarError, setSidebarError] = useState<Error | null>(null);
   const { t } = useTranslation();
@@ -121,7 +118,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
             </div>
             <div className="flex-1 ml-64">
               <div className="max-w-[1600px] mx-auto px-4 py-6">
-                {children}
+                <Outlet />
               </div>
             </div>
           </div>
@@ -158,7 +155,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         {/* Main Content */}
         <div className="flex-1 ml-64 overflow-auto">
           <div className="max-w-[1600px] mx-auto px-4 py-6">
-            {children}
+            <Outlet />
           </div>
         </div>
       </div>

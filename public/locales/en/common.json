@@ -21,7 +21,8 @@
     "readMore": "Read More",
     "viewAll": "View All",
     "seeMore": "See More",
-    "tryFeatures": "Try AI Features"
+    "tryFeatures": "Try AI Features",
+    "language": "Language"
   },
   "navigation": {
     "home": "Home",
@@ -232,6 +233,10 @@
       }
     },
     "alerts": {
+      "overall": {
+        "title": "Budget Alert",
+        "message": "You've spent {percent}% of your total budget"
+      },
       "utilities": {
         "title": "Utilities Alert",
         "message": "You've spent {percent}% of your Utilities budget"
@@ -239,6 +244,18 @@
       "salad": {
         "title": "Salad Alert",
         "message": "You've spent {percent}% of your Salad budget"
+      },
+      "salud": {
+        "title": "Health Alert",
+        "message": "You've spent {percent}% of your Health budget"
+      },
+      "groceries": {
+        "title": "Groceries Alert",
+        "message": "You've spent {percent}% of your Groceries budget"
+      },
+      "entertainment": {
+        "title": "Entertainment Alert",
+        "message": "You've spent {percent}% of your Entertainment budget"
       }
     },
     "overview": {
@@ -367,7 +384,10 @@
       "doctores": "Doctors",
       "clasesextra": "Extra Classes",
       "renta": "Rent",
-      "juanis": "Juanis"
+      "juanis": "Juanis",
+      "salud": "Health",
+      "servicio": "Services",
+      "taxes": "Taxes"
     },
     "payments": {
       "calendar": {
@@ -447,7 +467,10 @@
         "targetAmount": "Target amount",
         "deadline": "Deadline",
         "color": "Color",
-        "saveChanges": "Save Changes"
+        "saveChanges": "Save Changes",
+        "remaining": "Remaining Amount",
+        "timeLeft": "Time Left",
+        "days": "days"
       }
     }
   },
@@ -456,7 +479,8 @@
     "personalLoan": "Personal Loan",
     "mortgage": "Mortgage",
     "creditCard": "Credit Card",
-    "storeCredit": "Store Credit"
+    "storeCredit": "Store Credit",
+    "investments": "Investments"
   },
   "errors": {
     "sidebarLoading": "Error loading sidebar. Please refresh the page."

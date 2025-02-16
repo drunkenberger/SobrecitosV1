@@ -23,8 +23,9 @@ import {
   deleteSavingsGoal,
   addFuturePayment,
   updateFuturePayment,
+  addExpense,
 } from "@/lib/store";
-import { Sparkles, Wallet, PieChart, ListChecks } from "lucide-react";
+import { Sparkles, Wallet, PieChart, ListChecks, Plus } from "lucide-react";
 import FuturePayments from "./budget/FuturePayments";
 import { AuthDialog } from "./auth/AuthDialog";
 import { AIInsightsDialog } from "./budget/AIInsightsDialog";
@@ -33,12 +34,23 @@ import { AIChatWindow } from "./budget/AIChatWindow";
 import { useTranslation } from 'react-i18next';
 import type { Category } from "@/types/category";
 import type { Expense } from "@/types/expense";
+import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import type { ExpenseFormData } from '@/components/forms/ExpenseForm';
+import type { ExpenseInput } from '@/lib/store';
 
 const Home = () => {
   const { t } = useTranslation();
   const [showAuth, setShowAuth] = React.useState(!getCurrentUser());
   const [store, setStore] = React.useState(getStore());
   const [categories] = React.useState<Category[]>(store.categories || []);
+  const [showExpenseForm, setShowExpenseForm] = React.useState(false);
 
   React.useEffect(() => {
     if (!getCurrentUser()) {
@@ -134,6 +146,17 @@ const Home = () => {
     refreshStore();
   };
 
+  const handleAddExpense = (expenseData: ExpenseFormData) => {
+    const newExpense: ExpenseInput = {
+      amount: expenseData.amount,
+      category: expenseData.category,
+      description: expenseData.description
+    };
+    addExpense(newExpense);
+    refreshStore();
+    setShowExpenseForm(false);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Top Banner with Gradient */}
@@ -160,12 +183,23 @@ const Home = () => {
                 <DataManager onDataChange={refreshStore} />
                 <AIInsightsDialog />
               </div>
-              <ExpenseForm
-                categories={categories}
-                onSubmit={(expense: Expense) => {
-                  console.log('New expense:', expense);
-                }}
-              />
+              <Dialog open={showExpenseForm} onOpenChange={setShowExpenseForm}>
+                <DialogTrigger asChild>
+                  <Button className="gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold">
+                    <Plus className="w-4 h-4" />
+                    {t('dashboard.header.buttons.addExpense')}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>{t('dashboard.transactions.addExpense')}</DialogTitle>
+                  </DialogHeader>
+                  <ExpenseForm
+                    categories={categories}
+                    onSubmit={handleAddExpense}
+                  />
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>
@@ -232,15 +266,16 @@ const Home = () => {
                 <div className="flex items-center gap-3">
                   <ListChecks className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                   <h2 className="text-xl font-semibold text-purple-800 dark:text-purple-200">
-                    Recent Transactions
+                    {t('dashboard.transactions.recentExpenses')}
                   </h2>
                 </div>
-                <ExpenseForm
-                  categories={categories}
-                  onSubmit={(expense: Expense) => {
-                    console.log('New expense:', expense);
-                  }}
-                />
+                <Button 
+                  onClick={() => setShowExpenseForm(true)}
+                  className="gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold"
+                >
+                  <Plus className="w-4 h-4" />
+                  {t('dashboard.header.buttons.addExpense')}
+                </Button>
               </div>
               <ExpenseList
                 expenses={(store.expenses || []).map((exp) => ({

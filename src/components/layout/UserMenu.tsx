@@ -18,11 +18,12 @@ import { getCurrentUser, logoutUser } from "@/lib/auth";
 import { useNavigate, Link } from "react-router-dom";
 import { currencies } from "@/lib/currency";
 import { getStore, setStore } from "@/lib/store";
+import { useState } from "react";
 
 export function UserMenu() {
   const user = getCurrentUser();
   const navigate = useNavigate();
-  const store = getStore();
+  const [currentCurrency, setCurrentCurrency] = useState(getStore().currency);
 
   const handleLogout = () => {
     logoutUser();
@@ -30,8 +31,10 @@ export function UserMenu() {
   };
 
   const handleCurrencyChange = (currency: typeof currencies[0]) => {
+    const store = getStore();
     store.currency = currency;
     setStore(store);
+    setCurrentCurrency(currency);
   };
 
   if (!user) return null;

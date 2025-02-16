@@ -1,65 +1,77 @@
 import { useTranslation } from 'react-i18next';
-import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import type { Category } from "@/types/category";
-import type { Expense } from "@/types/expense";
+import { Button } from '../ui/button';
+import type { Category } from '@/types/category';
+import { FormEvent } from 'react';
 
-export interface ExpenseFormProps {
-  categories: Category[];
-  onSubmit: (expense: Expense) => void;
+export interface ExpenseFormData {
+  amount: number;
+  category: string;
+  description: string;
 }
 
-type ExpenseFormData = Omit<Expense, 'id'>;
+interface ExpenseFormProps {
+  onSubmit: (expense: ExpenseFormData) => void;
+  categories: Category[];
+}
 
-export function ExpenseForm({ categories, onSubmit }: ExpenseFormProps) {
+export function ExpenseForm({ onSubmit, categories }: ExpenseFormProps) {
   const { t } = useTranslation();
-  const { register, handleSubmit } = useForm<ExpenseFormData>();
 
-  const handleFormSubmit = (data: ExpenseFormData) => {
-    onSubmit({
-      ...data,
-      id: crypto.randomUUID(),
-      date: new Date(data.date)
-    });
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    
+    const expenseData: ExpenseFormData = {
+      amount: Number(formData.get('amount')),
+      category: String(formData.get('category')),
+      description: String(formData.get('description') || '')
+    };
+    
+    onSubmit(expenseData);
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="amount">{t('forms.expense.amount')}</Label>
-        <Input
-          id="amount"
-          type="number"
-          {...register('amount', { required: true, min: 0 })}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="category">{t('forms.expense.category')}</Label>
-        <Select {...register('category', { required: true })}>
-          <SelectTrigger>
-            <SelectValue placeholder={t('forms.expense.selectCategory')} />
-          </SelectTrigger>
-          <SelectContent>
+    <form onSubmit={handleSubmit}>
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">{t('forms.expense.amount')}</label>
+          <input 
+            type="number" 
+            name="amount"
+            className="w-full rounded-md border border-input bg-background px-3 py-2"
+            required
+            placeholder="0.00"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">{t('forms.expense.category')}</label>
+          <select 
+            name="category"
+            className="w-full rounded-md border border-input bg-background px-3 py-2"
+            required
+          >
+            <option value="">{t('dashboard.transactions.allCategories')}</option>
             {categories.map((category) => (
-              <SelectItem key={category.id} value={category.name}>
+              <option key={category.id} value={category.name}>
                 {t(`dashboard.categories.${category.name.toLowerCase()}`)}
-              </SelectItem>
+              </option>
             ))}
-          </SelectContent>
-        </Select>
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">{t('forms.expense.description')}</label>
+          <input 
+            type="text" 
+            name="description"
+            className="w-full rounded-md border border-input bg-background px-3 py-2"
+            required
+            placeholder={t('dashboard.transactions.searchPlaceholder')}
+          />
+        </div>
+        <Button type="submit" className="w-full">
+          {t('common.save')}
+        </Button>
       </div>
-      <Button type="submit">{t('common.save')}</Button>
     </form>
   );
-}
-
-export default ExpenseForm; 
+} 

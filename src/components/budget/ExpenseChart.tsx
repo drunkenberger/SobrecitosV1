@@ -138,45 +138,52 @@ const ExpenseChart = ({
         </TabsList>
 
         <TabsContent value="pie" className="h-[250px]">
-          <div className="relative w-full h-[180px] flex items-center justify-center">
-            <div
-              className="w-[180px] h-[180px] rounded-full relative overflow-hidden shadow-lg"
-              style={{
-                background: `conic-gradient(${data
+          <div className="relative w-full h-[180px] flex">
+            {/* Scrollable labels column on the left */}
+            <div className="w-48 h-[180px] overflow-y-auto pr-4 border-r">
+              <div className="space-y-2">
+                {data
                   .filter((item) => item.amount > 0)
-                  .map((item) => {
-                    return `${CHART_COLORS[data.indexOf(item) % CHART_COLORS.length]} ${data
-                      .filter((d) => d.amount > 0)
-                      .slice(0, data.indexOf(item))
-                      .reduce((sum, d) => sum + (d.amount / total) * 100, 0)}% ${data
-                      .filter((d) => d.amount > 0)
-                      .slice(0, data.indexOf(item) + 1)
-                      .reduce((sum, d) => sum + (d.amount / total) * 100, 0)}%`;
-                  })
-                  .join(",")})`,
-              }}
-            />
-          </div>
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            {data
-              .filter((item) => item.amount > 0)
-              .map((item: ChartDataItem) => {
-                const percentage = ((item.amount / total) * 100).toFixed(1);
-                return (
-                  <div
-                    key={item.category}
-                    className="flex items-center justify-between py-2"
-                  >
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: CHART_COLORS[data.indexOf(item) % CHART_COLORS.length] }}
-                    />
-                    <span className="text-sm text-muted-foreground">
-                      {t(`dashboard.categories.${item.category.toLowerCase()}`)} ({percentage}%)
-                    </span>
-                  </div>
-                );
-              })}
+                  .map((item: ChartDataItem) => {
+                    const percentage = ((item.amount / total) * 100).toFixed(1);
+                    return (
+                      <div
+                        key={item.category}
+                        className="flex items-center gap-2"
+                      >
+                        <div
+                          className="w-3 h-3 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: CHART_COLORS[data.indexOf(item) % CHART_COLORS.length] }}
+                        />
+                        <span className="text-sm text-muted-foreground whitespace-nowrap">
+                          {t(`dashboard.categories.${item.category.toLowerCase()}`)} ({percentage}%)
+                        </span>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+
+            {/* Pie chart centered in remaining space */}
+            <div className="flex-1 flex items-center justify-center">
+              <div
+                className="w-[180px] h-[180px] rounded-full relative overflow-hidden shadow-lg"
+                style={{
+                  background: `conic-gradient(${data
+                    .filter((item) => item.amount > 0)
+                    .map((item) => {
+                      return `${CHART_COLORS[data.indexOf(item) % CHART_COLORS.length]} ${data
+                        .filter((d) => d.amount > 0)
+                        .slice(0, data.indexOf(item))
+                        .reduce((sum, d) => sum + (d.amount / total) * 100, 0)}% ${data
+                        .filter((d) => d.amount > 0)
+                        .slice(0, data.indexOf(item) + 1)
+                        .reduce((sum, d) => sum + (d.amount / total) * 100, 0)}%`;
+                    })
+                    .join(",")})`,
+                }}
+              />
+            </div>
           </div>
         </TabsContent>
 

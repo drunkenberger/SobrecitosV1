@@ -1,32 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { getStore } from "@/lib/store";
 import { getCurrentUser } from "@/lib/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PieChart, Wallet, TrendingUp, Target } from "lucide-react";
+import { PieChart } from "lucide-react";
 import ExpenseChart from "@/components/budget/ExpenseChart";
 import SEO from "@/components/SEO";
-import {
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-
-interface Income {
-  amount: number;
-}
-
-interface Expense {
-  amount: number;
-  category: string;
-}
-
-interface SavingsGoal {
-  targetAmount: number;
-  currentAmount: number;
-  name: string;
-}
 
 export default function Profile() {
   const { t } = useTranslation();
@@ -35,24 +15,30 @@ export default function Profile() {
 
   const totalBudget =
     store.monthlyBudget +
-    (store.additionalIncomes || []).reduce((sum: number, inc: Income) => sum + inc.amount, 0);
+    (store.additionalIncomes || []).reduce((sum, inc) => sum + inc.amount, 0);
   const spentAmount = (store.expenses || []).reduce(
-    (sum: number, exp: Expense) => sum + exp.amount,
+    (sum, exp) => sum + exp.amount,
     0,
   );
+  const remainingBalance = totalBudget - spentAmount;
 
-  // Calculate current savings
-  const currentSavings = (store.savingsGoals || []).reduce(
-    (sum: number, goal: SavingsGoal) => sum + goal.currentAmount,
+  // Calculate savings progress
+  const totalSavingsGoal = (store.savingsGoals || []).reduce(
+    (sum, goal) => sum + goal.targetAmount,
     0,
   );
+  const currentSavings = (store.savingsGoals || []).reduce(
+    (sum, goal) => sum + goal.currentAmount,
+    0,
+  );
+  const savingsProgress = (currentSavings / totalSavingsGoal) * 100;
 
   // Prepare chart data
   const chartData = (store.categories || []).map((cat) => ({
     category: cat.name,
     amount: (store.expenses || [])
-      .filter((exp: Expense) => exp.category === cat.name)
-      .reduce((sum: number, exp: Expense) => sum + exp.amount, 0),
+      .filter((exp) => exp.category === cat.name)
+      .reduce((sum, exp) => sum + exp.amount, 0),
   }));
 
   return (
@@ -81,48 +67,50 @@ export default function Profile() {
         {/* Financial Overview Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="p-6">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Wallet className="w-5 h-5 text-primary" />
-                <CardTitle>{t('profile.stats.totalBudget')}</CardTitle>
+            <div className="flex items-center gap-3 mb-2">
+              <Wallet className="w-5 h-5 text-primary" />
+              <h3 className="font-semibold">Monthly Budget</h3>
+            </div>
+            <p className="text-3xl font-bold">
+              ${totalBudget.toLocaleString()}
+            </p>
+            <div className="mt-2">
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-muted-foreground">Spent</span>
+                <span>{((spentAmount / totalBudget) * 100).toFixed(1)}%</span>
               </div>
-              <CardDescription>{t('profile.stats.totalBudgetDesc')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">
-                ${totalBudget.toLocaleString()}
-              </p>
-            </CardContent>
+              <Progress value={(spentAmount / totalBudget) * 100} />
+            </div>
           </Card>
 
           <Card className="p-6">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-primary" />
-                <CardTitle>{t('profile.stats.monthlySpending')}</CardTitle>
-              </div>
-              <CardDescription>{t('profile.stats.monthlySpendingDesc')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">
-                ${spentAmount.toLocaleString()}
-              </p>
-            </CardContent>
+            <div className="flex items-center gap-3 mb-2">
+              <TrendingUp className="w-5 h-5 text-primary" />
+              <h3 className="font-semibold">Current Balance</h3>
+            </div>
+            <p className="text-3xl font-bold">
+              ${remainingBalance.toLocaleString()}
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Available to spend this month
+            </p>
           </Card>
 
           <Card className="p-6">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-primary" />
-                <CardTitle>{t('profile.stats.savingsGoals')}</CardTitle>
+            <div className="flex items-center gap-3 mb-2">
+              <Target className="w-5 h-5 text-primary" />
+              <h3 className="font-semibold">Savings Progress</h3>
+            </div>
+            <p className="text-3xl font-bold">
+              ${currentSavings.toLocaleString()}
+            </p>
+            <div className="mt-2">
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-muted-foreground">Goal</span>
+                <span>${totalSavingsGoal.toLocaleString()}</span>
               </div>
-              <CardDescription>{t('profile.stats.savingsGoalsDesc')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">
-                ${currentSavings.toLocaleString()}
-              </p>
-            </CardContent>
+              <Progress value={savingsProgress} />
+            </div>
           </Card>
         </div>
 

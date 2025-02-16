@@ -1,44 +1,23 @@
 import { useTranslation } from 'react-i18next';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
 
-interface Alert {
-  type: 'category' | 'overall';
-  percentage: number;
-  severity: 'warning' | 'error' | 'info';
-  category?: string;
-}
-
-interface BudgetAlertsProps {
-  alerts: Alert[];
-}
-
-export function BudgetAlerts({ alerts }: BudgetAlertsProps) {
+export function BudgetAlerts({ alerts }) {
   const { t } = useTranslation();
 
-  const getCategoryTranslationKey = (category: string) => {
-    return `dashboard.categories.${category.toLowerCase()}`;
-  };
-
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       {alerts.map((alert) => (
-        <Alert 
-          key={`${alert.type}-${alert.category || 'overall'}`}
-          variant={alert.severity === 'error' ? 'destructive' : 'default'}
-        >
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>
-            {t(`dashboard.alerts.${alert.type}.title`, {
-              category: alert.category ? t(getCategoryTranslationKey(alert.category)) : null
-            })}
-          </AlertTitle>
-          <AlertDescription>
+        <div key={alert.id} className="alert alert-warning">
+          <h3 className="font-semibold">
+            {t(`dashboard.alerts.${alert.type}.title`)}
+          </h3>
+          <p>
             {t(`dashboard.alerts.${alert.type}.message`, {
-              percent: alert.percentage
+              percent: alert.percent,
+              category: alert.category,
+              goalName: alert.goalName
             })}
-          </AlertDescription>
-        </Alert>
+          </p>
+        </div>
       ))}
     </div>
   );

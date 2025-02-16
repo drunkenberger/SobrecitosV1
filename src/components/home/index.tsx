@@ -1,29 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { AlertCircle } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 export default function Home() {
   const { t } = useTranslation();
-  
-  // TODO: Replace with actual data from your state management
-  const totalBudget = 5000;
-  const spentAmount = 3250;
-  const remainingBalance = totalBudget - spentAmount;
 
   return (
     <div className="min-h-screen bg-background">
@@ -38,16 +16,16 @@ export default function Home() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant="secondary">
+              <Button variant="warning">
                 {t('dashboard.header.buttons.exportData')}
               </Button>
-              <Button variant="secondary">
+              <Button variant="warning">
                 {t('dashboard.header.buttons.importData')}
               </Button>
-              <Button variant="secondary">
+              <Button variant="warning">
                 {t('dashboard.header.buttons.aiInsights')}
               </Button>
-              <Button variant="secondary">
+              <Button variant="warning">
                 {t('dashboard.header.buttons.addExpense')}
               </Button>
             </div>
@@ -58,16 +36,16 @@ export default function Home() {
       <div className="container mx-auto p-6 space-y-6">
         {/* Alerts */}
         <div className="space-y-2">
-          <Alert>
+          <div className="alert">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>{t('dashboard.alerts.utilities.title')}</AlertTitle>
-            <AlertDescription>{t('dashboard.alerts.utilities.message', { percent: 84 })}</AlertDescription>
-          </Alert>
-          <Alert variant="destructive">
+            <h4>{t('dashboard.alerts.utilities.title')}</h4>
+            <p>{t('dashboard.alerts.utilities.message', { percent: 84 })}</p>
+          </div>
+          <div className="alert">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>{t('dashboard.alerts.salad.title')}</AlertTitle>
-            <AlertDescription>{t('dashboard.alerts.salad.message', { percent: 171 })}</AlertDescription>
-          </Alert>
+            <h4>{t('dashboard.alerts.salad.title')}</h4>
+            <p>{t('dashboard.alerts.salad.message', { percent: 171 })}</p>
+          </div>
         </div>
 
         {/* Budget Overview */}

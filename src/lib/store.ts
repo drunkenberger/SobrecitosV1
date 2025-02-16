@@ -55,6 +55,12 @@ export interface BudgetAlert {
   severity: 'warning' | 'danger';
 }
 
+export interface ExpenseInput {
+  amount: number;
+  category: string;
+  description: string;
+}
+
 interface BudgetStore {
   monthlyBudget: number;
   additionalIncomes: Income[];
@@ -164,7 +170,7 @@ export const deleteCategory = (id: string) => {
   setStore(store);
 };
 
-export const addExpense = (expense: Omit<Expense, "id" | "date">) => {
+export const addExpense = (expense: ExpenseInput) => {
   const store = getStore();
   store.expenses.push({
     ...expense,
@@ -248,12 +254,13 @@ export function getBudgetAlerts(): BudgetAlert[] {
 
   // Check category budgets
   (store.categories || []).forEach(category => {
-    const categorySpent = (store.expenses || [])
+    const categoryExpenses = (store.expenses || [])
       .filter(exp => exp.category === category.name)
       .reduce((sum, exp) => sum + exp.amount, 0);
-    const categoryPercentage = (categorySpent / category.budget) * 100;
-
-    if (categoryPercentage >= 90) {
+    
+    const categoryPercentage = (categoryExpenses / category.budget) * 100;
+    
+    if (categoryPercentage >= 80) {
       alerts.push({
         type: 'category',
         category: category.name,

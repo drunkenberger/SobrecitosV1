@@ -1,33 +1,60 @@
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface ExpenseData {
-  [key: string]: number;
+interface ChartData {
+  category: string;
+  amount: number;
 }
 
-export function ExpenseChart({ data }: { data: ExpenseData }) {
-  const { t } = useTranslation();
-  const total = Object.values(data).reduce((sum, amount) => sum + amount, 0);
+interface ExpenseChartProps {
+  data: ChartData[];
+  selectedView: 'pie' | 'bar';
+  selectedTimeframe: 'week' | 'month' | 'year';
+}
+
+type ColorMap = {
+  [key: string]: string;
+};
+
+export function ExpenseChart({ data, selectedView, selectedTimeframe }: ExpenseChartProps): React.ReactElement {
+  const colors: ColorMap = {
+    Groceries: '#FF6B6B',     // Red for Groceries
+    Utilities: '#4ECDC4',     // Turquoise for Utilities
+    Entertainment: '#45B7D1',  // Light blue for Entertainment
+    Salud: '#96CEB4',         // Mint green for Health
+    Other: '#607D8B'
+  };
+
+  // Calculate total for percentages
+  const total = data.reduce((sum, item) => sum + item.amount, 0);
+
+  // Calculate percentages for each category
+  const getPercentage = (amount: number): string => {
+    return ((amount / total) * 100).toFixed(1);
+  };
 
   return (
-    <div className="space-y-4">
-      {Object.entries(data).map(([category, amount]) => {
-        const percentage = total > 0 ? (amount / total) * 100 : 0;
-        return (
-          <div key={category} className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div
-                className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: `hsl(${Math.random() * 360}, 70%, 50%)` }}
+    <div className="relative w-full" style={{ height: '400px' }}>
+      <div className="absolute inset-0">
+        {/* Pie chart will go here */}
+      </div>
+
+      {/* Category labels in scrollable column */}
+      <div className="absolute left-4 top-0 bottom-0 w-48 overflow-y-auto">
+        <div className="space-y-2 py-2">
+          {data.map((item) => (
+            <div key={item.category} className="inline-flex items-center">
+              <div 
+                className="w-2 h-2 rounded-full" 
+                style={{ backgroundColor: colors[item.category] || colors.Other }} 
               />
-              <span>{t(`dashboard.categories.${category.toLowerCase()}`)}</span>
+              <span className="ml-1 text-xs">
+                {item.category} ({getPercentage(item.amount)}%)
+              </span>
             </div>
-            <div className="text-right">
-              <div>${amount.toLocaleString()}</div>
-              <div className="text-sm text-muted-foreground">{percentage.toFixed(1)}%</div>
-            </div>
-          </div>
-        );
-      })}
+          ))}
+        </div>
+      </div>
     </div>
   );
 } 
