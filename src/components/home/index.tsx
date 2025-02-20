@@ -1,6 +1,32 @@
 import { useTranslation } from 'react-i18next';
+import { AlertCircle } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-export default function Home() {
+interface HomeProps {
+  totalBudget?: number;
+  spentAmount?: number;
+  remainingBalance?: number;
+}
+
+export default function Home({ 
+  totalBudget = 0, 
+  spentAmount = 0, 
+  remainingBalance = 0 
+}: HomeProps) {
   const { t } = useTranslation();
 
   return (
@@ -16,16 +42,16 @@ export default function Home() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant="warning">
+              <Button variant="secondary">
                 {t('dashboard.header.buttons.exportData')}
               </Button>
-              <Button variant="warning">
+              <Button variant="secondary">
                 {t('dashboard.header.buttons.importData')}
               </Button>
-              <Button variant="warning">
+              <Button variant="destructive">
                 {t('dashboard.header.buttons.aiInsights')}
               </Button>
-              <Button variant="warning">
+              <Button variant="destructive">
                 {t('dashboard.header.buttons.addExpense')}
               </Button>
             </div>
@@ -34,20 +60,6 @@ export default function Home() {
       </div>
 
       <div className="container mx-auto p-6 space-y-6">
-        {/* Alerts */}
-        <div className="space-y-2">
-          <div className="alert">
-            <AlertCircle className="h-4 w-4" />
-            <h4>{t('dashboard.alerts.utilities.title')}</h4>
-            <p>{t('dashboard.alerts.utilities.message', { percent: 84 })}</p>
-          </div>
-          <div className="alert">
-            <AlertCircle className="h-4 w-4" />
-            <h4>{t('dashboard.alerts.salad.title')}</h4>
-            <p>{t('dashboard.alerts.salad.message', { percent: 171 })}</p>
-          </div>
-        </div>
-
         {/* Budget Overview */}
         <div className="grid grid-cols-3 gap-4">
           <Card>
@@ -105,7 +117,7 @@ export default function Home() {
               <span>{t('dashboard.categories.groceries')} (1.5%)</span>
               <span>{t('dashboard.categories.utilities')} (25.3%)</span>
               <span>{t('dashboard.categories.entertainment')} (6.1%)</span>
-              <span>{t('dashboard.categories.salad')} (67.1%)</span>
+              <span>{t('dashboard.categories.salud')} (67.1%)</span>
             </div>
           </CardContent>
         </Card>

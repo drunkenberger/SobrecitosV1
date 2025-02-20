@@ -5,7 +5,7 @@ import "./index.css";
 import "./styles/wordpress.css";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
-import './config/i18n';
+import './i18n/config';
 
 import { TempoDevtools } from "tempo-devtools";
 TempoDevtools.init();

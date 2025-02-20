@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 
 interface ChartData {
   category: string;
@@ -16,7 +15,14 @@ type ColorMap = {
   [key: string]: string;
 };
 
-export function ExpenseChart({ data, selectedView, selectedTimeframe }: ExpenseChartProps): React.ReactElement {
+export function ExpenseChart({ 
+  data,
+  // Keep props in interface for future use but mark as unused for now
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  selectedView,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  selectedTimeframe 
+}: ExpenseChartProps): React.ReactElement {
   const colors: ColorMap = {
     Groceries: '#FF6B6B',     // Red for Groceries
     Utilities: '#4ECDC4',     // Turquoise for Utilities

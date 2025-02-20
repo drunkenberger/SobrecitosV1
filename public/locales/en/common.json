@@ -232,32 +232,6 @@
         "addExpense": "Add Expense"
       }
     },
-    "alerts": {
-      "overall": {
-        "title": "Budget Alert",
-        "message": "You've spent {percent}% of your total budget"
-      },
-      "utilities": {
-        "title": "Utilities Alert",
-        "message": "You've spent {percent}% of your Utilities budget"
-      },
-      "salad": {
-        "title": "Salad Alert",
-        "message": "You've spent {percent}% of your Salad budget"
-      },
-      "salud": {
-        "title": "Health Alert",
-        "message": "You've spent {percent}% of your Health budget"
-      },
-      "groceries": {
-        "title": "Groceries Alert",
-        "message": "You've spent {percent}% of your Groceries budget"
-      },
-      "entertainment": {
-        "title": "Entertainment Alert",
-        "message": "You've spent {percent}% of your Entertainment budget"
-      }
-    },
     "overview": {
       "totalBudget": "Total Budget",
       "spentAmount": "Spent Amount",

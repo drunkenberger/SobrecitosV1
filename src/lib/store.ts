@@ -48,13 +48,6 @@ export interface FuturePayment {
   isPaid: boolean;
 }
 
-export interface BudgetAlert {
-  type: 'category' | 'overall';
-  category?: string;
-  percentage: number;
-  severity: 'warning' | 'danger';
-}
-
 export interface ExpenseInput {
   amount: number;
   category: string;
@@ -234,44 +227,6 @@ export const updateFuturePayment = (
   );
   setStore(store);
 };
-
-export function getBudgetAlerts(): BudgetAlert[] {
-  const store = getStore();
-  const alerts: BudgetAlert[] = [];
-
-  // Check overall budget
-  const totalSpent = (store.expenses || []).reduce((sum, exp) => sum + exp.amount, 0);
-  const totalBudget = store.monthlyBudget;
-  const overallPercentage = (totalSpent / totalBudget) * 100;
-
-  if (overallPercentage >= 90) {
-    alerts.push({
-      type: 'overall',
-      percentage: overallPercentage,
-      severity: overallPercentage >= 100 ? 'danger' : 'warning'
-    });
-  }
-
-  // Check category budgets
-  (store.categories || []).forEach(category => {
-    const categoryExpenses = (store.expenses || [])
-      .filter(exp => exp.category === category.name)
-      .reduce((sum, exp) => sum + exp.amount, 0);
-    
-    const categoryPercentage = (categoryExpenses / category.budget) * 100;
-    
-    if (categoryPercentage >= 80) {
-      alerts.push({
-        type: 'category',
-        category: category.name,
-        percentage: categoryPercentage,
-        severity: categoryPercentage >= 100 ? 'danger' : 'warning'
-      });
-    }
-  });
-
-  return alerts;
-}
 
 export const calculateRecommendedSavings = () => {
   const store = getStore();

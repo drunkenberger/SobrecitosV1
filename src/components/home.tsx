@@ -6,7 +6,6 @@ import { ExpenseForm } from "@/components/forms/ExpenseForm";
 import CategoryManager from "./budget/CategoryManager";
 import BudgetManager from "./budget/BudgetManager";
 import SavingsGoals from "./budget/SavingsGoals";
-import BudgetAlerts from "./budget/BudgetAlerts";
 import ExpenseList from "./budget/ExpenseList";
 import { Card } from "@/components/ui/card";
 import {
@@ -206,11 +205,6 @@ const Home = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        {/* Alerts Section */}
-        <div className="animate-in fade-in slide-in-from-top duration-500">
-          <BudgetAlerts />
-        </div>
-
         {/* Overview Cards with Gradient Backgrounds */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-100 dark:border-green-900 shadow-md hover:shadow-lg transition-shadow">

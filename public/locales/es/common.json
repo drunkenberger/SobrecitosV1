@@ -231,52 +231,6 @@
         "addExpense": "Añadir Gasto"
       }
     },
-    "alerts": {
-      "overall": {
-        "title": "Alerta de Presupuesto",
-        "message": "Has gastado el {percent}% de tu presupuesto total"
-      },
-      "utilities": {
-        "title": "Alerta de Servicios",
-        "message": "Has gastado el {percent}% de tu presupuesto de Servicios"
-      },
-      "salud": {
-        "title": "Alerta de Salud",
-        "message": "Has gastado el {percent}% de tu presupuesto de Salud"
-      },
-      "salad": {
-        "title": "Alerta de Ensalada",
-        "message": "Has gastado el {percent}% de tu presupuesto de Ensalada"
-      },
-      "groceries": {
-        "title": "Alerta de Comestibles",
-        "message": "Has gastado el {percent}% de tu presupuesto de Comestibles"
-      },
-      "entertainment": {
-        "title": "Alerta de Entretenimiento",
-        "message": "Has gastado el {percent}% de tu presupuesto de Entretenimiento"
-      },
-      "housing": {
-        "title": "Alerta de Vivienda",
-        "message": "Has gastado el {percent}% de tu presupuesto de Vivienda"
-      },
-      "transportation": {
-        "title": "Alerta de Transporte",
-        "message": "Has gastado el {percent}% de tu presupuesto de Transporte"
-      },
-      "education": {
-        "title": "Alerta de Educación",
-        "message": "Has gastado el {percent}% de tu presupuesto de Educación"
-      },
-      "savings": {
-        "title": "Alerta de Ahorros",
-        "message": "Has gastado el {percent}% de tu presupuesto de Ahorros"
-      },
-      "other": {
-        "title": "Alerta de Otros Gastos",
-        "message": "Has gastado el {percent}% de tu presupuesto de Otros Gastos"
-      }
-    },
     "overview": {
       "totalBudget": "Presupuesto Total",
       "spentAmount": "Cantidad Gastada",
