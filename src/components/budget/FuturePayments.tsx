@@ -15,26 +15,22 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { es } from 'date-fns/locale';
 import { format, parseISO, isValid } from "date-fns";
+import type { Category } from "@/lib/store";
 
 interface FuturePayment {
   id: string;
   description: string;
   amount: number;
-  dueDate: Date;
+  dueDate: string;
   category: string;
   isPaid?: boolean;
 }
 
 interface FuturePaymentsProps {
   payments?: FuturePayment[];
-  onPaymentUpdate?: (id: string, isPaid: boolean) => void;
-  categories?: string[];
-  onAddPayment: (payment: {
-    description: string;
-    amount: number;
-    dueDate: Date;
-    category: string;
-  }) => void;
+  categories?: Category[];
+  onAddPayment: (payment: Omit<FuturePayment, "id" | "isPaid">) => Promise<void>;
+  onUpdatePayment: (id: string, updates: Partial<FuturePayment>) => Promise<void>;
 }
 
 // Safely create dates with validation
@@ -48,30 +44,11 @@ const createSafeDate = (dateString: string): Date => {
   }
 };
 
-const defaultPayments: FuturePayment[] = [
-  {
-    id: "1",
-    description: "Rent Payment",
-    amount: 1200,
-    dueDate: createSafeDate("2024-03-01"),
-    category: "Housing",
-    isPaid: false,
-  },
-  {
-    id: "2",
-    description: "Car Insurance",
-    amount: 150,
-    dueDate: createSafeDate("2024-03-15"),
-    category: "Insurance",
-    isPaid: false,
-  },
-];
-
 export default function FuturePayments({
-  payments = defaultPayments,
-  onPaymentUpdate = () => {},
+  payments = [],
   categories = [],
   onAddPayment,
+  onUpdatePayment,
 }: FuturePaymentsProps) {
   const { t, i18n } = useTranslation();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -104,8 +81,9 @@ export default function FuturePayments({
   };
 
   // Safe date formatter with validation
-  const formatDate = (date: Date) => {
+  const formatDate = (dateString: string) => {
     try {
+      const date = parseISO(dateString);
       if (!isValid(date)) {
         throw new Error('Invalid date');
       }
@@ -136,8 +114,13 @@ export default function FuturePayments({
           {t('dashboard.payments.calendar.title')}
         </h2>
         <AddFuturePaymentDialog
-          onAddPayment={onAddPayment}
-          categories={categories}
+          onAddPayment={async (payment) => {
+            await onAddPayment({
+              ...payment,
+              dueDate: payment.dueDate.toISOString(),
+            });
+          }}
+          categories={categories.map(c => c.name)}
         />
       </div>
 
@@ -207,7 +190,7 @@ export default function FuturePayments({
                 {payments
                   .sort((a, b) => {
                     try {
-                      return a.dueDate.getTime() - b.dueDate.getTime();
+                      return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
                     } catch (error) {
                       return 0;
                     }
@@ -222,7 +205,7 @@ export default function FuturePayments({
                           variant={payment.isPaid ? "default" : "secondary"}
                           className="cursor-pointer"
                           onClick={() =>
-                            onPaymentUpdate(payment.id, !payment.isPaid)
+                            onUpdatePayment(payment.id, { isPaid: !payment.isPaid })
                           }
                         >
                           {payment.isPaid 

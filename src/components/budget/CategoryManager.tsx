@@ -27,54 +27,16 @@ interface Category {
 
 interface CategoryManagerProps {
   categories?: Category[];
-  onAddCategory?: (category: Omit<Category, "id">) => void;
-  onEditCategory?: (id: string, category: Partial<Category>) => void;
-  onDeleteCategory?: (id: string) => void;
+  onAddCategory?: (category: Omit<Category, "id">) => Promise<void>;
+  onUpdateCategory?: (id: string, updates: Partial<Category>) => Promise<void>;
+  onDeleteCategory?: (id: string) => Promise<void>;
 }
 
-const defaultCategories: Category[] = [
-  {
-    id: "1",
-    name: "groceries",
-    color: "#4CAF50",
-    budget: 500,
-    isRecurring: false,
-  },
-  {
-    id: "2",
-    name: "utilities",
-    color: "#2196F3",
-    budget: 300,
-    isRecurring: true,
-  },
-  {
-    id: "3",
-    name: "entertainment",
-    color: "#9C27B0",
-    budget: 200,
-    isRecurring: false,
-  },
-  {
-    id: "4",
-    name: "transportation",
-    color: "#FF9800",
-    budget: 150,
-    isRecurring: true,
-  },
-  {
-    id: "5",
-    name: "shopping",
-    color: "#E91E63",
-    budget: 250,
-    isRecurring: false,
-  },
-];
-
 const CategoryManager = ({
-  categories = defaultCategories,
-  onAddCategory = () => {},
-  onEditCategory = () => {},
-  onDeleteCategory = () => {},
+  categories = [],
+  onAddCategory = async () => {},
+  onUpdateCategory = async () => {},
+  onDeleteCategory = async () => {},
 }: CategoryManagerProps) => {
   const { t } = useTranslation();
   const [editingCategory, setEditingCategory] = React.useState<string | null>(null);
@@ -88,10 +50,10 @@ const CategoryManager = ({
     return t(`dashboard.categories.${categoryName.toLowerCase()}`);
   };
 
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     if (!newCategoryName || !newCategoryBudget) return;
     
-    onAddCategory({
+    await onAddCategory({
       name: newCategoryName.toLowerCase().replace(/\s+/g, ''),
       budget: Number(newCategoryBudget),
       color: newCategoryColor,
@@ -113,14 +75,14 @@ const CategoryManager = ({
         <div className="flex items-center gap-2">
           <TransferBalanceDialog
             categories={categories}
-            onTransfer={(fromId, toId, amount) => {
+            onTransfer={async (fromId, toId, amount) => {
               const fromCategory = categories.find((c) => c.id === fromId);
               const toCategory = categories.find((c) => c.id === toId);
               if (fromCategory && toCategory) {
-                onEditCategory(fromId, {
+                await onUpdateCategory(fromId, {
                   budget: fromCategory.budget - amount,
                 });
-                onEditCategory(toId, { budget: toCategory.budget + amount });
+                await onUpdateCategory(toId, { budget: toCategory.budget + amount });
               }
             }}
           />
@@ -201,7 +163,7 @@ const CategoryManager = ({
                   <Input
                     value={category.name}
                     onChange={(e) =>
-                      onEditCategory(category.id, { name: e.target.value.toLowerCase().replace(/\s+/g, '') })
+                      onUpdateCategory(category.id, { name: e.target.value.toLowerCase().replace(/\s+/g, '') })
                     }
                     className="w-1/3"
                   />
@@ -209,7 +171,7 @@ const CategoryManager = ({
                     type="number"
                     value={category.budget}
                     onChange={(e) =>
-                      onEditCategory(category.id, {
+                      onUpdateCategory(category.id, {
                         budget: Number(e.target.value),
                       })
                     }
@@ -219,7 +181,7 @@ const CategoryManager = ({
                     type="color"
                     value={category.color}
                     onChange={(e) =>
-                      onEditCategory(category.id, { color: e.target.value })
+                      onUpdateCategory(category.id, { color: e.target.value })
                     }
                     className="w-20"
                   />
@@ -228,7 +190,7 @@ const CategoryManager = ({
                       id={`recurring-${category.id}`}
                       checked={category.isRecurring}
                       onCheckedChange={(checked) =>
-                        onEditCategory(category.id, {
+                        onUpdateCategory(category.id, {
                           isRecurring: checked as boolean,
                         })
                       }

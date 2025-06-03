@@ -1,0 +1,54 @@
+{
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "npx", 
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "perplexity-ask": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-perplexity-ask"
+      ],
+      "env": {
+        "PERPLEXITY_API_KEY": "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"
+      }
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-brave-search"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "BSABJfkavQg8mlzTTFfg6NY9zTLK4e-"
+      }
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "sbp_3d77e832fa628c684044715efbcb6ae9f4656ad2"
+      ]
+    },
+    "stripe": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-stripe"
+      ],
+      "env": {
+        "STRIPE_SECRET_KEY": "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"
+      }
+    }
+  }
+}

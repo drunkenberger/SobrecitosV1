@@ -1,3 +1,6 @@
+import { supabase } from "./supabase";
+import { getUserSettings } from "./supabaseStore";
+
 export interface AIProvider {
   id: string;
   name: string;
@@ -139,6 +142,7 @@ export const AI_PROVIDERS: AIProvider[] = [
   },
 ];
 
+// AI settings interface
 export interface AISettings {
   enabled: boolean;
   provider: string;
@@ -146,40 +150,107 @@ export interface AISettings {
   apiKeys: Record<string, string>;
   baseUrl?: string;
   autoSelectModel?: boolean;
+  temperature?: number;
+  maxTokens?: number;
 }
 
-const AI_SETTINGS_KEY = "budget_ai_settings";
+// Default AI settings
+export const defaultAISettings: AISettings = {
+  enabled: true,
+  provider: "openai",
+  model: "gpt-3.5-turbo",
+  apiKeys: {},
+  baseUrl: "",
+  autoSelectModel: true,
+  temperature: 0.7,
+  maxTokens: 1000,
+};
 
-export const getAISettings = (): AISettings => {
+// Get AI settings from Supabase
+export const getAISettings = async (): Promise<AISettings> => {
   try {
-    const stored = localStorage.getItem(AI_SETTINGS_KEY);
-    return stored
-      ? JSON.parse(stored)
-      : {
-          enabled: false,
-          provider: "openai",
-          apiKeys: {},
-          model: "gpt-4-turbo",
-          baseUrl: "",
-        };
-  } catch {
+    const { data } = await supabase.auth.getSession();
+    const user = data?.session?.user;
+
+    if (!user) {
+      return defaultAISettings;
+    }
+
+    const { data: settings, error } = await supabase
+      .from("ai_settings")
+      .select("*")
+      .eq("user_id", user.id)
+      .single();
+
+    if (error || !settings) {
+      // Create default settings if they don't exist
+      const { error: insertError } = await supabase
+        .from("ai_settings")
+        .insert({
+          user_id: user.id,
+          ...defaultAISettings,
+        });
+
+      if (insertError) {
+        console.error("Error creating AI settings:", insertError);
+      }
+
+      return defaultAISettings;
+    }
+
     return {
-      enabled: false,
-      provider: "openai",
-      apiKeys: {},
-      model: "gpt-4-turbo",
-      baseUrl: "",
+      enabled: settings.enabled !== undefined ? settings.enabled : defaultAISettings.enabled,
+      provider: settings.provider || defaultAISettings.provider,
+      model: settings.model || defaultAISettings.model,
+      apiKeys: settings.api_keys || defaultAISettings.apiKeys,
+      baseUrl: settings.base_url || defaultAISettings.baseUrl,
+      autoSelectModel: settings.auto_select_model !== undefined ? settings.auto_select_model : defaultAISettings.autoSelectModel,
+      temperature: settings.temperature || defaultAISettings.temperature,
+      maxTokens: settings.max_tokens || defaultAISettings.maxTokens,
     };
+  } catch (error) {
+    console.error("Error getting AI settings:", error);
+    return defaultAISettings;
   }
 };
 
-export const setAISettings = (settings: AISettings) => {
-  localStorage.setItem(AI_SETTINGS_KEY, JSON.stringify(settings));
+// Save AI settings to Supabase
+export const saveAISettings = async (settings: AISettings): Promise<void> => {
+  try {
+    const { data } = await supabase.auth.getSession();
+    const user = data?.session?.user;
+
+    if (!user) {
+      console.error("No authenticated user to save AI settings for");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("ai_settings")
+      .upsert({
+        user_id: user.id,
+        enabled: settings.enabled,
+        provider: settings.provider,
+        model: settings.model,
+        api_keys: settings.apiKeys,
+        base_url: settings.baseUrl,
+        auto_select_model: settings.autoSelectModel,
+        temperature: settings.temperature,
+        max_tokens: settings.maxTokens,
+        updated_at: new Date().toISOString(),
+      });
+
+    if (error) {
+      console.error("Error saving AI settings:", error);
+    }
+  } catch (error) {
+    console.error("Error in saveAISettings:", error);
+  }
 };
 
 export const getAIInsights = async (): Promise<string> => {
-  const settings = getAISettings();
-  if (!settings.enabled || !settings.apiKeys[settings.provider]) {
+  const settings = await getAISettings();
+  if (!settings.enabled) {
     return "AI insights are not available at the moment. Please configure your AI settings first.";
   }
 

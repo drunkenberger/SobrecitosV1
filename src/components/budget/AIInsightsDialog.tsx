@@ -11,7 +11,7 @@ import { Button } from "../ui/button";
 import { Sparkles, AlertTriangle, Settings } from "lucide-react";
 import { Alert, AlertDescription } from "../ui/alert";
 import { ScrollArea } from "../ui/scroll-area";
-import { getAIInsights, getAISettings } from "@/lib/ai";
+import { getAIInsights, getAISettings, AISettings } from "@/lib/ai";
 import { AISettingsDialog } from "./AISettingsDialog";
 
 export function AIInsightsDialog() {
@@ -21,8 +21,24 @@ export function AIInsightsDialog() {
   const [insights, setInsights] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [showSettings, setShowSettings] = React.useState(false);
+  const [settings, setSettings] = React.useState<AISettings>({
+    enabled: false,
+    provider: "openai",
+    model: "gpt-3.5-turbo",
+    apiKeys: {},
+    baseUrl: "",
+    autoSelectModel: true,
+    temperature: 0.7,
+    maxTokens: 1000
+  });
 
-  const settings = getAISettings();
+  React.useEffect(() => {
+    const loadSettings = async () => {
+      const aiSettings = await getAISettings();
+      setSettings(aiSettings);
+    };
+    loadSettings();
+  }, []);
 
   const fetchInsights = async () => {
     setLoading(true);
@@ -34,6 +50,15 @@ export function AIInsightsDialog() {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSettingsUpdate = async (newSettings: AISettings) => {
+    setSettings(newSettings);
+    setShowSettings(false);
+    if (newSettings.enabled) {
+      setOpen(true);
+      fetchInsights();
     }
   };
 
@@ -118,13 +143,7 @@ export function AIInsightsDialog() {
       <AISettingsDialog
         open={showSettings}
         onOpenChange={setShowSettings}
-        onSave={() => {
-          setShowSettings(false);
-          if (settings.enabled) {
-            setOpen(true);
-            fetchInsights();
-          }
-        }}
+        onSave={handleSettingsUpdate}
       />
     </>
   );

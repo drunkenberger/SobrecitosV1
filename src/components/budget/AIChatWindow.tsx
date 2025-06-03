@@ -14,7 +14,7 @@ import {
   Settings,
   Paperclip,
 } from "lucide-react";
-import { getAISettings, AI_PROVIDERS, setAISettings } from "@/lib/ai";
+import { getAISettings, AI_PROVIDERS, AISettings } from "@/lib/ai";
 import {
   Select,
   SelectContent,
@@ -24,46 +24,13 @@ import {
 } from "../ui/select";
 import { AISettingsDialog } from "./AISettingsDialog";
 import { ErrorBoundary } from "../ErrorBoundary";
-import { getStore } from "@/lib/store";
+import { useStore } from "@/lib/store";
 
 interface Message {
   id: string;
   text: string;
   sender: "user" | "ai";
   timestamp: string;
-}
-
-interface Income {
-  amount: number;
-}
-
-interface Expense {
-  amount: number;
-  category: string;
-  description: string;
-  date: string;
-  isRecurring: boolean;
-}
-
-interface Category {
-  name: string;
-  budget: number;
-  isRecurring: boolean;
-}
-
-interface SavingsGoal {
-  name: string;
-  targetAmount: number;
-  currentAmount: number;
-  deadline: string;
-}
-
-interface FuturePayment {
-  description: string;
-  amount: number;
-  dueDate: string;
-  category: string;
-  isPaid: boolean;
 }
 
 interface ChatMessage {
@@ -73,7 +40,8 @@ interface ChatMessage {
 
 interface RequestBody {
   model?: string;
-  messages: ChatMessage[];
+  messages?: ChatMessage[];
+  contents?: any[];
   [key: string]: any;
 }
 
@@ -85,7 +53,24 @@ export function AIChatWindow() {
     const saved = localStorage.getItem("ai_chat_minimized");
     return saved === null ? true : saved === "true";
   });
-  
+
+  const [settings, setSettings] = React.useState<AISettings>({
+    enabled: false,
+    provider: "openai",
+    model: "gpt-3.5-turbo",
+    apiKeys: {},
+    baseUrl: "",
+    autoSelectModel: true
+  });
+
+  React.useEffect(() => {
+    const loadSettings = async () => {
+      const aiSettings = await getAISettings();
+      setSettings(aiSettings);
+    };
+    loadSettings();
+  }, []);
+
   const handleMinimize = () => {
     const newState = !minimized;
     setMinimized(newState);
@@ -96,7 +81,6 @@ export function AIChatWindow() {
   const [showSettings, setShowSettings] = React.useState(false);
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
-  const settings = getAISettings();
   const apiKey = settings.apiKeys[settings.provider];
   const baseUrl = settings.baseUrl || ""; // Add default empty string
   const selectedProvider = AI_PROVIDERS.find((p) => p.id === settings.provider);
@@ -139,7 +123,7 @@ export function AIChatWindow() {
 
   const handleSend = async () => {
     if (!input.trim() || loading) return;
-  
+
     // Create and add user message first
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -155,14 +139,14 @@ export function AIChatWindow() {
 
     try {
       // Get actual financial data from the store
-      const store = getStore();
+      const store = useStore.getState();
       const financialData = {
         monthlyBudget: store.monthlyBudget,
         expenses: store.expenses,
         categories: store.categories,
         savingsGoals: store.savingsGoals,
         futurePayments: store.futurePayments,
-        incomes: store.incomes
+        additionalIncomes: store.additionalIncomes
       };
 
       // Create context string with real data
@@ -179,20 +163,27 @@ export function AIChatWindow() {
 
       let apiEndpoint = '';
       let requestBody: RequestBody;
+      let headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
 
       // Format request body based on provider
       if (settings.provider === "gemini") {
         requestBody = {
+          model: settings.model,
           contents: [{
             parts: [{
-              text: messages.map(msg => 
+              text: messages.map(msg =>
                 `${msg.sender === "user" ? "Human" : "Assistant"}: ${msg.text}`
               ).join('\n') + `\nHuman: ${context}`
             }]
           }]
         };
-      } else {
+        headers['x-api-key'] = apiKey;
+        apiEndpoint = "/.netlify/functions/gemini";
+      } else if (settings.provider === "openai") {
         requestBody = {
+          model: settings.model,
           messages: [
             {
               role: "system",
@@ -208,91 +199,95 @@ export function AIChatWindow() {
             } as ChatMessage
           ]
         };
-
-        if (settings.provider === "openai") {
-          requestBody.model = settings.model;
-        }
-      }
-
-      switch (settings.provider) {
-        case "openai":
-          apiEndpoint = "https://api.openai.com/v1/chat/completions";
-          break;
-
-        case "gemini":
-          apiEndpoint = `https://generativelanguage.googleapis.com/v1/models/${settings.model}:generateContent?key=${apiKey}`;
-          break;
-
-        case "ollama":
-          apiEndpoint = `${baseUrl}/api/chat`;
-          break;
-
-        default:
-          throw new Error("Unsupported AI provider");
+        headers['x-api-key'] = apiKey;
+        apiEndpoint = "/.netlify/functions/openai";
+      } else if (settings.provider === "ollama") {
+        requestBody = {
+          model: settings.model,
+          messages: [
+            {
+              role: "system",
+              content: "You are a helpful AI assistant for a budget management app. You help users understand their finances and make better financial decisions. Always provide specific advice based on their actual financial data."
+            } as ChatMessage,
+            ...messages.map(msg => ({
+              role: msg.sender === "user" ? "user" : "assistant",
+              content: msg.text
+            } as ChatMessage)),
+            {
+              role: "user",
+              content: context
+            } as ChatMessage
+          ]
+        };
+        headers['x-base-url'] = baseUrl;
+        apiEndpoint = "/.netlify/functions/ollama";
+      } else {
+        throw new Error("Unsupported AI provider");
       }
 
       console.log('Making request to:', apiEndpoint);
       console.log('Request body:', JSON.stringify(requestBody, null, 2));
 
       try {
-        const headers: Record<string, string> = {
-          'Content-Type': 'application/json',
-        };
-
-        if (settings.provider === "openai") {
-          headers['Authorization'] = `Bearer ${apiKey}`;
-        }
-
         const fetchResponse = await fetch(apiEndpoint, {
           method: 'POST',
           headers,
           body: JSON.stringify(requestBody),
         });
 
-        console.log('Response status:', fetchResponse.status);
-        const responseData = await fetchResponse.json();
-        console.log('Response data:', JSON.stringify(responseData, null, 2));
-
         if (!fetchResponse.ok) {
-          throw new Error(`API error: ${responseData.error?.message || 'Unknown error'}`);
+          throw new Error(`HTTP error! status: ${fetchResponse.status}`);
         }
 
-        let aiMessage = '';
+        const data = await fetchResponse.json();
+        let aiResponse = '';
+
         if (settings.provider === "openai") {
-          aiMessage = responseData.choices[0]?.message?.content || '';
+          aiResponse = data.choices[0].message.content;
         } else if (settings.provider === "gemini") {
-          aiMessage = responseData.candidates[0]?.content?.parts[0]?.text || '';
+          aiResponse = data.candidates[0].content.parts[0].text;
         } else if (settings.provider === "ollama") {
-          aiMessage = responseData.message || '';
+          aiResponse = data.message.content;
         }
 
-        if (!aiMessage) {
-          throw new Error('No message content in response');
-        }
-
-        const assistantMessage: Message = {
+        // Add AI response to messages
+        const aiMessage: Message = {
           id: Date.now().toString(),
-          text: aiMessage,
-          sender: "assistant",
+          text: aiResponse,
+          sender: "ai",
           timestamp: new Date().toISOString(),
         };
 
-        setMessages((prev) => [...prev, assistantMessage]);
+        setMessages(prev => [...prev, aiMessage]);
       } catch (error) {
-        console.error('Fetch error:', error);
-        throw new Error(`Connection error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        console.error('Error making AI request:', error);
+        // Add error message
+        const errorMessage: Message = {
+          id: Date.now().toString(),
+          text: "Sorry, I encountered an error while processing your request. Please try again or check your AI settings.",
+          sender: "ai",
+          timestamp: new Date().toISOString(),
+        };
+        setMessages(prev => [...prev, errorMessage]);
       }
     } catch (error) {
-      console.error('Error getting AI response:', error);
-      const errorMessage: Message = {
-        id: Date.now().toString(),
-        text: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        sender: "assistant",
-        timestamp: new Date().toISOString(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      console.error('Error in handleSend:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSettingsUpdate = async (newSettings: AISettings) => {
+    setSettings(newSettings);
+    if (newSettings.enabled && messages.length === 0) {
+      setMessages([
+        {
+          id: "welcome",
+          text: "👋 Hello! I'm your AI financial assistant. I can help you analyze your budget, track expenses, and provide personalized financial advice. Feel free to ask me anything about your finances!",
+          sender: "ai",
+          timestamp: new Date().toISOString(),
+        },
+      ]);
     }
   };
 
@@ -357,7 +352,7 @@ export function AIChatWindow() {
                     value={settings.model}
                     onValueChange={(value) => {
                       const newSettings = { ...settings, model: value };
-                      setAISettings(newSettings);
+                      handleSettingsUpdate(newSettings);
                     }}
                   >
                     <SelectTrigger className="flex-1">
@@ -468,21 +463,7 @@ export function AIChatWindow() {
       <AISettingsDialog
         open={showSettings}
         onOpenChange={setShowSettings}
-        onSave={() => {
-          setShowSettings(false);
-          // Refresh settings after save
-          const newSettings = getAISettings();
-          if (newSettings.enabled && messages.length === 0) {
-            setMessages([
-              {
-                id: "welcome",
-                text: "👋 Hello! I'm your AI financial assistant. I can help you analyze your budget, track expenses, and provide personalized financial advice. Feel free to ask me anything about your finances!",
-                sender: "ai",
-                timestamp: new Date().toISOString(),
-              },
-            ]);
-          }
-        }}
+        onSave={handleSettingsUpdate}
       />
     </ErrorBoundary>
   );

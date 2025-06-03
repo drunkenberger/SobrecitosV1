@@ -1,3 +1,84 @@
+# Sobrecitos - Budget Management App
+
+Sobrecitos is a personal budget management application that helps you track expenses, savings goals, and future payments. The app supports both local storage and cloud storage via Supabase.
+
+## Features
+
+- Monthly budget management
+- Expense tracking with categories
+- Income management
+- Savings goals
+- Future payments planning
+- Dual storage (local and cloud)
+- Premium subscription for cloud storage
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Copy the `.env.example` file to `.env` and fill in your Supabase credentials
+4. Start the development server:
+   ```
+   npm run dev
+   ```
+
+## Supabase Setup
+
+This application uses Supabase for cloud storage. To set up your Supabase project:
+
+1. Create a project at [Supabase](https://supabase.com)
+2. Get your project ID and API keys from the project settings
+3. Apply the database migrations:
+
+   Using the shell script:
+   ```
+   ./deploy-migrations.sh
+   ```
+
+   Or using the Node.js script:
+   ```
+   node deploy-migrations.js
+   ```
+
+   You will be prompted to enter your Supabase project ID and service role key.
+
+4. Generate TypeScript types for your database schema:
+   ```
+   npm run types:supabase
+   ```
+
+## Dual Storage Implementation
+
+The application implements a dual storage system allowing data to be stored both locally and in the cloud:
+
+1. **Local Storage**: All data is stored in the browser's localStorage by default, allowing the app to work offline.
+
+2. **Cloud Storage (Supabase)**: Premium users can sync their data to Supabase, enabling access across multiple devices.
+
+The storage abstraction layer allows seamless switching between storage types and synchronization of data in both directions.
+
+## Authentication
+
+The app supports both local authentication and Supabase authentication:
+
+- Local users are stored in localStorage
+- Cloud users are authenticated via Supabase Auth
+
+Premium features, including cloud storage, are only available to authenticated users with premium status.
+
+## Building for Production
+
+```
+npm run build
+```
+
+## License
+
+[MIT](LICENSE)
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

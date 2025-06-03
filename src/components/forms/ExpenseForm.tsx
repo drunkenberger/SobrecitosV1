@@ -1,7 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
 import type { Category } from '@/types/category';
-import { FormEvent } from 'react';
+import { FormEvent, useState, useEffect } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 export interface ExpenseFormData {
   amount: number;
@@ -10,24 +17,70 @@ export interface ExpenseFormData {
 }
 
 interface ExpenseFormProps {
-  onSubmit: (expense: ExpenseFormData) => void;
+  onSubmit: (expense: ExpenseFormData) => Promise<void>;
+  onCancel?: () => void;
   categories: Category[];
 }
 
-export function ExpenseForm({ onSubmit, categories }: ExpenseFormProps) {
+export function ExpenseForm({ onSubmit, onCancel, categories }: ExpenseFormProps) {
   const { t } = useTranslation();
+  const [amount, setAmount] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    // Set the first category as default if available
+    if (categories.length > 0 && !category) {
+      setCategory(categories[0].name);
+    }
+  }, [categories, category]);
+
+  const resetForm = () => {
+    setAmount('');
+    setCategory(categories.length > 0 ? categories[0].name : '');
+    setDescription('');
+    setFormError(null);
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    setFormError(null);
+    
+    if (!amount || Number(amount) <= 0) {
+      setFormError('Please enter a valid amount');
+      return;
+    }
+    
+    if (!category) {
+      setFormError('Please select a category');
+      return;
+    }
+    
+    if (!description) {
+      setFormError('Please enter a description');
+      return;
+    }
     
     const expenseData: ExpenseFormData = {
-      amount: Number(formData.get('amount')),
-      category: String(formData.get('category')),
-      description: String(formData.get('description') || '')
+      amount: Number(amount),
+      category: category,
+      description: description
     };
     
-    onSubmit(expenseData);
+    console.log('Submitting expense data:', expenseData);
+    
+    try {
+      setIsSubmitting(true);
+      await onSubmit(expenseData);
+      resetForm();
+    } catch (error) {
+      console.error('Error submitting expense data:', error);
+      setFormError('Failed to save expense. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -37,40 +90,66 @@ export function ExpenseForm({ onSubmit, categories }: ExpenseFormProps) {
           <label className="block text-sm font-medium mb-1">{t('forms.expense.amount')}</label>
           <input 
             type="number" 
-            name="amount"
             className="w-full rounded-md border border-input bg-background px-3 py-2"
             required
             placeholder="0.00"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            min="0.01"
+            step="0.01"
           />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">{t('forms.expense.category')}</label>
-          <select 
-            name="category"
-            className="w-full rounded-md border border-input bg-background px-3 py-2"
-            required
-          >
-            <option value="">{t('dashboard.transactions.allCategories')}</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.name}>
-                {t(`dashboard.categories.${category.name.toLowerCase()}`)}
-              </option>
-            ))}
-          </select>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.length > 0 ? (
+                categories.map((category) => (
+                  <SelectItem key={category.id} value={category.name}>
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: category.color }} 
+                      />
+                      <span>{category.name}</span>
+                    </div>
+                  </SelectItem>
+                ))
+              ) : (
+                <SelectItem value="default">No categories available</SelectItem>
+              )}
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">{t('forms.expense.description')}</label>
           <input 
             type="text" 
-            name="description"
             className="w-full rounded-md border border-input bg-background px-3 py-2"
             required
             placeholder={t('dashboard.transactions.searchPlaceholder')}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </div>
-        <Button type="submit" className="w-full">
-          {t('common.save')}
-        </Button>
+        
+        {formError && (
+          <div className="text-red-500 text-sm">{formError}</div>
+        )}
+        
+        <div className="flex gap-2">
+          {onCancel && (
+            <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+              {t('common.cancel')}
+            </Button>
+          )}
+          <Button type="submit" className="flex-1" disabled={isSubmitting}>
+            {isSubmitting ? t('common.saving') : t('common.save')}
+          </Button>
+        </div>
       </div>
     </form>
   );

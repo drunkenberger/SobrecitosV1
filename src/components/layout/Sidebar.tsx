@@ -23,8 +23,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getStore, calculateRecommendedSavings } from "@/lib/store";
+import { getStore, getStoreSynced, calculateRecommendedSavings } from "@/lib/store";
 import { useTranslation } from 'react-i18next';
+import { useState, useEffect } from "react";
 
 interface Account {
   name: string;
@@ -39,9 +40,28 @@ interface SidebarProps {
 
 export default function Sidebar({ accounts = [], onError }: SidebarProps) {
   const { t } = useTranslation();
+  const [storeData, setStoreData] = useState(getStoreSynced());
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadStore = async () => {
+      try {
+        setLoading(true);
+        const store = await getStore();
+        setStoreData(store);
+      } catch (error) {
+        console.error("Error loading store:", error);
+        onError?.(error as Error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadStore();
+  }, [onError]);
 
   try {
-    const store = getStore();
+    const store = storeData;
     const { recommendedSavings = 0, availableForSavings = 0 } = calculateRecommendedSavings();
 
     // Calculate total upcoming payments
@@ -89,6 +109,16 @@ export default function Sidebar({ accounts = [], onError }: SidebarProps) {
       { name: t('navigation.categories'), icon: BarChart3, path: "/app/categories" },
       { name: t('navigation.recurring'), icon: Clock, path: "/app/recurrings" },
     ];
+
+    if (loading) {
+      return (
+        <div className="h-full bg-[#0A0D14] text-white p-4">
+          <div className="flex justify-center items-center h-full">
+            <div className="text-sm">Loading...</div>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className="h-full bg-[#0A0D14] text-white flex flex-col">
@@ -240,6 +270,10 @@ export default function Sidebar({ accounts = [], onError }: SidebarProps) {
   } catch (error) {
     console.error("Sidebar Error:", error);
     onError?.(error as Error);
-    return null;
+    return (
+      <div className="h-full bg-[#0A0D14] text-white p-4">
+        <p>{t('errors.sidebarLoading')}</p>
+      </div>
+    );
   }
 } 

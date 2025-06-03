@@ -18,10 +18,9 @@ interface SavingsGoal {
 
 interface SavingsGoalsProps {
   goals: SavingsGoal[];
-  onAddGoal: (goal: Omit<SavingsGoal, "id">) => void;
-  onUpdateGoal: (id: string, updates: Partial<SavingsGoal>) => void;
-  onDeleteGoal: (id: string) => void;
-  monthlyIncome: number;
+  onAddGoal: (goal: Omit<SavingsGoal, "id">) => Promise<void>;
+  onUpdateGoal: (id: string, updates: Partial<SavingsGoal>) => Promise<void>;
+  onDeleteGoal: (id: string) => Promise<void>;
 }
 
 export default function SavingsGoals({
@@ -32,6 +31,7 @@ export default function SavingsGoals({
 }: SavingsGoalsProps) {
   const { t } = useTranslation();
   const [editingId, setEditingId] = React.useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [newGoal, setNewGoal] = React.useState({
     name: "",
     targetAmount: 0,
@@ -40,25 +40,30 @@ export default function SavingsGoals({
     color: "#4CAF50",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newGoal.name || !newGoal.targetAmount || !newGoal.deadline) return;
 
-    onAddGoal({
-      name: newGoal.name,
-      targetAmount: Number(newGoal.targetAmount),
-      currentAmount: 0,
-      deadline: new Date(newGoal.deadline).toISOString(),
-      color: newGoal.color,
-    });
+    try {
+      setIsSubmitting(true);
+      await onAddGoal({
+        name: newGoal.name,
+        targetAmount: Number(newGoal.targetAmount),
+        currentAmount: 0,
+        deadline: new Date(newGoal.deadline).toISOString(),
+        color: newGoal.color,
+      });
 
-    setNewGoal({
-      name: "",
-      targetAmount: 0,
-      currentAmount: 0,
-      deadline: "",
-      color: "#4CAF50",
-    });
+      setNewGoal({
+        name: "",
+        targetAmount: 0,
+        currentAmount: 0,
+        deadline: "",
+        color: "#4CAF50",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -191,8 +196,8 @@ export default function SavingsGoals({
             onChange={(e) => setNewGoal({ ...newGoal, color: e.target.value })}
           />
         </div>
-        <Button type="submit" className="w-full">
-          {t('dashboard.savingsGoals.dialog.addButton')}
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? t('common.saving') : t('dashboard.savingsGoals.dialog.addButton')}
         </Button>
       </form>
     </div>

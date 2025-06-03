@@ -13,12 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { AI_PROVIDERS, getAISettings, setAISettings } from "@/lib/ai";
+import { AI_PROVIDERS, getAISettings, saveAISettings, AISettings } from "@/lib/ai";
 
 interface AISettingsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: () => void;
+  onSave: (settings: AISettings) => void;
 }
 
 export function AISettingsDialog({
@@ -26,43 +26,31 @@ export function AISettingsDialog({
   onOpenChange,
   onSave,
 }: AISettingsDialogProps) {
-  const settings = getAISettings();
-  const [enabled, setEnabled] = React.useState(settings.enabled);
-  const [provider, setProvider] = React.useState(settings.provider);
-  const [selectedModel, setSelectedModel] = React.useState(settings.model);
-  const [autoSelectModel, setAutoSelectModel] = React.useState(
-    settings.autoSelectModel ?? true,
-  );
-  const [apiKeys, setApiKeys] = React.useState<Record<string, string>>(
-    settings.apiKeys || {},
-  );
-  const [baseUrl, setBaseUrl] = React.useState(settings.baseUrl);
-
-  const selectedProvider = AI_PROVIDERS.find((p) => p.id === provider);
+  const [settings, setSettings] = React.useState<AISettings>({
+    enabled: false,
+    provider: "openai",
+    model: "gpt-3.5-turbo",
+    apiKeys: {},
+    baseUrl: "",
+    autoSelectModel: true,
+    temperature: 0.7,
+    maxTokens: 1000
+  });
 
   // Reset form when dialog opens
   React.useEffect(() => {
-    if (open) {
-      const currentSettings = getAISettings();
-      setEnabled(currentSettings.enabled);
-      setProvider(currentSettings.provider);
-      setSelectedModel(currentSettings.model);
-      setAutoSelectModel(currentSettings.autoSelectModel ?? true);
-      setApiKeys(currentSettings.apiKeys || {});
-      setBaseUrl(currentSettings.baseUrl);
-    }
+    const loadSettings = async () => {
+      if (open) {
+        const currentSettings = await getAISettings();
+        setSettings(currentSettings);
+      }
+    };
+    loadSettings();
   }, [open]);
 
-  const handleSave = () => {
-    setAISettings({
-      enabled,
-      provider,
-      model: selectedModel,
-      apiKeys,
-      baseUrl,
-      autoSelectModel,
-    });
-    onSave();
+  const handleSave = async () => {
+    await saveAISettings(settings);
+    onSave(settings);
     onOpenChange(false);
   };
 
@@ -76,6 +64,8 @@ export function AISettingsDialog({
       alert("Install command copied to clipboard!");
     }
   };
+
+  const selectedProvider = AI_PROVIDERS.find((p) => p.id === settings.provider);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -98,14 +88,17 @@ export function AISettingsDialog({
             <Label htmlFor="ai-enabled">Enable AI Features</Label>
             <Switch
               id="ai-enabled"
-              checked={enabled}
-              onCheckedChange={setEnabled}
+              checked={settings.enabled}
+              onCheckedChange={(enabled) => setSettings({ ...settings, enabled })}
             />
           </div>
 
           <div className="space-y-2">
             <Label>AI Provider</Label>
-            <Select value={provider} onValueChange={setProvider}>
+            <Select 
+              value={settings.provider} 
+              onValueChange={(provider) => setSettings({ ...settings, provider })}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select AI provider" />
               </SelectTrigger>
@@ -126,20 +119,20 @@ export function AISettingsDialog({
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="auto-select"
-                    checked={autoSelectModel}
-                    onCheckedChange={setAutoSelectModel}
+                    checked={settings.autoSelectModel}
+                    onCheckedChange={(autoSelectModel) => setSettings({ ...settings, autoSelectModel })}
                   />
                   <Label htmlFor="auto-select">
                     Auto-select best model for each task
                   </Label>
                 </div>
 
-                {!autoSelectModel && (
+                {!settings.autoSelectModel && (
                   <div className="space-y-2">
                     <Label>Select Model</Label>
                     <Select
-                      value={selectedModel}
-                      onValueChange={setSelectedModel}
+                      value={settings.model}
+                      onValueChange={(model) => setSettings({ ...settings, model })}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select AI model" />
@@ -153,6 +146,36 @@ export function AISettingsDialog({
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+                )}
+
+                {selectedProvider?.apiKeyName && (
+                  <div className="space-y-2">
+                    <Label>API Key</Label>
+                    <Input
+                      type="password"
+                      value={settings.apiKeys[settings.provider] || ""}
+                      onChange={(e) => setSettings({
+                        ...settings,
+                        apiKeys: {
+                          ...settings.apiKeys,
+                          [settings.provider]: e.target.value
+                        }
+                      })}
+                      placeholder={`Enter your ${selectedProvider.name} API key`}
+                    />
+                  </div>
+                )}
+
+                {selectedProvider?.baseUrl && (
+                  <div className="space-y-2">
+                    <Label>Base URL</Label>
+                    <Input
+                      type="text"
+                      value={settings.baseUrl || ""}
+                      onChange={(e) => setSettings({ ...settings, baseUrl: e.target.value })}
+                      placeholder="Enter base URL"
+                    />
                   </div>
                 )}
 
@@ -257,40 +280,13 @@ export function AISettingsDialog({
               </div>
             </div>
           </div>
+        </div>
 
-          {selectedProvider?.id !== "ollama" && (
-            <div className="space-y-2">
-              <Label htmlFor="api-key">{selectedProvider?.apiKeyName}</Label>
-              <Input
-                id="api-key"
-                type="password"
-                value={apiKeys[provider] || ""}
-                onChange={(e) =>
-                  setApiKeys({ ...apiKeys, [provider]: e.target.value })
-                }
-                placeholder={`Enter your ${selectedProvider?.apiKeyName}`}
-              />
-            </div>
-          )}
-
-          {selectedProvider?.baseUrl && (
-            <div className="space-y-2">
-              <Label htmlFor="base-url">Base URL</Label>
-              <Input
-                id="base-url"
-                value={baseUrl}
-                onChange={(e) => setBaseUrl(e.target.value)}
-                placeholder={selectedProvider.baseUrl}
-              />
-            </div>
-          )}
-
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={handleCancel}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave}>Save Settings</Button>
-          </div>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave}>Save Changes</Button>
         </div>
       </DialogContent>
     </Dialog>

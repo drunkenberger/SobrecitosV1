@@ -21,7 +21,11 @@
     "readMore": "Leer Más",
     "viewAll": "Ver Todo",
     "seeMore": "Ver Más",
-    "tryFeatures": "Probar Funciones de IA"
+    "tryFeatures": "Probar Funciones de IA",
+    "saveToCloud": "Guardar en la Nube",
+    "syncing": "Sincronizando...",
+    "syncedToCloud": "¡Guardado en la Nube!",
+    "syncFailed": "Error al Guardar"
   },
   "navigation": {
     "home": "Inicio",

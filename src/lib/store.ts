@@ -1,3 +1,18 @@
+import { v4 as uuidv4 } from 'uuid';
+import {
+  StorageType,
+  getUserSettings,
+  updateSupabaseBudget,
+  addSupabaseIncome,
+  addSupabaseCategory,
+  addSupabaseExpense,
+  addSupabaseSavingsGoal,
+  addSupabaseFuturePayment,
+  getSupabaseStore
+} from "./supabaseStore";
+import { supabase } from "./supabase";
+import { create } from "zustand";
+
 // Types
 export interface Income {
   id: string;
@@ -49,12 +64,13 @@ export interface FuturePayment {
 }
 
 export interface ExpenseInput {
+  id?: string;
   amount: number;
   category: string;
   description: string;
 }
 
-interface BudgetStore {
+export interface BudgetStore {
   monthlyBudget: number;
   additionalIncomes: Income[];
   categories: Category[];
@@ -68,28 +84,31 @@ interface BudgetStore {
   };
 }
 
+// Helper function to generate consistent IDs
+const generateId = () => uuidv4();
+
 // Default Data
-const defaultStore: BudgetStore = {
+export const defaultStore: BudgetStore = {
   currency: { code: "USD", symbol: "$", name: "US Dollar" },
   monthlyBudget: 2000,
   additionalIncomes: [],
   categories: [
     {
-      id: "1",
+      id: generateId(),
       name: "Groceries",
       color: "#4CAF50",
       budget: 500,
       isRecurring: false,
     },
     {
-      id: "2",
+      id: generateId(),
       name: "Utilities",
       color: "#2196F3",
       budget: 300,
       isRecurring: true,
     },
     {
-      id: "3",
+      id: generateId(),
       name: "Entertainment",
       color: "#9C27B0",
       budget: 200,
@@ -101,178 +120,325 @@ const defaultStore: BudgetStore = {
   futurePayments: [],
 };
 
-// Store Functions
-export const getStore = (): BudgetStore => {
-  try {
-    const stored = localStorage.getItem("budget_store");
-    return stored ? JSON.parse(stored) : defaultStore;
-  } catch {
-    return defaultStore;
-  }
-};
+// Store interface
+export interface Store extends BudgetStore {
+  // Cloud operations
+  loadFromCloud: () => Promise<void>;
+  saveToCloud: () => Promise<void>;
 
-export const setStore = (store: BudgetStore) => {
-  localStorage.setItem("budget_store", JSON.stringify(store));
-};
+  // Store operations
+  updateMonthlyBudget: (amount: number) => Promise<void>;
+  addIncome: (income: Omit<Income, "id" | "date">) => Promise<void>;
+  deleteIncome: (id: string) => Promise<void>;
+  addCategory: (category: Omit<Category, "id">) => Promise<void>;
+  updateCategory: (id: string, updates: Partial<Category>) => Promise<void>;
+  deleteCategory: (id: string) => Promise<void>;
+  addExpense: (expense: ExpenseInput) => Promise<void>;
+  deleteExpense: (id: string) => Promise<void>;
+  addSavingsGoal: (goal: Omit<SavingsGoal, "id">) => Promise<void>;
+  updateSavingsGoal: (id: string, updates: Partial<SavingsGoal>) => Promise<void>;
+  deleteSavingsGoal: (id: string) => Promise<void>;
+  addFuturePayment: (payment: Omit<FuturePayment, "id" | "isPaid">) => Promise<void>;
+  updateFuturePayment: (id: string, updates: Partial<FuturePayment>) => Promise<void>;
+  calculateRecommendedSavings: () => number;
+  distributeAutoSavings: (amount: number) => void;
+}
 
-// Helper Functions
-export const updateMonthlyBudget = (amount: number) => {
-  const store = getStore();
-  store.monthlyBudget = amount;
-  setStore(store);
-};
+// Create store
+export const useStore = create<Store>((set, get) => ({
+  ...defaultStore,
 
-export const addIncome = (income: Omit<Income, "id" | "date">) => {
-  const store = getStore();
-  store.additionalIncomes.push({
-    ...income,
-    id: Math.random().toString(36).substr(2, 9),
-    date: new Date().toISOString(),
-  });
-  setStore(store);
-};
+  loadFromCloud: async () => {
+    try {
+      const settings = await getUserSettings();
 
-export const deleteIncome = (id: string) => {
-  const store = getStore();
-  store.additionalIncomes = store.additionalIncomes.filter(
-    (income) => income.id !== id,
-  );
-  setStore(store);
-};
+      if (settings.storageType !== StorageType.CLOUD) {
+        console.error("Cloud storage is required");
+        return;
+      }
 
-export const addCategory = (category: Omit<Category, "id">) => {
-  const store = getStore();
-  store.categories.push({
-    ...category,
-    id: Math.random().toString(36).substr(2, 9),
-  });
-  setStore(store);
-};
+      const { data: session } = await supabase.auth.getSession();
+      const user = session?.session?.user;
 
-export const updateCategory = (id: string, updates: Partial<Category>) => {
-  const store = getStore();
-  store.categories = store.categories.map((cat) =>
-    cat.id === id ? { ...cat, ...updates } : cat,
-  );
-  setStore(store);
-};
+      if (!user) {
+        console.error("No authenticated user");
+        return;
+      }
 
-export const deleteCategory = (id: string) => {
-  const store = getStore();
-  store.categories = store.categories.filter((cat) => cat.id !== id);
-  setStore(store);
-};
+      const store = await getSupabaseStore();
+      if (store) {
+        set(store);
+      }
 
-export const addExpense = (expense: ExpenseInput) => {
-  const store = getStore();
-  store.expenses.push({
-    ...expense,
-    id: Math.random().toString(36).substr(2, 9),
-    date: new Date().toISOString(),
-  });
-  setStore(store);
-};
+    } catch (error) {
+      console.error("Error loading from cloud:", error);
+    }
+  },
 
-export const deleteExpense = (id: string) => {
-  const store = getStore();
-  store.expenses = store.expenses.filter((expense) => expense.id !== id);
-  setStore(store);
-};
+  saveToCloud: async () => {
+    try {
+      const settings = await getUserSettings();
 
-export const addSavingsGoal = (goal: Omit<SavingsGoal, "id">) => {
-  const store = getStore();
-  store.savingsGoals.push({
-    ...goal,
-    id: Math.random().toString(36).substr(2, 9),
-  });
-  setStore(store);
-};
+      if (settings.storageType !== StorageType.CLOUD) {
+        console.error("Cloud storage is required");
+        return;
+      }
 
-export const updateSavingsGoal = (
-  id: string,
-  updates: Partial<SavingsGoal>,
-) => {
-  const store = getStore();
-  store.savingsGoals = store.savingsGoals.map((goal) =>
-    goal.id === id ? { ...goal, ...updates } : goal,
-  );
-  setStore(store);
-};
+      const { data: session } = await supabase.auth.getSession();
+      const user = session?.session?.user;
 
-export const deleteSavingsGoal = (id: string) => {
-  const store = getStore();
-  store.savingsGoals = store.savingsGoals.filter((goal) => goal.id !== id);
-  setStore(store);
-};
+      if (!user) {
+        console.error("No authenticated user");
+        return;
+      }
 
-export const addFuturePayment = (
-  payment: Omit<FuturePayment, "id" | "isPaid">,
-) => {
-  const store = getStore();
-  store.futurePayments.push({
-    ...payment,
-    id: Math.random().toString(36).substr(2, 9),
-    isPaid: false,
-  });
-  setStore(store);
-};
+      const store = get();
 
-export const updateFuturePayment = (
-  id: string,
-  updates: Partial<FuturePayment>,
-) => {
-  const store = getStore();
-  store.futurePayments = store.futurePayments.map((payment) =>
-    payment.id === id ? { ...payment, ...updates } : payment,
-  );
-  setStore(store);
-};
+      // Save all data to Supabase
+      await Promise.all([
+        updateSupabaseBudget(store.monthlyBudget),
+        ...store.additionalIncomes.map(income =>
+          addSupabaseIncome({ description: income.description, amount: income.amount })
+        ),
+        ...store.categories.map(category =>
+          addSupabaseCategory({ name: category.name, color: category.color, budget: category.budget, isRecurring: category.isRecurring })
+        ),
+        ...store.expenses.map(expense =>
+          addSupabaseExpense({ ...expense, id: expense.id })
+        ),
+        ...store.savingsGoals.map(goal =>
+          addSupabaseSavingsGoal({ name: goal.name, targetAmount: goal.targetAmount, currentAmount: goal.currentAmount, deadline: goal.deadline, color: goal.color })
+        ),
+        ...store.futurePayments.map(payment =>
+          addSupabaseFuturePayment({ ...payment, id: payment.id })
+        )
+      ]);
 
-export const calculateRecommendedSavings = () => {
-  const store = getStore();
-  const totalIncome =
-    store.monthlyBudget +
-    store.additionalIncomes.reduce((sum, inc) => sum + inc.amount, 0);
-  const totalExpenses = store.expenses.reduce(
-    (sum, exp) => sum + exp.amount,
-    0,
-  );
+    } catch (error) {
+      console.error("Error saving to cloud:", error);
+    }
+  },
 
-  const targetSavingsRate = 0.2;
-  const availableForSavings = totalIncome - totalExpenses;
-  const recommendedSavings = Math.min(
-    availableForSavings,
-    totalIncome * targetSavingsRate,
-  );
+  updateMonthlyBudget: async (amount: number) => {
+    const store = get();
+    set({ ...store, monthlyBudget: amount });
+    await get().saveToCloud();
+  },
 
-  return {
-    recommendedSavings,
-    availableForSavings,
-    totalIncome,
-    savingsPercentage: (recommendedSavings / totalIncome) * 100,
-  };
-};
-
-export const distributeAutoSavings = (amount: number) => {
-  const store = getStore();
-  const sortedGoals = [...store.savingsGoals].sort(
-    (a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime(),
-  );
-
-  let remainingAmount = amount;
-
-  sortedGoals.forEach((goal) => {
-    if (remainingAmount <= 0) return;
-
-    const remaining = goal.targetAmount - goal.currentAmount;
-    if (remaining <= 0) return;
-
-    const allocation = Math.min(remainingAmount, remaining);
-    updateSavingsGoal(goal.id, {
-      currentAmount: goal.currentAmount + allocation,
+  addIncome: async (income: Omit<Income, "id" | "date">) => {
+    const store = get();
+    const newIncome: Income = {
+      ...income,
+      id: generateId(),
+      date: new Date().toISOString(),
+    };
+    set({
+      ...store,
+      additionalIncomes: [...store.additionalIncomes, newIncome]
     });
-    remainingAmount -= allocation;
-  });
+    await get().saveToCloud();
+  },
 
-  return amount - remainingAmount;
+  deleteIncome: async (id: string) => {
+    const store = get();
+    set({
+      ...store,
+      additionalIncomes: store.additionalIncomes.filter(income => income.id !== id)
+    });
+    await get().saveToCloud();
+  },
+
+  addCategory: async (category: Omit<Category, "id">) => {
+    const store = get();
+    const newCategory: Category = {
+      ...category,
+      id: generateId()
+    };
+    set({
+      ...store,
+      categories: [...store.categories, newCategory]
+    });
+    await get().saveToCloud();
+  },
+
+  updateCategory: async (id: string, updates: Partial<Category>) => {
+    const store = get();
+    set({
+      ...store,
+      categories: store.categories.map((cat: Category) =>
+        cat.id === id ? { ...cat, ...updates } : cat
+      )
+    });
+    await get().saveToCloud();
+  },
+
+  deleteCategory: async (id: string) => {
+    const store = get();
+    set({
+      ...store,
+      categories: store.categories.filter((cat: Category) => cat.id !== id)
+    });
+    await get().saveToCloud();
+  },
+
+  addExpense: async (expense: ExpenseInput) => {
+    const store = get();
+    const categoryExists = store.categories.some((cat: Category) => cat.name === expense.category);
+
+    if (!categoryExists) {
+      const newCategory: Category = {
+        id: generateId(),
+        name: expense.category,
+        color: `#${Math.floor(Math.random()*16777215).toString(16)}`,
+        budget: expense.amount,
+      };
+
+      await get().addCategory(newCategory);
+    }
+
+    const newExpense: Expense = {
+      ...expense,
+      id: expense.id || generateId(),
+      date: new Date().toISOString(),
+    };
+
+    set({
+      ...store,
+      expenses: [...store.expenses, newExpense]
+    });
+
+    await get().saveToCloud();
+  },
+
+  deleteExpense: async (id: string) => {
+    const store = get();
+    set({
+      ...store,
+      expenses: store.expenses.filter((exp: Expense) => exp.id !== id)
+    });
+    await get().saveToCloud();
+  },
+
+  addSavingsGoal: async (goal: Omit<SavingsGoal, "id">) => {
+    const store = get();
+    const newGoal: SavingsGoal = {
+      ...goal,
+      id: generateId()
+    };
+    set({
+      ...store,
+      savingsGoals: [...store.savingsGoals, newGoal]
+    });
+    await get().saveToCloud();
+  },
+
+  updateSavingsGoal: async (id: string, updates: Partial<SavingsGoal>) => {
+    const store = get();
+    set({
+      ...store,
+      savingsGoals: store.savingsGoals.map((goal: SavingsGoal) =>
+        goal.id === id ? { ...goal, ...updates } : goal
+      )
+    });
+    await get().saveToCloud();
+  },
+
+  deleteSavingsGoal: async (id: string) => {
+    const store = get();
+    set({
+      ...store,
+      savingsGoals: store.savingsGoals.filter((goal: SavingsGoal) => goal.id !== id)
+    });
+    await get().saveToCloud();
+  },
+
+  addFuturePayment: async (payment: Omit<FuturePayment, "id" | "isPaid">) => {
+    const store = get();
+    const categoryExists = store.categories.some((cat: Category) => cat.name === payment.category);
+
+    if (!categoryExists) {
+      const newCategory: Category = {
+        id: generateId(),
+        name: payment.category,
+        color: `#${Math.floor(Math.random()*16777215).toString(16)}`,
+        budget: payment.amount,
+      };
+
+      await get().addCategory(newCategory);
+    }
+
+    const newPayment: FuturePayment = {
+      ...payment,
+      id: generateId(),
+      isPaid: false
+    };
+
+    set({
+      ...store,
+      futurePayments: [...store.futurePayments, newPayment]
+    });
+
+    await get().saveToCloud();
+  },
+
+  updateFuturePayment: async (id: string, updates: Partial<FuturePayment>) => {
+    const store = get();
+    set({
+      ...store,
+      futurePayments: store.futurePayments.map((payment: FuturePayment) =>
+        payment.id === id ? { ...payment, ...updates } : payment
+      )
+    });
+    await get().saveToCloud();
+  },
+
+  calculateRecommendedSavings: () => {
+    const store = get();
+    const totalIncome = store.monthlyBudget +
+      (store.additionalIncomes || []).reduce((sum: number, inc: Income) => sum + (inc.amount || 0), 0);
+
+    const totalExpenses = (store.expenses || []).reduce(
+      (sum: number, exp: Expense) => sum + (exp.amount || 0),
+      0
+    );
+
+    return Math.max(0, totalIncome - totalExpenses);
+  },
+
+  distributeAutoSavings: (amount: number) => {
+    const store = get();
+    const totalNeeded = store.savingsGoals.reduce(
+      (sum: number, goal: SavingsGoal) => sum + (goal.targetAmount - goal.currentAmount),
+      0
+    );
+
+    if (totalNeeded <= 0) return;
+
+    const updatedGoals = store.savingsGoals.map((goal: SavingsGoal) => {
+      const needed = goal.targetAmount - goal.currentAmount;
+      if (needed <= 0) return goal;
+
+      const proportion = needed / totalNeeded;
+      const allocation = amount * proportion;
+
+      return {
+        ...goal,
+        currentAmount: goal.currentAmount + allocation
+      };
+    });
+
+    set({
+      ...store,
+      savingsGoals: updatedGoals
+    });
+  }
+}));
+
+// Helper functions for backward compatibility
+export const getStore = () => useStore.getState();
+export const setStore = (newState: Partial<Store>) => useStore.setState(newState);
+export const getStoreSynced = () => useStore.getState();
+export const calculateRecommendedSavings = () => useStore.getState().calculateRecommendedSavings();
+export const syncLocalToSupabase = async () => {
+  await useStore.getState().saveToCloud();
 };

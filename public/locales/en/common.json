@@ -22,7 +22,34 @@
     "viewAll": "View All",
     "seeMore": "See More",
     "tryFeatures": "Try AI Features",
-    "language": "Language"
+    "language": "Language",
+    "saveToCloud": "Save to Cloud",
+    "syncing": "Syncing...",
+    "syncedToCloud": "Saved to Cloud!",
+    "syncFailed": "Save Failed"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "cloudSync": "Cloud Sync",
+    "cloudSyncDescription": "Your data will be securely stored in the cloud",
+    "cloudStorage": "Cloud Storage",
+    "cloudStorageDescription": "Your data is securely stored in the cloud",
+    "localStorage": "Local Storage",
+    "cloudFeature": "Premium feature - sync across devices",
+    "localFeature": "Privacy focused - data stays on device",
+    "welcomeBack": "Welcome back!",
+    "goodToSeeYou": "Good to see you, {{name}}!",
+    "welcomeToSobrecitos": "Welcome to Sobrecitos!",
+    "accountCreated": "Your account has been created, {{name}}!",
+    "invalidCredentials": "Invalid email or password",
+    "emailExists": "An account with this email already exists",
+    "unknownError": "An unknown error occurred",
+    "needAccount": "Need an account? Register",
+    "alreadyHaveAccount": "Already have an account? Login"
   },
   "navigation": {
     "home": "Home",
@@ -457,7 +484,13 @@
     "investments": "Investments"
   },
   "errors": {
-    "sidebarLoading": "Error loading sidebar. Please refresh the page."
+    "sidebarLoading": "Error loading sidebar. Please refresh the page.",
+    "notSignedIn": "Not Signed In",
+    "signInRequired": "You must be signed in to access this feature",
+    "loadingSettings": "Error Loading Settings",
+    "savingSettings": "Error Saving Settings",
+    "syncFailed": "Synchronization Failed",
+    "upgradeFailed": "Upgrade Failed"
   },
   "helpCenter": {
     "title": "Help Center",
@@ -619,6 +652,38 @@
     "support": {
       "stillNeedHelp": "Still have questions?",
       "contactSupport": "Contact our support team"
+    }
+  },
+  "settings": {
+    "storageSettings": "Storage Settings",
+    "cloudSyncSettings": "Cloud Sync Settings",
+    "cloudStorageEnabled": "Cloud Storage Enabled",
+    "cloudStorageDescription": "Your data is securely stored in the cloud",
+    "storageOptions": {
+      "local": "Local Storage",
+      "cloud": "Cloud Storage"
+    },
+    "syncEnabled": "Enable Sync",
+    "lastSynced": "Last Synced",
+    "syncNow": "Sync Now",
+    "localInfo": "Your data stays on your device. No cloud backup available.",
+    "cloudInfo": "Your data is synchronized across all your devices and securely backed up in the cloud."
+  },
+  "success": {
+    "settingsSaved": "Settings Saved",
+    "storageUpdated": "Storage settings updated successfully",
+    "syncComplete": "Sync Complete",
+    "dataUpdated": "Your data has been synchronized",
+    "upgradedToPremium": "Upgraded to Premium",
+    "premiumFeatures": "You now have access to all premium features"
+  },
+  "premium": {
+    "requiredForCloudStorage": "Cloud Storage is a Premium Feature",
+    "upgrade": "Upgrade to Premium",
+    "benefits": {
+      "title": "Premium Benefits",
+      "cloudSync": "Cloud synchronization across all devices",
+      "multiDevice": "Access your budget from any device"
     }
   }
 } 

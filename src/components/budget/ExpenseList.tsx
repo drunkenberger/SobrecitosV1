@@ -35,32 +35,8 @@ interface ExpenseListProps {
   categories?: Array<{ id: string; name: string; color: string }>;
 }
 
-const defaultExpenses: Expense[] = [
-  {
-    id: "1",
-    amount: 85.5,
-    category: "Groceries",
-    description: "Weekly groceries from Walmart",
-    date: new Date("2024-03-15"),
-  },
-  {
-    id: "2",
-    amount: 120.0,
-    category: "Utilities",
-    description: "Electricity bill",
-    date: new Date("2024-03-14"),
-  },
-  {
-    id: "3",
-    amount: 45.0,
-    category: "Kids' Activities",
-    description: "Swimming lessons",
-    date: new Date("2024-03-13"),
-  },
-];
-
 const ExpenseList = ({
-  expenses = defaultExpenses,
+  expenses = [],
   onDeleteExpense,
   categories = [],
 }: ExpenseListProps) => {

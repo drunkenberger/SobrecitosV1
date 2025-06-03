@@ -35,24 +35,9 @@ interface BudgetManagerProps {
   onDeleteIncome?: (id: string) => void;
 }
 
-const defaultIncomes: Income[] = [
-  {
-    id: "1",
-    description: "Freelance Project",
-    amount: 500,
-    date: new Date(),
-  },
-  {
-    id: "2",
-    description: "Part-time Work",
-    amount: 300,
-    date: new Date(),
-  },
-];
-
 const BudgetManager = ({
   monthlyBudget = 2000,
-  additionalIncomes = defaultIncomes,
+  additionalIncomes = [],
   onUpdateMonthlyBudget = () => {},
   onAddIncome = () => {},
   onDeleteIncome = () => {},

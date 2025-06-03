@@ -14,19 +14,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Settings, User, LogOut, DollarSign } from "lucide-react";
-import { getCurrentUser, logoutUser } from "@/lib/auth";
 import { useNavigate, Link } from "react-router-dom";
 import { currencies } from "@/lib/currency";
 import { getStore, setStore } from "@/lib/store";
 import { useState } from "react";
+import { useAuth } from "@/lib/auth-context";
 
 export function UserMenu() {
-  const user = getCurrentUser();
+  const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
   const [currentCurrency, setCurrentCurrency] = useState(getStore().currency);
 
-  const handleLogout = () => {
-    logoutUser();
+  const handleLogout = async () => {
+    await signOut();
     navigate("/");
   };
 
@@ -37,7 +37,10 @@ export function UserMenu() {
     setCurrentCurrency(currency);
   };
 
+  if (loading) return null;
   if (!user) return null;
+
+  const nameInitial = user.name ? user.name.charAt(0) : 'U';
 
   return (
     <DropdownMenu>
@@ -48,7 +51,7 @@ export function UserMenu() {
               src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`}
               alt={user.name}
             />
-            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+            <AvatarFallback>{nameInitial}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

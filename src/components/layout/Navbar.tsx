@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Phone,
   Mail,
@@ -13,15 +13,32 @@ import {
   Menu,
   Bell,
   Settings,
+  LogIn
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import { AuthDialog } from "../auth/AuthDialog";
+import { useAuth } from "@/lib/auth-context";
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isApp = location.pathname.startsWith("/app");
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+
+  const handleLoginClick = () => {
+    setShowAuthDialog(true);
+  };
+
+  const handleAuthSuccess = () => {
+    console.log("Auth success in Navbar, navigating to /app");
+    setShowAuthDialog(false);
+    navigate('/app');
+  };
 
   return (
     <div className="bg-[#FFD700]">
@@ -104,7 +121,9 @@ export default function Navbar() {
                   <span className="hidden sm:inline font-medium">FAQ</span>
                 </Link>
               </div>
-              {!isApp ? (
+              {isApp ? (
+                <UserMenu />
+              ) : user ? (
                 <Button
                   className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-medium rounded-full px-6 border-2 border-[#556B2F] shadow-lg hover:shadow-xl transition-all"
                   asChild
@@ -112,12 +131,24 @@ export default function Navbar() {
                   <Link to="/app">{t('common.dashboard')}</Link>
                 </Button>
               ) : (
-                <UserMenu />
+                <Button
+                  className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-medium rounded-full px-6 border-2 border-[#556B2F] shadow-lg hover:shadow-xl transition-all"
+                  onClick={handleLoginClick}
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  {t('common.login')}
+                </Button>
               )}
             </div>
           </div>
         </div>
       </nav>
+
+      <AuthDialog 
+        open={showAuthDialog} 
+        onOpenChange={setShowAuthDialog} 
+        onSuccess={handleAuthSuccess} 
+      />
     </div>
   );
 }
