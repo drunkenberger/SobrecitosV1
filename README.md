@@ -1,5 +1,5 @@
 # Sobrecitos - Budget Management App
-
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/drunkenberger/SobrecitosV1?utm_source=oss&utm_medium=github&utm_campaign=drunkenberger%2FSobrecitosV1&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 Sobrecitos is a personal budget management application that helps you track expenses, savings goals, and future payments. The app supports both local storage and cloud storage via Supabase.
 
 ## Features
