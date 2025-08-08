@@ -4,6 +4,7 @@ import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { ScrollArea } from "../ui/scroll-area";
+import { type Income } from "@/lib/store";
 import {
   Plus,
   X,
@@ -19,13 +20,6 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { useTranslation } from "react-i18next";
-
-interface Income {
-  id: string;
-  description: string;
-  amount: number;
-  date: Date;
-}
 
 interface BudgetManagerProps {
   monthlyBudget?: number;
@@ -49,6 +43,7 @@ const BudgetManager = ({
   );
   const [newIncomeAmount, setNewIncomeAmount] = React.useState("");
   const [newIncomeDescription, setNewIncomeDescription] = React.useState("");
+  const [isIncomeDialogOpen, setIsIncomeDialogOpen] = React.useState(false);
 
   const totalAdditionalIncome = additionalIncomes.reduce(
     (sum, income) => sum + income.amount,
@@ -161,7 +156,7 @@ const BudgetManager = ({
             <h3 className="font-medium text-foreground">
               {t('dashboard.budgetSettings.additionalIncome.title')}
             </h3>
-            <Dialog>
+            <Dialog open={isIncomeDialogOpen} onOpenChange={setIsIncomeDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="flex items-center gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold w-[180px]">
                   <Plus size={16} /> {t('dashboard.budgetSettings.additionalIncome.addButton')}
@@ -198,6 +193,7 @@ const BudgetManager = ({
                       });
                       setNewIncomeDescription("");
                       setNewIncomeAmount("");
+                      setIsIncomeDialogOpen(false);
                     }}
                   >
                     {t('dashboard.budgetSettings.additionalIncome.dialog.addButton')}
@@ -219,7 +215,7 @@ const BudgetManager = ({
                       {income.description}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {income.date.toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US')}
+                      {new Date(income.date).toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US')}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">

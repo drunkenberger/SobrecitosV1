@@ -1,5 +1,5 @@
 interface DataPoint {
-  date: Date;
+  date: Date | string;
   amount: number;
 }
 
@@ -18,14 +18,14 @@ const LineChart = ({ data, width = 600, height = 200 }: LineChartProps) => {
 
   // Find min and max values
   const maxAmount = Math.max(...data.map((d) => d.amount));
-  const minDate = Math.min(...data.map((d) => d.date.getTime()));
-  const maxDate = Math.max(...data.map((d) => d.date.getTime()));
+  const minDate = Math.min(...data.map((d) => new Date(d.date).getTime()));
+  const maxDate = Math.max(...data.map((d) => new Date(d.date).getTime()));
 
   // Create points
   const points = data.map((d) => {
     const x =
       padding +
-      ((d.date.getTime() - minDate) / (maxDate - minDate)) * chartWidth;
+      ((new Date(d.date).getTime() - minDate) / (maxDate - minDate)) * chartWidth;
     const y = height - (padding + (d.amount / maxAmount) * chartHeight);
     return `${x},${y}`;
   });
@@ -63,7 +63,7 @@ const LineChart = ({ data, width = 600, height = 200 }: LineChartProps) => {
       {data.map((d, i) => {
         const x =
           padding +
-          ((d.date.getTime() - minDate) / (maxDate - minDate)) * chartWidth;
+          ((new Date(d.date).getTime() - minDate) / (maxDate - minDate)) * chartWidth;
         const y = height - (padding + (d.amount / maxAmount) * chartHeight);
 
         return (

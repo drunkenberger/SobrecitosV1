@@ -8,6 +8,11 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
+  // TEMPORARY: Disable authentication for testing
+  console.log("ProtectedRoute: Authentication disabled for testing - allowing access");
+  return <>{children}</>;
+  
+  /* ORIGINAL CODE - COMMENTED OUT FOR TESTING
   const { user, loading, refreshUser } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -80,4 +85,5 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       </div>
     </>
   );
+  */
 } 

@@ -28,11 +28,13 @@ interface AddFuturePaymentDialogProps {
     category: string;
   }) => Promise<void>;
   categories: string[];
+  trigger?: React.ReactNode;
 }
 
 export function AddFuturePaymentDialog({
   onAddPayment,
   categories,
+  trigger,
 }: AddFuturePaymentDialogProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -72,10 +74,12 @@ export function AddFuturePaymentDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold">
-          <PlusCircle className="w-4 h-4" />
-          {t('dashboard.payments.calendar.addButton')}
-        </Button>
+        {trigger || (
+          <Button className="gap-2 bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-semibold">
+            <PlusCircle className="w-4 h-4" />
+            {t('dashboard.payments.calendar.addButton')}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -149,7 +153,7 @@ export function AddFuturePaymentDialog({
             </div>
           </div>
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? t('common.saving') : t('dashboard.payments.calendar.addPayment')}
+            {isSubmitting ? t('common.save') : t('dashboard.payments.calendar.addPayment')}
           </Button>
         </form>
       </DialogContent>

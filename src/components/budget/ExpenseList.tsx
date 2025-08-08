@@ -61,7 +61,7 @@ const ExpenseList = ({
     })
     .sort((a, b) => {
       if (sortBy === "date") {
-        return b.date.getTime() - a.date.getTime();
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
       } else {
         return b.amount - a.amount;
       }

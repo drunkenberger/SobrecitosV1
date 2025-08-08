@@ -15,7 +15,8 @@ const basename = import.meta.env.BASE_URL;
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
 root.render(
-  <React.StrictMode>
+  // TEMPORARY: Disable StrictMode to test duplicate issue
+  // <React.StrictMode>
     <Suspense fallback={
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg">Loading...</div>
@@ -27,5 +28,5 @@ root.render(
         </ThemeProvider>
       </BrowserRouter>
     </Suspense>
-  </React.StrictMode>,
+  // </React.StrictMode>
 );
