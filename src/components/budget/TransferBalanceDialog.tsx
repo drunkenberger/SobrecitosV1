@@ -31,11 +31,13 @@ interface Category {
 interface TransferBalanceDialogProps {
   categories: Category[];
   onTransfer: (fromId: string, toId: string, amount: number) => void;
+  trigger?: React.ReactNode;
 }
 
 export function TransferBalanceDialog({
   categories,
   onTransfer,
+  trigger,
 }: TransferBalanceDialogProps) {
   const { t } = useTranslation();
   const [fromCategory, setFromCategory] = React.useState<string>("");
@@ -70,9 +72,11 @@ export function TransferBalanceDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
-          {t('dashboard.categoryManagement.transferBalance')}
-        </Button>
+        {trigger || (
+          <Button variant="outline" className="flex items-center gap-2">
+            {t('dashboard.categoryManagement.transferBalance')}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

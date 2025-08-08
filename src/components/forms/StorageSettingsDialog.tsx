@@ -74,7 +74,7 @@ export function StorageSettingsDialog({
       // Sincronizamos los datos
       const success = await syncLocalToSupabase();
       
-      if (!success) {
+      if (success === false) {
         throw new Error(t('errors.syncFailed'));
       }
       
@@ -141,7 +141,7 @@ export function StorageSettingsDialog({
 
         {showUpgradePremium ? (
           <div className="space-y-4">
-            <Alert variant="warning">
+            <Alert>
               <div className="font-semibold flex items-center gap-2">
                 <Cloud className="h-4 w-4" />
                 {t('premium.requiredForCloudStorage')}

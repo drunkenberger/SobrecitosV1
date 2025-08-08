@@ -126,12 +126,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       setError(null);
       
-      // Proceed with signup directly, without the OTP check that was causing issues
+      // Proceed with signup. If email confirmations are required, session will be null
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: { name },
+          emailRedirectTo: `${window.location.origin}/app`,
         },
       });
 
@@ -149,22 +150,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return null;
       }
 
-      // Wait a moment for the trigger to create the profile
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Verify that the profile was created
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', data.user.id)
-        .single();
-
-      if (profileError || !profile) {
-        console.error('Profile creation failed:', profileError);
-        setError('Account created but profile setup failed. Please contact support.');
+      // If email confirmation is required, there will be no session yet
+      if (!data.session) {
+        setError('Account created. Please check your email to confirm your account and then sign in.');
         return null;
       }
-      
+
       await refreshUser();
       return await getCurrentUser();
     } catch (error) {

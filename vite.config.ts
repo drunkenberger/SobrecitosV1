@@ -11,14 +11,21 @@ export default defineConfig({
     }),
     tempo(),
   ],
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["./vitest.setup.ts"],
+    css: false,
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
   server: {
-    port: 4000,
-    strictPort: true,
+    port: Number(process.env.PORT) || 4000,
+    // If the preferred port is taken, Vite will choose the next available
+    strictPort: false,
     open: true,
     headers: {
       "Content-Security-Policy": `

@@ -150,18 +150,20 @@ export const loginSupabaseUser = async (
     
     try {
       // Get profile to check premium status with timeout
-      const profileResult = await Promise.race([
+      const { data: profileData, error: profileError } = await Promise.race([
         supabase
           .from("profiles")
           .select("name, is_premium, avatar_url")
           .eq("id", data.user.id)
           .single(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Profile fetch timed out')), 5000))
+        new Promise<{ data: null; error: Error }>((_, reject) => 
+          setTimeout(() => reject({ data: null, error: new Error('Profile fetch timed out') }), 5000)
+        )
       ]);
       
       // If profile fetch was successful, use that data
-      if (profileResult.data) {
-        profile = profileResult.data;
+      if (!profileError && profileData) {
+        profile = profileData;
       }
     } catch (profileError) {
       console.warn("Couldn't fetch user profile, using default values:", profileError);

@@ -57,7 +57,7 @@ export function AIChatWindow() {
   const [settings, setSettings] = React.useState<AISettings>({
     enabled: false,
     provider: "openai",
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o",
     apiKeys: {},
     baseUrl: "",
     autoSelectModel: true
@@ -201,6 +201,23 @@ export function AIChatWindow() {
         };
         headers['x-api-key'] = apiKey;
         apiEndpoint = "/.netlify/functions/openai";
+      } else if (settings.provider === "anthropic") {
+        requestBody = {
+          model: settings.model,
+          messages: [
+            ...messages.map(msg => ({
+              role: msg.sender === "user" ? "user" : "assistant",
+              content: msg.text
+            } as ChatMessage)),
+            {
+              role: "user",
+              content: context
+            } as ChatMessage
+          ],
+          system: "You are a helpful AI assistant for a budget management app. You help users understand their finances and make better financial decisions. Always provide specific advice based on their actual financial data."
+        };
+        headers['x-api-key'] = apiKey;
+        apiEndpoint = "/.netlify/functions/anthropic";
       } else if (settings.provider === "ollama") {
         requestBody = {
           model: settings.model,
@@ -244,6 +261,8 @@ export function AIChatWindow() {
 
         if (settings.provider === "openai") {
           aiResponse = data.choices[0].message.content;
+        } else if (settings.provider === "anthropic") {
+          aiResponse = data.content[0].text;
         } else if (settings.provider === "gemini") {
           aiResponse = data.candidates[0].content.parts[0].text;
         } else if (settings.provider === "ollama") {
@@ -303,7 +322,7 @@ export function AIChatWindow() {
   return (
     <ErrorBoundary>
       <Card
-        className={`fixed bottom-4 right-4 w-[400px] ${minimized ? "h-[60px]" : "h-[500px]"} shadow-xl transition-all duration-300 ease-in-out z-50 bg-background`}
+        className={`fixed bottom-4 right-4 w-[380px] max-w-[calc(100vw-2rem)] ${minimized ? "h-[60px]" : "h-[480px]"} shadow-xl transition-all duration-300 ease-in-out z-40 bg-background border`}
       >
         <div className="flex items-center justify-between p-4 border-b bg-primary text-primary-foreground">
           <div className="flex items-center gap-2">

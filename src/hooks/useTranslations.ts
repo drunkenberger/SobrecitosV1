@@ -3,15 +3,15 @@ import { useTranslation } from 'react-i18next';
 export function useTranslations() {
   const { t, i18n } = useTranslation();
 
-  const changeLanguage = (language: 'en' | 'es') => {
-    i18n.changeLanguage(language);
+  const changeLanguage = async (language: 'en' | 'es') => {
+    await i18n.changeLanguage(language);
   };
 
   return {
     t,
     i18n,
     changeLanguage,
-    currentLanguage: i18n.language as 'en' | 'es',
+    currentLanguage: (i18n.language as 'en' | 'es') || 'en',
   };
 }
 

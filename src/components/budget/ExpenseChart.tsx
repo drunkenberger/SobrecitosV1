@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   PieChart,
   BarChart3,
@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
-import LineChart from "./charts/LineChart";
 
 const CHART_COLORS = [
   "#FF6B6B",
@@ -66,7 +65,9 @@ const ExpenseChart = ({
   selectedTimeframe = "month",
 }: ExpenseChartProps) => {
   const { t } = useTranslation();
-  const total = data.reduce((sum, item) => sum + item.amount, 0);
+  const safeData = data || defaultData;
+  const filteredData = safeData.filter(item => item && item.amount > 0);
+  const total = filteredData.reduce((sum, item) => sum + item.amount, 0);
 
   // Generate mock trend data
   const generateTrendData = () => {
@@ -91,233 +92,190 @@ const ExpenseChart = ({
     ((total - previousMonthTotal) / previousMonthTotal) * 100;
 
   // Calculate category insights
-  const categoryInsights = data.map((item) => ({
+  const categoryInsights = filteredData.map((item) => ({
     ...item,
     percentage: (item.amount / total) * 100,
     change: Math.random() * 40 - 20, // Mock month-over-month change
   }));
 
   return (
-    <Card className="p-6 w-full h-[400px]">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-foreground">
-          {t('dashboard.expenseBreakdown.title')}
-        </h2>
-        <div className="flex gap-4">
-          <Select defaultValue={selectedTimeframe}>
-            <SelectTrigger className="w-[120px] flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              <SelectValue placeholder={t('dashboard.expenseBreakdown.timeframe.select')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="week">{t('dashboard.expenseBreakdown.timeframe.week')}</SelectItem>
-              <SelectItem value="month">{t('dashboard.expenseBreakdown.timeframe.month')}</SelectItem>
-              <SelectItem value="year">{t('dashboard.expenseBreakdown.timeframe.year')}</SelectItem>
-            </SelectContent>
-          </Select>
+    <div className="h-full flex flex-col overflow-hidden">
+      {/* Header with controls - Properly contained */}
+      <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
+        <div className="flex items-center gap-2">
+          <h3 className="text-sm font-medium text-gray-600">Expense Analysis</h3>
+          <Badge variant="secondary" className="text-xs">
+            ${total.toLocaleString()} total
+          </Badge>
         </div>
+        <Select defaultValue={selectedView}>
+          <SelectTrigger className="w-[140px] h-8 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="pie">Category Split</SelectItem>
+            <SelectItem value="bar">Bar Chart</SelectItem>
+            <SelectItem value="insights">Insights</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      <Tabs defaultValue={selectedView} className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="pie" className="flex items-center gap-2">
-            <PieChart className="w-4 h-4" /> {t('dashboard.expenseBreakdown.tabs.categorySplit')}
-          </TabsTrigger>
-          <TabsTrigger value="bar" className="flex items-center gap-2">
-            <BarChart3 className="w-4 h-4" /> {t('dashboard.expenseBreakdown.tabs.amountByCategory')}
-          </TabsTrigger>
-          <TabsTrigger value="line" className="flex items-center gap-2">
-            <LineChartIcon className="w-4 h-4" /> {t('dashboard.expenseBreakdown.tabs.dailySpending')}
-          </TabsTrigger>
-          <TabsTrigger value="trend" className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4" /> {t('dashboard.expenseBreakdown.tabs.trends')}
-          </TabsTrigger>
-          <TabsTrigger value="insights" className="flex items-center gap-2">
-            <Target className="w-4 h-4" /> {t('dashboard.expenseBreakdown.tabs.insights')}
-          </TabsTrigger>
-        </TabsList>
+      {/* Chart Content - Contained with proper scrolling */}
+      <div className="flex-1 overflow-hidden">
+        {selectedView === "pie" && (
+          <div className="h-full flex flex-col">
+            {/* Pie Chart */}
+            <div className="flex-1 flex items-center justify-center min-h-0">
+              <div className="relative">
+                <div
+                  className="w-48 h-48 rounded-full shadow-lg border-4 border-white"
+                  style={{
+                    background: filteredData.length > 0 && total > 0 ? `conic-gradient(${filteredData
+                      .map((item, index) => {
+                        const startPercentage = filteredData
+                          .slice(0, index)
+                          .reduce((sum, d) => sum + (d.amount / total) * 100, 0);
+                        const endPercentage = startPercentage + (item.amount / total) * 100;
+                        return `${CHART_COLORS[index % CHART_COLORS.length]} ${startPercentage}% ${endPercentage}%`;
+                      })
+                      .join(",")})` : '#f3f4f6',
+                  }}
+                >
+                  <div className="absolute inset-4 bg-white rounded-full flex items-center justify-center shadow-inner">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-gray-900">${total.toLocaleString()}</p>
+                      <p className="text-xs text-gray-500">Total Spent</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Legend - Scrollable */}
+            <div className="mt-4">
+              <ScrollArea className="h-32">
+                <div className="grid grid-cols-2 gap-2 pr-2">
+                  {filteredData
+                    .map((item, index) => {
+                      const percentage = ((item.amount / total) * 100).toFixed(1);
+                      return (
+                        <div key={item.category} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                          <div
+                            className="w-3 h-3 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium text-gray-900 truncate">{item.category}</p>
+                            <p className="text-xs text-gray-600">${item.amount.toLocaleString()} ({percentage}%)</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </ScrollArea>
+            </div>
+          </div>
+        )}
 
-        <TabsContent value="pie" className="h-[250px]">
-          <div className="relative w-full h-[180px] flex">
-            {/* Scrollable labels column on the left */}
-            <div className="w-48 h-[180px] overflow-y-auto pr-4 border-r">
-              <div className="space-y-2">
-                {data
-                  .filter((item) => item.amount > 0)
-                  .map((item: ChartDataItem) => {
-                    const percentage = ((item.amount / total) * 100).toFixed(1);
-                    return (
+        {selectedView === "bar" && (
+          <div className="h-full flex flex-col">
+            <div className="flex-1 flex items-end justify-between gap-2 p-4 min-h-0">
+              {filteredData
+                .slice(0, 6) // Limit bars to fit properly
+                .map((item, index) => {
+                  const maxAmount = Math.max(...filteredData.map((d) => d.amount));
+                  const heightPercentage = maxAmount > 0 ? (item.amount / maxAmount) * 100 : 0;
+                  const barHeight = Math.max((heightPercentage * 200) / 100, 8);
+                  return (
+                    <div key={item.category} className="flex flex-col items-center gap-2 flex-1 max-w-[80px]">
+                      <div className="text-xs font-medium text-gray-900">
+                        ${item.amount.toLocaleString()}
+                      </div>
                       <div
-                        key={item.category}
-                        className="flex items-center gap-2"
-                      >
-                        <div
-                          className="w-3 h-3 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: CHART_COLORS[data.indexOf(item) % CHART_COLORS.length] }}
+                        className="w-full rounded-t-lg transition-all duration-300 min-h-[8px]"
+                        style={{
+                          height: `${barHeight}px`,
+                          backgroundColor: CHART_COLORS[index % CHART_COLORS.length],
+                        }}
+                      />
+                      <div className="text-xs text-gray-600 text-center truncate w-full">
+                        {item.category}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+            {filteredData.length > 6 && (
+              <div className="text-xs text-gray-500 text-center p-2">
+                Showing top 6 categories
+              </div>
+            )}
+          </div>
+        )}
+
+        {selectedView === "insights" && (
+          <ScrollArea className="h-full pr-2">
+            <div className="space-y-3">
+              {filteredData.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                    <PieChart className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <h3 className="font-medium text-gray-900 mb-2">No expenses yet</h3>
+                  <p className="text-sm">Add some expenses to see insights</p>
+                </div>
+              ) : (
+                categoryInsights
+                  .map((item, index) => (
+                    <div key={item.category} className="p-4 border border-gray-200 rounded-xl bg-white">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-3 h-3 rounded-full"
+                            style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
+                          />
+                          <span className="font-medium text-gray-900">
+                            {item.category}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1 text-xs">
+                          {item.change >= 0 ? (
+                            <ArrowUpRight className="w-3 h-3 text-red-500" />
+                          ) : (
+                            <ArrowDownRight className="w-3 h-3 text-green-500" />
+                          )}
+                          <span
+                            className={`font-medium ${item.change >= 0 ? "text-red-600" : "text-green-600"}`}
+                          >
+                            {Math.abs(item.change).toFixed(1)}%
+                          </span>
+                        </div>
+                      </div>
+                      <div className="mb-2">
+                        <Progress
+                          value={item.percentage}
+                          className="h-2"
+                          style={{
+                            backgroundColor: `${CHART_COLORS[index % CHART_COLORS.length]}20`
+                          }}
                         />
-                        <span className="text-sm text-muted-foreground whitespace-nowrap">
-                          {t(`dashboard.categories.${item.category.toLowerCase()}`)} ({percentage}%)
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600">
+                          ${item.amount.toLocaleString()}
+                        </span>
+                        <span className="font-medium text-gray-900">
+                          {item.percentage.toFixed(1)}% of total
                         </span>
                       </div>
-                    );
-                  })}
-              </div>
+                    </div>
+                  ))
+              )}
             </div>
-
-            {/* Pie chart centered in remaining space */}
-            <div className="flex-1 flex items-center justify-center">
-              <div
-                className="w-[180px] h-[180px] rounded-full relative overflow-hidden shadow-lg"
-                style={{
-                  background: `conic-gradient(${data
-                    .filter((item) => item.amount > 0)
-                    .map((item) => {
-                      return `${CHART_COLORS[data.indexOf(item) % CHART_COLORS.length]} ${data
-                        .filter((d) => d.amount > 0)
-                        .slice(0, data.indexOf(item))
-                        .reduce((sum, d) => sum + (d.amount / total) * 100, 0)}% ${data
-                        .filter((d) => d.amount > 0)
-                        .slice(0, data.indexOf(item) + 1)
-                        .reduce((sum, d) => sum + (d.amount / total) * 100, 0)}%`;
-                    })
-                    .join(",")})`,
-                }}
-              />
-            </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="bar" className="h-[250px]">
-          <div className="w-full h-full flex items-end justify-between gap-4 pt-8">
-            {data
-              .filter((item) => item.amount > 0)
-              .map((item) => {
-                const maxAmount = Math.max(...data.map((d) => d.amount));
-                const heightPercentage = (item.amount / maxAmount) * 100;
-                const barHeight = Math.max((heightPercentage * 180) / 100, 20);
-                return (
-                  <div
-                    key={item.category}
-                    className="flex flex-col items-center gap-2 flex-1"
-                  >
-                    <div
-                      className="w-full rounded-t-lg transition-all duration-500"
-                      style={{
-                        height: `${barHeight}px`,
-                        backgroundColor: CHART_COLORS[data.indexOf(item) % CHART_COLORS.length],
-                      }}
-                    />
-                    <span className="text-sm text-center whitespace-nowrap overflow-hidden text-ellipsis w-full text-muted-foreground">
-                      {item.category}
-                    </span>
-                    <span className="text-xs font-medium text-foreground">
-                      ${item.amount.toLocaleString()}
-                    </span>
-                  </div>
-                );
-              })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="line" className="h-[250px]">
-          <LineChart data={trendData} width={700} height={250} />
-        </TabsContent>
-
-        <TabsContent value="trend" className="h-[250px]">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 border rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="w-4 h-4 text-green-500" />
-                <h3 className="font-medium">Month-over-Month</h3>
-              </div>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">
-                    Total Spending
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`text-sm font-medium ${monthOverMonthChange >= 0 ? "text-red-500" : "text-green-500"}`}
-                    >
-                      {monthOverMonthChange >= 0 ? (
-                        <ArrowUpRight className="w-4 h-4 inline" />
-                      ) : (
-                        <ArrowDownRight className="w-4 h-4 inline" />
-                      )}
-                      {Math.abs(monthOverMonthChange).toFixed(1)}%
-                    </span>
-                  </div>
-                </div>
-                <Progress
-                  value={Math.abs(monthOverMonthChange)}
-                  className="h-2"
-                  indicatorClassName={
-                    monthOverMonthChange >= 0 ? "bg-red-500" : "bg-green-500"
-                  }
-                />
-              </div>
-            </div>
-            <div className="p-4 border rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <DollarSign className="w-4 h-4 text-blue-500" />
-                <h3 className="font-medium">Spending Summary</h3>
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">
-                    Total Spent
-                  </span>
-                  <span className="font-medium">${total.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">
-                    Avg per Category
-                  </span>
-                  <span className="font-medium">
-                    ${(total / data.length).toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="insights" className="h-[250px] overflow-auto">
-          <div className="space-y-4">
-            {categoryInsights
-              .filter((item) => item.amount > 0)
-              .map((item) => (
-                <div key={item.category} className="p-3 border rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-medium">
-                      {t(`dashboard.categories.${item.category.toLowerCase()}`)}
-                    </span>
-                    <span
-                      className={`text-sm ${item.change >= 0 ? "text-red-500" : "text-green-500"}`}
-                    >
-                      {item.change >= 0 ? (
-                        <ArrowUpRight className="w-4 h-4 inline" />
-                      ) : (
-                        <ArrowDownRight className="w-4 h-4 inline" />
-                      )}
-                      {Math.abs(item.change).toFixed(1)}%
-                    </span>
-                  </div>
-                  <Progress
-                    value={item.percentage}
-                    className="h-2"
-                  />
-                  <div className="flex justify-between items-center mt-1">
-                    <span className="text-sm text-muted-foreground">
-                      ${item.amount.toLocaleString()} ({item.percentage.toFixed(1)}%)
-                    </span>
-                  </div>
-                </div>
-              ))}
-          </div>
-        </TabsContent>
-      </Tabs>
-    </Card>
+          </ScrollArea>
+        )}
+      </div>
+    </div>
   );
 };
 

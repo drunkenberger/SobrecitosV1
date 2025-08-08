@@ -49,7 +49,8 @@
     "emailExists": "An account with this email already exists",
     "unknownError": "An unknown error occurred",
     "needAccount": "Need an account? Register",
-    "alreadyHaveAccount": "Already have an account? Login"
+    "alreadyHaveAccount": "Already have an account? Login",
+    "switchToLogin": "Switch to Login"
   },
   "navigation": {
     "home": "Home",

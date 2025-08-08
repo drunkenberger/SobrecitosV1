@@ -1,26 +1,26 @@
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
-  Phone,
   Mail,
-  Facebook,
-  X,
   MessageSquare,
   Home,
   HelpCircle,
   LifeBuoy,
   Menu,
-  Bell,
-  Settings,
-  LogIn
+  LogIn,
+  Sparkles,
+  X,
+  Wallet
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AuthDialog } from "../auth/AuthDialog";
 import { useAuth } from "@/lib/auth-context";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
   const location = useLocation();
@@ -29,6 +29,20 @@ export default function Navbar() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { scrollY } = useScroll();
+  
+  const navbarOpacity = useTransform(scrollY, [0, 100], [0.95, 0.98]);
+  const navbarBlur = useTransform(scrollY, [0, 100], [8, 16]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleLoginClick = () => {
     setShowAuthDialog(true);
@@ -40,115 +54,219 @@ export default function Navbar() {
     navigate('/app');
   };
 
-  return (
-    <div className="bg-[#FFD700]">
-      {/* Top Bar */}
-      <div className="border-b border-[#556B2F]/30 bg-[#FFD700] shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-12 items-center text-[#556B2F] text-sm">
-            <div className="flex items-center gap-6">
-              <a
-                href="mailto:info@sobrecitos.net"
-                className="flex items-center gap-2 hover:text-[#556B2F]/80 transition-colors duration-200"
-              >
-                <Mail className="w-4 h-4" /> info@sobrecitos.net
-              </a>
-            </div>
-            <div className="flex items-center gap-4">
-              <a
-                href="#"
-                className="hover:text-[#556B2F]/80 transition-colors duration-200 p-1.5 rounded-full hover:bg-[#556B2F]/10"
-              >
-                <Facebook className="w-4 h-4" />
-              </a>
-              <a
-                href="#"
-                className="hover:text-[#556B2F]/80 transition-colors duration-200 p-1.5 rounded-full hover:bg-[#556B2F]/10"
-              >
-                <X className="w-4 h-4" />
-              </a>
-              <a
-                href="#"
-                className="hover:text-[#556B2F]/80 transition-colors duration-200 p-1.5 rounded-full hover:bg-[#556B2F]/10"
-              >
-                <MessageSquare className="w-4 h-4" />
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+  const navItems = [
+    { to: "/blog", icon: MessageSquare, label: t('navigation.blog') },
+    { to: isApp ? "/app/help" : "/help-center", icon: LifeBuoy, label: t('common.help') },
+    { to: isApp ? "/app/faq" : "/faq", icon: HelpCircle, label: "FAQ" },
+  ];
 
-      {/* Main Navigation */}
-      <nav className="relative shadow-md">
-        <div className="absolute inset-0 bg-[#556B2F] skew-x-12 -translate-x-1/2 w-[120%] -z-10 opacity-95" />
+  return (
+    <>
+      {/* Premium Navbar */}
+      <motion.nav
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+          isScrolled 
+            ? "backdrop-blur-xl bg-white/80 dark:bg-neutral-900/80 shadow-lg border-b border-neutral-200/50 dark:border-neutral-700/50" 
+            : "backdrop-blur-md bg-white/60 dark:bg-neutral-900/60"
+        )}
+        style={{
+          backdropFilter: `blur(${navbarBlur}px)`,
+        }}
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-20 items-center relative z-20">
-            <div className="flex items-center gap-6">
+          <div className="flex justify-between items-center h-16">
+            
+            {/* Logo Section */}
+            <motion.div
+              className="flex items-center gap-4"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+            >
               <Link
                 to="/"
-                className="text-white hover:text-white/80 p-2 rounded-full hover:bg-white/10 transition-colors duration-200"
+                className="flex items-center gap-3 group"
               >
-                <Home className="w-6 h-6" />
+                <div className="relative">
+                  <motion.div
+                    className="w-10 h-10 bg-gradient-to-br from-brand-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow"
+                    whileHover={{ scale: 1.05, rotate: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Wallet className="w-5 h-5 text-white" />
+                  </motion.div>
+                  <motion.div
+                    className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center"
+                    animate={{ 
+                      scale: [1, 1.2, 1],
+                      rotate: [0, 10, -10, 0]
+                    }}
+                    transition={{ 
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <Sparkles className="w-2 h-2 text-white" />
+                  </motion.div>
+                </div>
+                <div className="hidden sm:block">
+                  <span className="text-xl font-bold text-gradient-primary">
+                    Sobrecitos
+                  </span>
+                  <div className="text-xs text-muted-foreground font-medium">
+                    Smart Budget Management
+                  </div>
+                </div>
               </Link>
+            </motion.div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-2">
+              {navItems.map((item, index) => (
+                <motion.div
+                  key={item.to}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + index * 0.1 }}
+                >
+                  <Link
+                    to={item.to}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100/80 dark:hover:bg-neutral-800/80 transition-all duration-200 group"
+                  >
+                    <item.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    <span>{item.label}</span>
+                  </Link>
+                </motion.div>
+              ))}
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-4 bg-[#556B2F]/40 px-3 py-2 rounded-md">
+            {/* Right Section */}
+            <div className="flex items-center gap-3">
+              
+              {/* Theme & Language Controls */}
+              <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-neutral-100/50 dark:bg-neutral-800/50 rounded-xl backdrop-blur-sm">
                 <ThemeToggle />
-                <div className="border-l border-white/20 h-6 mx-2" />
+                <div className="w-px h-5 bg-neutral-300 dark:bg-neutral-600" />
                 <LanguageSwitcher />
               </div>
-              <div className="flex items-center gap-4">
-                <Link
-                  to="/blog"
-                  className="text-white hover:text-white/80 flex items-center gap-2 bg-[#556B2F]/40 px-3 py-2 rounded-md"
-                >
-                  <MessageSquare className="w-5 h-5" />
-                  <span className="hidden sm:inline font-medium">{t('navigation.blog')}</span>
-                </Link>
-                <Link
-                  to={isApp ? "/app/help" : "/help-center"}
-                  className="text-white hover:text-white/80 flex items-center gap-2 bg-[#556B2F]/40 px-3 py-2 rounded-md"
-                >
-                  <LifeBuoy className="w-5 h-5" />
-                  <span className="hidden sm:inline font-medium">{t('common.help')}</span>
-                </Link>
-                <Link
-                  to={isApp ? "/app/faq" : "/faq"}
-                  className="text-white hover:text-white/80 flex items-center gap-2 bg-[#556B2F]/40 px-3 py-2 rounded-md"
-                >
-                  <HelpCircle className="w-5 h-5" />
-                  <span className="hidden sm:inline font-medium">FAQ</span>
-                </Link>
-              </div>
-              {isApp ? (
-                <UserMenu />
-              ) : user ? (
-                <Button
-                  className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-medium rounded-full px-6 border-2 border-[#556B2F] shadow-lg hover:shadow-xl transition-all"
-                  asChild
-                >
-                  <Link to="/app">{t('common.dashboard')}</Link>
-                </Button>
-              ) : (
-                <Button
-                  className="bg-[#FFD700] hover:bg-[#FFD700]/90 text-[#556B2F] font-medium rounded-full px-6 border-2 border-[#556B2F] shadow-lg hover:shadow-xl transition-all"
-                  onClick={handleLoginClick}
-                >
-                  <LogIn className="w-4 h-4 mr-2" />
-                  {t('common.login')}
-                </Button>
-              )}
+
+              {/* Auth Section */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                {isApp ? (
+                  <UserMenu />
+                ) : user ? (
+                  <Button
+                    className="btn-primary group"
+                    asChild
+                  >
+                    <Link to="/app" className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+                      {t('common.dashboard')}
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button
+                    className="btn-primary group"
+                    onClick={handleLoginClick}
+                  >
+                    <LogIn className="w-4 h-4 mr-2 group-hover:translate-x-1 transition-transform" />
+                    {t('common.login')}
+                  </Button>
+                )}
+              </motion.div>
+
+              {/* Mobile Menu Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="md:hidden p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                onClick={() => setIsMobileMenuOpen(true)}
+              >
+                <Menu className="w-5 h-5" />
+              </Button>
             </div>
           </div>
         </div>
-      </nav>
+      </motion.nav>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <motion.div
+          className="fixed inset-0 z-50 md:hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <motion.div
+            className="absolute top-0 right-0 w-80 h-full bg-white dark:bg-neutral-900 shadow-2xl border-l border-neutral-200 dark:border-neutral-700"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+          >
+            <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-700">
+              <h2 className="text-lg font-semibold">Menu</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              {navItems.map((item, index) => (
+                <motion.div
+                  key={item.to}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Link
+                    to={item.to}
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <item.icon className="w-5 h-5" />
+                    <span className="font-medium">{item.label}</span>
+                  </Link>
+                </motion.div>
+              ))}
+              
+              <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700">
+                <div className="flex items-center gap-3 px-4 py-3 bg-neutral-100 dark:bg-neutral-800 rounded-xl">
+                  <ThemeToggle />
+                  <div className="w-px h-5 bg-neutral-300 dark:bg-neutral-600" />
+                  <LanguageSwitcher />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Spacer for fixed navbar */}
+      <div className="h-16" />
 
       <AuthDialog 
         open={showAuthDialog} 
         onOpenChange={setShowAuthDialog} 
         onSuccess={handleAuthSuccess} 
       />
-    </div>
+    </>
   );
 }

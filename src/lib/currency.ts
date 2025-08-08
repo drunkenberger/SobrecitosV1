@@ -35,13 +35,21 @@ export const getExchangeRates = async (
     const response = await fetch(
       `https://api.exchangerate-api.com/v4/latest/${baseCurrency}`,
     );
+    if (!response.ok) {
+      throw new Error(`Exchange rate API error: ${response.status}`);
+    }
     const data = await response.json();
+    if (!data || typeof data !== 'object' || !data.rates) {
+      throw new Error('Invalid exchange rate payload');
+    }
     cachedRates = data.rates;
     lastFetchTime = Date.now();
     return data.rates;
   } catch (error) {
     console.error("Error fetching exchange rates:", error);
-    return { USD: 1, EUR: 0.85, GBP: 0.73, JPY: 110, CAD: 1.25, AUD: 1.35 };
+    // Graceful fallback: keep previous cache if available, else minimal default
+    if (cachedRates) return cachedRates;
+    return { USD: 1 };
   }
 };
 

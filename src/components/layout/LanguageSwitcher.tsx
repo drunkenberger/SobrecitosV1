@@ -27,8 +27,6 @@ export function LanguageSwitcher() {
   const handleLanguageChange = async (value: string) => {
     try {
       await changeLanguage(value as 'en' | 'es');
-      // Force a page reload to ensure all components update
-      window.location.reload();
     } catch (error) {
       console.error('Failed to change language:', error);
     }

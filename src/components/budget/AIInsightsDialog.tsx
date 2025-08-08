@@ -24,12 +24,12 @@ export function AIInsightsDialog() {
   const [settings, setSettings] = React.useState<AISettings>({
     enabled: false,
     provider: "openai",
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o",
     apiKeys: {},
     baseUrl: "",
     autoSelectModel: true,
     temperature: 0.7,
-    maxTokens: 1000
+    maxTokens: 2000
   });
 
   React.useEffect(() => {

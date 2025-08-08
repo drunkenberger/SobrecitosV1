@@ -23,7 +23,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "tests", "vitest.setup.ts"],
   "exclude": ["src/tempobook", "src/server", "src/server-backup"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
