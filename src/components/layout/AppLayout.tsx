@@ -42,17 +42,12 @@ export default function AppLayout() {
             type: "savings" as const
           })),
 
-          // Investment Accounts (placeholders for future module)
-          {
-            name: "Coinbase",
-            balance: 0, // Will be connected in future
+          // Investment Accounts
+          ...(store.investments || []).map(investment => ({
+            name: investment.name,
+            balance: investment.currentValue,
             type: "investment" as const
-          },
-          {
-            name: "Robinhood",
-            balance: 0, // Will be connected in future
-            type: "investment" as const
-          },
+          })),
 
           // Credit Card Debt
           {
@@ -158,7 +153,7 @@ export default function AppLayout() {
       {/* Main Layout */}
       <div className="flex h-screen pt-16">
         {/* Sidebar */}
-        <div className="fixed left-0 top-16 bottom-0 w-64 z-40 bg-[#0A0D14]">
+        <div className="fixed left-0 top-16 bottom-0 w-64 z-40 bg-[#0A0D14] hidden md:block pointer-events-auto">
           <React.Suspense 
             fallback={
               <div className="h-full bg-[#0A0D14] text-white p-4">
@@ -176,7 +171,7 @@ export default function AppLayout() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 ml-64 overflow-auto">
+        <div className="flex-1 md:ml-64 overflow-auto">
           <div className="max-w-[1600px] mx-auto px-4 py-6">
             <Outlet />
           </div>

@@ -87,6 +87,39 @@ export interface DebtPayment {
   description?: string;
 }
 
+export interface Investment {
+  id: string;
+  name: string;
+  type: "stocks" | "etf" | "mutual_funds" | "index_funds" |
+        "government_bonds" | "corporate_bonds" | "municipal_bonds" | "treasury_bills" |
+        "bitcoin" | "ethereum" | "altcoins" | "crypto_index" |
+        "gold" | "silver" | "platinum" | "oil" | "natural_gas" | "agricultural" | "commodity_etf" |
+        "residential_property" | "commercial_property" | "reits" | "real_estate_funds" |
+        "private_equity" | "hedge_funds" | "venture_capital" | "collectibles" | "art" |
+        "savings_account" | "cd" | "money_market" | "other";
+  platform: string;
+  currentValue: number;
+  purchaseValue: number;
+  shares?: number;
+  purchaseDate: string;
+  lastUpdated: string;
+  symbol?: string;
+  color: string;
+  description?: string;
+  isConnected?: boolean; // For future API integrations
+}
+
+export interface InvestmentTransaction {
+  id: string;
+  investmentId: string;
+  type: "buy" | "sell" | "dividend" | "fee";
+  amount: number;
+  shares?: number;
+  price?: number;
+  date: string;
+  description?: string;
+}
+
 export interface ExpenseInput {
   id?: string;
   amount: number;
@@ -103,6 +136,8 @@ export interface BudgetStore {
   futurePayments: FuturePayment[];
   debts: Debt[];
   debtPayments: DebtPayment[];
+  investments: Investment[];
+  investmentTransactions: InvestmentTransaction[];
   currency: {
     code: string;
     symbol: string;
@@ -146,6 +181,8 @@ export const defaultStore: BudgetStore = {
   futurePayments: [],
   debts: [],
   debtPayments: [],
+  investments: [],
+  investmentTransactions: [],
 };
 
 // Store interface
@@ -179,6 +216,20 @@ export interface Store extends BudgetStore {
     totalInterest: number;
     debtToIncomeRatio: number;
     payoffProjections: { debtId: string; monthsToPayoff: number; totalInterest: number }[];
+  };
+
+  // Investment management
+  addInvestment: (investment: Omit<Investment, "id" | "lastUpdated">) => Promise<void>;
+  updateInvestment: (id: string, updates: Partial<Investment>) => Promise<void>;
+  deleteInvestment: (id: string) => Promise<void>;
+  addInvestmentTransaction: (transaction: Omit<InvestmentTransaction, "id">) => Promise<void>;
+  updateInvestmentValue: (id: string, newValue: number) => Promise<void>;
+  calculateInvestmentStatistics: () => {
+    totalValue: number;
+    totalGains: number;
+    totalGainsPercentage: number;
+    bestPerforming: Investment | null;
+    worstPerforming: Investment | null;
   };
   calculateRecommendedSavings: () => number;
   distributeAutoSavings: (amount: number) => void;
@@ -704,6 +755,123 @@ export const useStore = create<Store>((set, get) => ({
       totalInterest,
       debtToIncomeRatio,
       payoffProjections
+    };
+  },
+
+  // Investment management
+  addInvestment: async (investment: Omit<Investment, "id" | "lastUpdated">) => {
+    const store = get();
+    const newInvestment: Investment = {
+      ...investment,
+      id: generateId(),
+      lastUpdated: new Date().toISOString()
+    };
+    
+    set({
+      ...store,
+      investments: [...store.investments, newInvestment]
+    });
+    
+    await get().saveToCloud();
+  },
+
+  updateInvestment: async (id: string, updates: Partial<Investment>) => {
+    const store = get();
+    const updatedInvestments = store.investments.map((investment: Investment) =>
+      investment.id === id ? { 
+        ...investment, 
+        ...updates, 
+        lastUpdated: new Date().toISOString() 
+      } : investment
+    );
+    
+    set({
+      ...store,
+      investments: updatedInvestments
+    });
+    
+    await get().saveToCloud();
+  },
+
+  deleteInvestment: async (id: string) => {
+    const store = get();
+    set({
+      ...store,
+      investments: store.investments.filter((investment: Investment) => investment.id !== id),
+      investmentTransactions: store.investmentTransactions.filter((transaction: InvestmentTransaction) => transaction.investmentId !== id)
+    });
+    
+    await get().saveToCloud();
+  },
+
+  addInvestmentTransaction: async (transaction: Omit<InvestmentTransaction, "id">) => {
+    const store = get();
+    const newTransaction: InvestmentTransaction = {
+      ...transaction,
+      id: generateId()
+    };
+    
+    set({
+      ...store,
+      investmentTransactions: [...store.investmentTransactions, newTransaction]
+    });
+    
+    await get().saveToCloud();
+  },
+
+  updateInvestmentValue: async (id: string, newValue: number) => {
+    const store = get();
+    const updatedInvestments = store.investments.map((investment: Investment) =>
+      investment.id === id ? { 
+        ...investment, 
+        currentValue: newValue,
+        lastUpdated: new Date().toISOString() 
+      } : investment
+    );
+    
+    set({
+      ...store,
+      investments: updatedInvestments
+    });
+    
+    await get().saveToCloud();
+  },
+
+  calculateInvestmentStatistics: () => {
+    const store = get();
+    const { investments } = store;
+    
+    const totalValue = investments.reduce((sum, investment) => sum + investment.currentValue, 0);
+    const totalCost = investments.reduce((sum, investment) => sum + investment.purchaseValue, 0);
+    const totalGains = totalValue - totalCost;
+    const totalGainsPercentage = totalCost > 0 ? (totalGains / totalCost) * 100 : 0;
+    
+    let bestPerforming: Investment | null = null;
+    let worstPerforming: Investment | null = null;
+    let bestGainPercentage = -Infinity;
+    let worstGainPercentage = Infinity;
+    
+    investments.forEach(investment => {
+      const gainPercentage = investment.purchaseValue > 0 ? 
+        ((investment.currentValue - investment.purchaseValue) / investment.purchaseValue) * 100 : 0;
+      
+      if (gainPercentage > bestGainPercentage) {
+        bestGainPercentage = gainPercentage;
+        bestPerforming = investment;
+      }
+      
+      if (gainPercentage < worstGainPercentage) {
+        worstGainPercentage = gainPercentage;
+        worstPerforming = investment;
+      }
+    });
+    
+    return {
+      totalValue,
+      totalGains,
+      totalGainsPercentage,
+      bestPerforming,
+      worstPerforming
     };
   },
 

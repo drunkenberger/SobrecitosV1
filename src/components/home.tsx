@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@/lib/store";
@@ -11,6 +12,7 @@ import {
   Target,
   Calendar,
   TrendingDown,
+  TrendingUp,
   CreditCard,
   Receipt
 } from "lucide-react";
@@ -31,7 +33,7 @@ import { AIChatWindow } from "./budget/AIChatWindow";
 import { AllocateFundsDialog } from "./budget/AllocateFundsDialog";
 import { AddDebtDialog } from "./budget/AddDebtDialog";
 import { DebtPaymentDialog } from "./budget/DebtPaymentDialog";
-import type { Debt } from "@/lib/store";
+import type { Debt, Investment } from "@/lib/store";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -43,6 +45,7 @@ export default function Home() {
     savingsGoals,
     futurePayments,
     debts,
+    investments,
     addExpense,
     updateMonthlyBudget,
     addIncome,
@@ -63,7 +66,11 @@ export default function Home() {
     updateDebt,
     deleteDebt,
     makeDebtPayment,
-    calculateDebtStatistics
+    calculateDebtStatistics,
+    addInvestment,
+    updateInvestment,
+    deleteInvestment,
+    calculateInvestmentStatistics
   } = useStore();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -115,6 +122,9 @@ export default function Home() {
 
   // Calculate debt statistics
   const debtStatistics = calculateDebtStatistics();
+  
+  // Calculate investment statistics
+  const investmentStatistics = calculateInvestmentStatistics();
 
   const handleAddExpense = async (expenseData) => {
     const expense = {
@@ -413,6 +423,29 @@ export default function Home() {
             </div>
           </Card>
 
+          {/* Future Payments Card - Moved here to balance layout */}
+          <Card className="bg-white shadow-lg border-gray-200">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+                <div className="p-2.5 bg-indigo-100 rounded-lg">
+                  <Calendar className="w-5 h-5 text-indigo-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900">Future Payments</h3>
+                  <p className="text-sm text-gray-600">Upcoming bills</p>
+                </div>
+              </div>
+              <div className="space-y-4 max-h-[400px] overflow-y-auto">
+                <FuturePayments
+                  payments={futurePayments || []}
+                  categories={categories || []}
+                  onAddPayment={addFuturePayment}
+                  onUpdatePayment={updateFuturePayment}
+                />
+              </div>
+            </div>
+          </Card>
+
         </div>
 
         {/* Debt Management Section */}
@@ -445,57 +478,170 @@ export default function Home() {
           </Card>
         )}
 
-        {/* Debt Management - Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          
-          {/* Debt Manager Card */}
-          <Card className="bg-white shadow-lg border-gray-200">
-            <div className="p-6">
-              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
-                <div className="p-2.5 bg-red-100 rounded-lg">
-                  <CreditCard className="w-5 h-5 text-red-600" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900">Debt Management</h3>
-                  <p className="text-sm text-gray-600">Manage your debts and payments</p>
-                </div>
+        {/* Debt Management - Single Column */}
+        <Card className="bg-white shadow-lg border-gray-200 mb-8">
+          <div className="p-6">
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+              <div className="p-2.5 bg-red-100 rounded-lg">
+                <CreditCard className="w-5 h-5 text-red-600" />
               </div>
-              <div className="space-y-4 max-h-[400px] overflow-y-auto">
-                <DebtManager
-                  debts={debts || []}
-                  onAddDebt={handleAddDebt}
-                  onUpdateDebt={updateDebt}
-                  onDeleteDebt={deleteDebt}
-                  onMakePayment={handleMakeDebtPayment}
-                  onPaymentClick={handlePaymentClick}
-                />
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900">Debt Management</h3>
+                <p className="text-sm text-gray-600">Manage your debts and payments</p>
               </div>
             </div>
-          </Card>
+            <div className="space-y-4 max-h-[400px] overflow-y-auto">
+              <DebtManager
+                debts={debts || []}
+                onAddDebt={handleAddDebt}
+                onUpdateDebt={updateDebt}
+                onDeleteDebt={deleteDebt}
+                onMakePayment={handleMakeDebtPayment}
+                onPaymentClick={handlePaymentClick}
+              />
+            </div>
+          </div>
+        </Card>
 
-          {/* Future Payments Card - Moved here to balance layout */}
-          <Card className="bg-white shadow-lg border-gray-200">
-            <div className="p-6">
-              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
-                <div className="p-2.5 bg-indigo-100 rounded-lg">
-                  <Calendar className="w-5 h-5 text-indigo-600" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900">Future Payments</h3>
-                  <p className="text-sm text-gray-600">Upcoming bills</p>
-                </div>
+        {/* Investment Portfolio Section */}
+        <Card className="bg-white shadow-lg border-gray-200 mb-8">
+          <div className="p-6">
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+              <div className="p-2.5 bg-green-100 rounded-lg">
+                <TrendingUp className="w-5 h-5 text-green-600" />
               </div>
-              <div className="space-y-4 max-h-[400px] overflow-y-auto">
-                <FuturePayments
-                  payments={futurePayments || []}
-                  categories={categories || []}
-                  onAddPayment={addFuturePayment}
-                  onUpdatePayment={updateFuturePayment}
-                />
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900">Investment Portfolio</h3>
+                <p className="text-sm text-gray-600">Track your investment performance</p>
               </div>
+              <Link 
+                to="/app/investments"
+                className="btn-primary btn-sm"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Manage Investments
+              </Link>
             </div>
-          </Card>
-        </div>
+
+            {investments && investments.length > 0 ? (
+              <>
+                {/* Investment Overview Stats */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-gray-600">Portfolio Value</span>
+                      <TrendingUp className="w-4 h-4 text-green-600" />
+                    </div>
+                    <p className="text-xl font-bold text-gray-900">
+                      {formatCurrency(investmentStatistics.totalValue)}
+                    </p>
+                  </div>
+
+                  <div className={`rounded-lg p-4 ${
+                    investmentStatistics.totalGains >= 0 ? 'bg-green-50' : 'bg-red-50'
+                  }`}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-gray-600">Total Gains</span>
+                      {investmentStatistics.totalGains >= 0 ? 
+                        <TrendingUp className="w-4 h-4 text-green-600" /> :
+                        <TrendingDown className="w-4 h-4 text-red-600" />
+                      }
+                    </div>
+                    <p className={`text-xl font-bold ${
+                      investmentStatistics.totalGains >= 0 ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {investmentStatistics.totalGains >= 0 ? '+' : ''}{formatCurrency(investmentStatistics.totalGains)}
+                    </p>
+                  </div>
+
+                  <div className={`rounded-lg p-4 ${
+                    investmentStatistics.totalGainsPercentage >= 0 ? 'bg-green-50' : 'bg-red-50'
+                  }`}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-gray-600">Return</span>
+                      <PieChart className={`w-4 h-4 ${
+                        investmentStatistics.totalGainsPercentage >= 0 ? 'text-green-600' : 'text-red-600'
+                      }`} />
+                    </div>
+                    <p className={`text-xl font-bold ${
+                      investmentStatistics.totalGainsPercentage >= 0 ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {investmentStatistics.totalGainsPercentage >= 0 ? '+' : ''}{investmentStatistics.totalGainsPercentage.toFixed(1)}%
+                    </p>
+                  </div>
+
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-gray-600">Holdings</span>
+                      <DollarSign className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <p className="text-xl font-bold text-blue-600">
+                      {investments.length} {investments.length === 1 ? 'asset' : 'assets'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Top Holdings Preview */}
+                <div className="space-y-3">
+                  <h4 className="text-sm font-medium text-gray-700 mb-3">Top Holdings</h4>
+                  {investments.slice(0, 3).map((investment, index) => {
+                    const gain = investment.currentValue - investment.purchaseValue;
+                    const gainPercentage = investment.purchaseValue > 0 ? 
+                      ((investment.currentValue - investment.purchaseValue) / investment.purchaseValue) * 100 : 0;
+                    
+                    return (
+                      <div key={investment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div 
+                            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium text-white"
+                            style={{ backgroundColor: investment.color }}
+                          >
+                            {index + 1}
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">{investment.name}</p>
+                            <p className="text-xs text-gray-600">{investment.platform}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-medium text-gray-900">{formatCurrency(investment.currentValue)}</p>
+                          <p className={`text-xs ${gain >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {gain >= 0 ? '+' : ''}{formatCurrency(gain)} ({gainPercentage >= 0 ? '+' : ''}{gainPercentage.toFixed(1)}%)
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {investments.length > 3 && (
+                    <div className="text-center pt-2">
+                      <Link 
+                        to="/app/investments" 
+                        className="text-sm text-blue-600 hover:text-blue-700 inline-flex items-center gap-1"
+                      >
+                        View all {investments.length} investments →
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-12 text-gray-500">
+                <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <TrendingUp className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="font-medium text-gray-900 mb-2">No investments tracked</h3>
+                <p className="text-sm mb-4">Start tracking your investment portfolio to monitor performance</p>
+                <Link 
+                  to="/app/investments"
+                  className="btn-primary inline-flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Your First Investment
+                </Link>
+              </div>
+            )}
+          </div>
+        </Card>
 
         {/* Recent Transactions - Full Width */}
         <Card className="bg-white shadow-lg border-gray-200">

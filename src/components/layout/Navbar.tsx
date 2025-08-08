@@ -12,7 +12,13 @@ import {
   LogIn,
   Sparkles,
   X,
-  Wallet
+  Wallet,
+  LayoutDashboard,
+  LayoutList,
+  TrendingUp,
+  BarChart3,
+  Clock,
+  LineChart
 } from "lucide-react";
 import { UserMenu } from "./UserMenu";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -58,6 +64,15 @@ export default function Navbar() {
     { to: "/blog", icon: MessageSquare, label: t('navigation.blog') },
     { to: isApp ? "/app/help" : "/help-center", icon: LifeBuoy, label: t('common.help') },
     { to: isApp ? "/app/faq" : "/faq", icon: HelpCircle, label: "FAQ" },
+  ];
+
+  const sidebarNavItems = [
+    { to: "/app", icon: LayoutDashboard, label: t('navigation.dashboard') },
+    { to: "/app/transactions", icon: LayoutList, label: t('navigation.transactions') },
+    { to: "/app/cash-flow", icon: TrendingUp, label: t('navigation.cashFlow') },
+    { to: "/app/categories", icon: BarChart3, label: t('navigation.categories') },
+    { to: "/app/recurrings", icon: Clock, label: t('navigation.recurring') },
+    { to: "/app/investments", icon: LineChart, label: "Investments" },
   ];
 
   return (
@@ -229,12 +244,46 @@ export default function Navbar() {
             </div>
             
             <div className="p-6 space-y-4">
+              {/* Show sidebar navigation if in app */}
+              {isApp && (
+                <>
+                  <div className="text-xs font-semibold text-neutral-500 uppercase tracking-wider px-4">
+                    Navigation
+                  </div>
+                  {sidebarNavItems.map((item, index) => (
+                    <motion.div
+                      key={item.to}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Link
+                        to={item.to}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+                          location.pathname === item.to
+                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300'
+                            : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                        }`}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <item.icon className="w-5 h-5" />
+                        <span className="font-medium">{item.label}</span>
+                      </Link>
+                    </motion.div>
+                  ))}
+                  <div className="border-t border-neutral-200 dark:border-neutral-700 my-4" />
+                  <div className="text-xs font-semibold text-neutral-500 uppercase tracking-wider px-4">
+                    Support
+                  </div>
+                </>
+              )}
+              
               {navItems.map((item, index) => (
                 <motion.div
                   key={item.to}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: (isApp ? sidebarNavItems.length : 0) + index * 0.1 }}
                 >
                   <Link
                     to={item.to}

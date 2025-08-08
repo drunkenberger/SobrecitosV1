@@ -15,6 +15,11 @@ import TermsOfService from "./pages/legal/TermsOfService";
 import CookiePolicy from "./pages/legal/CookiePolicy";
 import Navbar from "./components/layout/Navbar";
 import Alternatives from "./pages/Alternatives";
+import Transactions from "./pages/Transactions";
+import CashFlow from "./pages/CashFlow";
+import Categories from "./pages/Categories";
+import Recurring from "./pages/Recurring";
+import Investments from "./pages/Investments";
 import AppLayout from "./components/layout/AppLayout";
 import routes from "tempo-routes";
 import "./i18n/config";
@@ -61,6 +66,11 @@ function App() {
               </ProtectedRoute>
             }>
               <Route path="/app" element={<Home />} />
+              <Route path="/app/transactions" element={<Transactions />} />
+              <Route path="/app/cash-flow" element={<CashFlow />} />
+              <Route path="/app/categories" element={<Categories />} />
+              <Route path="/app/recurrings" element={<Recurring />} />
+              <Route path="/app/investments" element={<Investments />} />
               <Route path="/app/profile" element={<Profile />} />
               <Route path="/app/faq" element={<FAQPage />} />
               <Route path="/app/help" element={<HelpCenter />} />

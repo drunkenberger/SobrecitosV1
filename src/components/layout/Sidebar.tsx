@@ -108,6 +108,7 @@ export default function Sidebar({ accounts = [], onError }: SidebarProps) {
       { name: t('navigation.cashFlow'), icon: TrendingUp, path: "/app/cash-flow" },
       { name: t('navigation.categories'), icon: BarChart3, path: "/app/categories" },
       { name: t('navigation.recurring'), icon: Clock, path: "/app/recurrings" },
+      { name: "Investments", icon: LineChart, path: "/app/investments" },
     ];
 
     if (loading) {
@@ -121,7 +122,7 @@ export default function Sidebar({ accounts = [], onError }: SidebarProps) {
     }
 
     return (
-      <div className="h-full bg-[#0A0D14] text-white flex flex-col">
+      <div className="h-full bg-[#0A0D14] text-white flex flex-col pointer-events-auto">
         {/* Search Section - Fixed at top */}
         <div className="p-4 border-b border-[#1A1F2E]">
           <div className="relative">
@@ -203,10 +204,14 @@ export default function Sidebar({ accounts = [], onError }: SidebarProps) {
                 <Link
                   key={item.name}
                   to={item.path}
-                  className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-[#1A1F2E] transition-colors"
+                  className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-[#1A1F2E] transition-colors cursor-pointer relative z-10"
+                  onClick={(e) => {
+                    console.log('Sidebar navigation clicked:', item.path);
+                    // Don't prevent default - let React Router handle it
+                  }}
                 >
-                  <item.icon className="h-5 w-5" />
-                  <span className="text-sm">{item.name}</span>
+                  <item.icon className="h-5 w-5 pointer-events-none" />
+                  <span className="text-sm pointer-events-none">{item.name}</span>
                 </Link>
               ))}
             </nav>
