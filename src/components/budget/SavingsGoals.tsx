@@ -24,7 +24,7 @@ interface SavingsGoalsProps {
 }
 
 export default function SavingsGoals({
-  goals,
+  goals = [],
   onAddGoal,
   onUpdateGoal,
   onDeleteGoal,
@@ -77,11 +77,11 @@ export default function SavingsGoals({
       </div>
 
       <div className="grid gap-6">
-        {goals.map((goal) => {
-          const progress = (goal.currentAmount / goal.targetAmount) * 100;
-          const remaining = goal.targetAmount - goal.currentAmount;
+        {(goals || []).filter(goal => goal && goal.id).map((goal) => {
+          const progress = goal.targetAmount > 0 ? (goal.currentAmount / goal.targetAmount) * 100 : 0;
+          const remaining = Math.max(0, goal.targetAmount - goal.currentAmount);
           const deadline = new Date(goal.deadline);
-          const daysLeft = Math.ceil((deadline.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+          const daysLeft = Math.max(0, Math.ceil((deadline.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
 
           return (
             <Card key={goal.id} className="p-6">
@@ -157,6 +157,13 @@ export default function SavingsGoals({
             </Card>
           );
         })}
+        
+        {(!goals || goals.length === 0) && (
+          <div className="text-center py-8 text-gray-500">
+            <p>{t('dashboard.savingsGoals.noGoalsYet')}</p>
+            <p className="text-sm">{t('dashboard.savingsGoals.createFirstGoal')}</p>
+          </div>
+        )}
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
