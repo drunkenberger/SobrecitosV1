@@ -21,12 +21,17 @@ import CategoryManager from "./budget/CategoryManager";
 import SavingsGoals from "./budget/SavingsGoals";
 import FuturePayments from "./budget/FuturePayments";
 import ExpenseList from "./budget/ExpenseList";
+import DebtManager from "./budget/DebtManager";
+import DebtOverview from "./budget/DebtOverview";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { ExpenseForm } from "./forms/ExpenseForm";
 import { AIInsightsDialog } from "./budget/AIInsightsDialog";
 import { DataSyncButton } from "./DataSyncButton";
 import { AIChatWindow } from "./budget/AIChatWindow";
 import { AllocateFundsDialog } from "./budget/AllocateFundsDialog";
+import { AddDebtDialog } from "./budget/AddDebtDialog";
+import { DebtPaymentDialog } from "./budget/DebtPaymentDialog";
+import type { Debt } from "@/lib/store";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -37,6 +42,7 @@ export default function Home() {
     categories,
     savingsGoals,
     futurePayments,
+    debts,
     addExpense,
     updateMonthlyBudget,
     addIncome,
@@ -52,12 +58,19 @@ export default function Home() {
     deleteExpense,
     loadFromCloud,
     resetStore,
-    allocateFundsToGoal
+    allocateFundsToGoal,
+    addDebt,
+    updateDebt,
+    deleteDebt,
+    makeDebtPayment,
+    calculateDebtStatistics
   } = useStore();
 
   const [isLoading, setIsLoading] = useState(true);
   const [showExpenseForm, setShowExpenseForm] = useState(false);
   const [showAIChat, setShowAIChat] = useState(false);
+  const [showDebtPaymentDialog, setShowDebtPaymentDialog] = useState(false);
+  const [selectedDebt, setSelectedDebt] = useState<Debt | null>(null);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -100,6 +113,9 @@ export default function Home() {
     }))
     .filter(item => item.amount > 0);
 
+  // Calculate debt statistics
+  const debtStatistics = calculateDebtStatistics();
+
   const handleAddExpense = async (expenseData) => {
     const expense = {
       ...expenseData,
@@ -139,6 +155,22 @@ export default function Home() {
 
   const handleDeleteCategory = async (id) => {
     await deleteCategory(id);
+  };
+
+  // Debt handlers
+  const handleAddDebt = async (debt) => {
+    await addDebt(debt);
+  };
+
+  const handlePaymentClick = (debt: Debt) => {
+    setSelectedDebt(debt);
+    setShowDebtPaymentDialog(true);
+  };
+
+  const handleMakeDebtPayment = async (payment) => {
+    await makeDebtPayment(payment);
+    setShowDebtPaymentDialog(false);
+    setSelectedDebt(null);
   };
 
   if (isLoading) {
@@ -381,7 +413,67 @@ export default function Home() {
             </div>
           </Card>
 
-          {/* Future Payments Card */}
+        </div>
+
+        {/* Debt Management Section */}
+        {debts && debts.length > 0 && (
+          <Card className="bg-white shadow-lg border-gray-200 mb-8">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+                <div className="p-2.5 bg-red-100 rounded-lg">
+                  <CreditCard className="w-5 h-5 text-red-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900">Debt Overview</h3>
+                  <p className="text-sm text-gray-600">Track and manage your debts</p>
+                </div>
+                <AddDebtDialog
+                  onAddDebt={handleAddDebt}
+                  trigger={
+                    <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white">
+                      <Plus className="w-4 h-4 mr-1" />
+                      Add Debt
+                    </Button>
+                  }
+                />
+              </div>
+              <DebtOverview 
+                debts={debts || []}
+                debtStatistics={debtStatistics}
+              />
+            </div>
+          </Card>
+        )}
+
+        {/* Debt Management - Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          
+          {/* Debt Manager Card */}
+          <Card className="bg-white shadow-lg border-gray-200">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+                <div className="p-2.5 bg-red-100 rounded-lg">
+                  <CreditCard className="w-5 h-5 text-red-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900">Debt Management</h3>
+                  <p className="text-sm text-gray-600">Manage your debts and payments</p>
+                </div>
+              </div>
+              <div className="space-y-4 max-h-[400px] overflow-y-auto">
+                <DebtManager
+                  debts={debts || []}
+                  onAddDebt={handleAddDebt}
+                  onUpdateDebt={updateDebt}
+                  onDeleteDebt={deleteDebt}
+                  onMakePayment={handleMakeDebtPayment}
+                  onPaymentClick={handlePaymentClick}
+                />
+              </div>
+            </div>
+          </Card>
+
+          {/* Future Payments Card - Moved here to balance layout */}
           <Card className="bg-white shadow-lg border-gray-200">
             <div className="p-6">
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
@@ -434,6 +526,15 @@ export default function Home() {
           <AIChatWindow onClose={() => setShowAIChat(false)} />
         </div>
       )}
+
+
+      <DebtPaymentDialog
+        debt={selectedDebt}
+        open={showDebtPaymentDialog}
+        onOpenChange={setShowDebtPaymentDialog}
+        onMakePayment={handleMakeDebtPayment}
+        availableBalance={remainingBalance}
+      />
     </div>
   );
 }

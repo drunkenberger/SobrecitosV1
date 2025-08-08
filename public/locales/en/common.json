@@ -474,6 +474,127 @@
         "timeLeft": "Time Left",
         "days": "days"
       }
+    },
+    "debts": {
+      "title": "Debt Management",
+      "subtitle": "Track and manage your debts and payments",
+      "addDebt": "Add Debt",
+      "noDebts": "No debts tracked",
+      "noDebtsDescription": "Add your debts to track payments and payoff progress",
+      "debtFree": "Debt-Free!",
+      "debtFreeDescription": "You currently have no debts tracked. Great job!",
+      "overview": {
+        "title": "Debt Overview",
+        "subtitle": "Track and manage your debts",
+        "totalDebt": "Total Debt",
+        "monthlyPayments": "Monthly Payments",
+        "monthlyInterest": "Monthly Interest",
+        "paidOff": "Paid Off",
+        "progress": "Progress",
+        "remaining": "Remaining",
+        "overallProgress": "Overall Progress"
+      },
+      "types": {
+        "credit_card": "Credit Card",
+        "loan": "Personal Loan", 
+        "mortgage": "Mortgage",
+        "student_loan": "Student Loan",
+        "personal": "Personal Debt",
+        "other": "Other"
+      },
+      "status": {
+        "due_soon": "Due Soon",
+        "due_this_month": "Due This Month", 
+        "upcoming": "Upcoming",
+        "paid_off": "Paid Off",
+        "overdue": "Overdue"
+      },
+      "risk": {
+        "low": "Low Risk",
+        "moderate": "Moderate", 
+        "high": "High Risk"
+      },
+      "dialog": {
+        "add": {
+          "title": "Add New Debt",
+          "name": "Debt Name",
+          "namePlaceholder": "e.g., Chase Freedom Card",
+          "creditor": "Creditor", 
+          "creditorPlaceholder": "e.g., Chase Bank",
+          "type": "Debt Type",
+          "color": "Color",
+          "totalAmount": "Total Amount",
+          "currentBalance": "Current Balance",
+          "minimumPayment": "Minimum Payment",
+          "interestRate": "Interest Rate (% APR)",
+          "nextDue": "Next Payment Due",
+          "description": "Description (Optional)",
+          "descriptionPlaceholder": "Additional notes about this debt...",
+          "preview": "Preview",
+          "addButton": "Add Debt",
+          "validation": {
+            "nameRequired": "Debt name is required",
+            "creditorRequired": "Creditor is required",
+            "totalAmountRequired": "Valid total amount is required",
+            "remainingAmountRequired": "Valid remaining amount is required",
+            "remainingExceedsTotal": "Remaining amount cannot exceed total amount",
+            "minimumPaymentRequired": "Valid minimum payment is required",
+            "interestRateInvalid": "Interest rate must be between 0 and 100",
+            "dueDateRequired": "Due date is required"
+          }
+        },
+        "payment": {
+          "title": "Make Payment",
+          "amount": "Payment Amount",
+          "type": "Payment Type",
+          "notes": "Notes (Optional)",
+          "notesPlaceholder": "Add notes about this payment...",
+          "availableBalance": "Available balance",
+          "impact": "Payment Impact",
+          "newBalance": "New Balance", 
+          "newProgress": "New Progress",
+          "interestPortion": "Interest Portion",
+          "principalPortion": "Principal Portion",
+          "paidOffMessage": "Debt will be paid off completely!",
+          "makePayment": "Make Payment",
+          "processing": "Processing...",
+          "validation": {
+            "amountRequired": "Valid payment amount is required",
+            "exceedsBalance": "Payment cannot exceed remaining balance",
+            "exceedsAvailable": "Payment exceeds available balance"
+          }
+        }
+      },
+      "paymentTypes": {
+        "minimum": "Minimum Payment",
+        "extra": "Extra Payment", 
+        "payoff": "Payoff Payment"
+      },
+      "quickPayment": {
+        "title": "Quick Payment Options",
+        "minimum": "Minimum Payment",
+        "double": "Double Payment",
+        "payoff": "Pay Off Completely"
+      },
+      "statistics": {
+        "payoffTimeline": "Payoff Timeline", 
+        "minimumOnly": "Minimum payments only",
+        "priorityDebt": "Priority Debt",
+        "priorityMessage": "Focus on {{name}} - payoff in {{time}}",
+        "priorityMessageRate": "at {{rate}}% APR",
+        "neverPayoff": "Never*",
+        "neverNote": "Some debts have minimum payments that don't cover the interest, meaning they will never be paid off with minimum payments alone.",
+        "debtToIncome": "DTI",
+        "interest": "Interest"
+      },
+      "details": {
+        "minimumPayment": "Minimum Payment",
+        "nextDue": "Next Due",
+        "interestRate": "Interest Rate", 
+        "monthlyInterest": "Monthly Interest",
+        "balance": "Balance",
+        "minPayment": "Min Payment"
+      }
     }
   },
   "accounts": {

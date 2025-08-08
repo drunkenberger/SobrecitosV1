@@ -450,6 +450,127 @@
         "color": "Color",
         "saveChanges": "Guardar Cambios"
       }
+    },
+    "debts": {
+      "title": "Gestión de Deudas",
+      "subtitle": "Seguir y gestionar tus deudas y pagos",
+      "addDebt": "Agregar Deuda",
+      "noDebts": "No hay deudas registradas",
+      "noDebtsDescription": "Agrega tus deudas para seguir los pagos y el progreso de liquidación",
+      "debtFree": "¡Libre de Deudas!",
+      "debtFreeDescription": "Actualmente no tienes deudas registradas. ¡Excelente trabajo!",
+      "overview": {
+        "title": "Resumen de Deudas",
+        "subtitle": "Seguir y gestionar tus deudas",
+        "totalDebt": "Deuda Total",
+        "monthlyPayments": "Pagos Mensuales",
+        "monthlyInterest": "Interés Mensual",
+        "paidOff": "Pagado",
+        "progress": "Progreso",
+        "remaining": "Restante",
+        "overallProgress": "Progreso General"
+      },
+      "types": {
+        "credit_card": "Tarjeta de Crédito",
+        "loan": "Préstamo Personal", 
+        "mortgage": "Hipoteca",
+        "student_loan": "Préstamo Estudiantil",
+        "personal": "Deuda Personal",
+        "other": "Otro"
+      },
+      "status": {
+        "due_soon": "Vence Pronto",
+        "due_this_month": "Vence Este Mes", 
+        "upcoming": "Próximo",
+        "paid_off": "Pagado",
+        "overdue": "Vencido"
+      },
+      "risk": {
+        "low": "Riesgo Bajo",
+        "moderate": "Moderado", 
+        "high": "Riesgo Alto"
+      },
+      "dialog": {
+        "add": {
+          "title": "Agregar Nueva Deuda",
+          "name": "Nombre de la Deuda",
+          "namePlaceholder": "ej., Tarjeta Chase Freedom",
+          "creditor": "Acreedor", 
+          "creditorPlaceholder": "ej., Chase Bank",
+          "type": "Tipo de Deuda",
+          "color": "Color",
+          "totalAmount": "Monto Total",
+          "currentBalance": "Saldo Actual",
+          "minimumPayment": "Pago Mínimo",
+          "interestRate": "Tasa de Interés (% APR)",
+          "nextDue": "Próximo Pago Vence",
+          "description": "Descripción (Opcional)",
+          "descriptionPlaceholder": "Notas adicionales sobre esta deuda...",
+          "preview": "Vista Previa",
+          "addButton": "Agregar Deuda",
+          "validation": {
+            "nameRequired": "El nombre de la deuda es requerido",
+            "creditorRequired": "El acreedor es requerido",
+            "totalAmountRequired": "Se requiere un monto total válido",
+            "remainingAmountRequired": "Se requiere un monto restante válido",
+            "remainingExceedsTotal": "El monto restante no puede exceder el monto total",
+            "minimumPaymentRequired": "Se requiere un pago mínimo válido",
+            "interestRateInvalid": "La tasa de interés debe estar entre 0 y 100",
+            "dueDateRequired": "La fecha de vencimiento es requerida"
+          }
+        },
+        "payment": {
+          "title": "Realizar Pago",
+          "amount": "Monto del Pago",
+          "type": "Tipo de Pago",
+          "notes": "Notas (Opcional)",
+          "notesPlaceholder": "Agregar notas sobre este pago...",
+          "availableBalance": "Saldo disponible",
+          "impact": "Impacto del Pago",
+          "newBalance": "Nuevo Saldo", 
+          "newProgress": "Nuevo Progreso",
+          "interestPortion": "Porción de Interés",
+          "principalPortion": "Porción del Principal",
+          "paidOffMessage": "¡La deuda será pagada completamente!",
+          "makePayment": "Realizar Pago",
+          "processing": "Procesando...",
+          "validation": {
+            "amountRequired": "Se requiere un monto de pago válido",
+            "exceedsBalance": "El pago no puede exceder el saldo restante",
+            "exceedsAvailable": "El pago excede el saldo disponible"
+          }
+        }
+      },
+      "paymentTypes": {
+        "minimum": "Pago Mínimo",
+        "extra": "Pago Extra", 
+        "payoff": "Pago de Liquidación"
+      },
+      "quickPayment": {
+        "title": "Opciones de Pago Rápido",
+        "minimum": "Pago Mínimo",
+        "double": "Pago Doble",
+        "payoff": "Pagar Completamente"
+      },
+      "statistics": {
+        "payoffTimeline": "Cronograma de Liquidación", 
+        "minimumOnly": "Solo pagos mínimos",
+        "priorityDebt": "Deuda Prioritaria",
+        "priorityMessage": "Enfócate en {{name}} - liquidación en {{time}}",
+        "priorityMessageRate": "al {{rate}}% APR",
+        "neverPayoff": "Nunca*",
+        "neverNote": "Algunas deudas tienen pagos mínimos que no cubren el interés, lo que significa que nunca se liquidarán solo con pagos mínimos.",
+        "debtToIncome": "DTI",
+        "interest": "Interés"
+      },
+      "details": {
+        "minimumPayment": "Pago Mínimo",
+        "nextDue": "Próximo Vencimiento",
+        "interestRate": "Tasa de Interés", 
+        "monthlyInterest": "Interés Mensual",
+        "balance": "Saldo",
+        "minPayment": "Pago Mín"
+      }
     }
   },
   "accounts": {

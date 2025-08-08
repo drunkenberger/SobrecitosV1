@@ -63,6 +63,30 @@ export interface FuturePayment {
   isPaid: boolean;
 }
 
+export interface Debt {
+  id: string;
+  name: string;
+  creditor: string;
+  totalAmount: number;
+  remainingAmount: number;
+  interestRate?: number;
+  minimumPayment: number;
+  dueDate: string;
+  createdDate: string;
+  color: string;
+  type: "credit_card" | "loan" | "mortgage" | "student_loan" | "personal" | "other";
+  description?: string;
+}
+
+export interface DebtPayment {
+  id: string;
+  debtId: string;
+  amount: number;
+  date: string;
+  type: "minimum" | "extra" | "payoff";
+  description?: string;
+}
+
 export interface ExpenseInput {
   id?: string;
   amount: number;
@@ -77,6 +101,8 @@ export interface BudgetStore {
   expenses: Expense[];
   savingsGoals: SavingsGoal[];
   futurePayments: FuturePayment[];
+  debts: Debt[];
+  debtPayments: DebtPayment[];
   currency: {
     code: string;
     symbol: string;
@@ -118,6 +144,8 @@ export const defaultStore: BudgetStore = {
   expenses: [],
   savingsGoals: [],
   futurePayments: [],
+  debts: [],
+  debtPayments: [],
 };
 
 // Store interface
@@ -140,6 +168,18 @@ export interface Store extends BudgetStore {
   deleteSavingsGoal: (id: string) => Promise<void>;
   addFuturePayment: (payment: Omit<FuturePayment, "id" | "isPaid">) => Promise<void>;
   updateFuturePayment: (id: string, updates: Partial<FuturePayment>) => Promise<void>;
+  addDebt: (debt: Omit<Debt, "id" | "createdDate">) => Promise<void>;
+  updateDebt: (id: string, updates: Partial<Debt>) => Promise<void>;
+  deleteDebt: (id: string) => Promise<void>;
+  makeDebtPayment: (payment: Omit<DebtPayment, "id" | "date">) => Promise<void>;
+  getDebtPayments: (debtId: string) => DebtPayment[];
+  calculateDebtStatistics: () => {
+    totalDebt: number;
+    totalMinimumPayments: number;
+    totalInterest: number;
+    debtToIncomeRatio: number;
+    payoffProjections: { debtId: string; monthsToPayoff: number; totalInterest: number }[];
+  };
   calculateRecommendedSavings: () => number;
   distributeAutoSavings: (amount: number) => void;
   allocateFundsToGoal: (goalId: string, amount: number) => Promise<void>;
@@ -503,6 +543,168 @@ export const useStore = create<Store>((set, get) => ({
     });
     
     await get().saveToCloud();
+  },
+
+  addDebt: async (debt: Omit<Debt, "id" | "createdDate">) => {
+    const store = get();
+    const newDebt: Debt = {
+      ...debt,
+      id: generateId(),
+      createdDate: new Date().toISOString()
+    };
+    
+    set({
+      ...store,
+      debts: [...store.debts, newDebt]
+    });
+    
+    await get().saveToCloud();
+  },
+
+  updateDebt: async (id: string, updates: Partial<Debt>) => {
+    const store = get();
+    set({
+      ...store,
+      debts: store.debts.map((debt: Debt) => 
+        debt.id === id ? { ...debt, ...updates } : debt
+      )
+    });
+    
+    await get().saveToCloud();
+  },
+
+  deleteDebt: async (id: string) => {
+    const store = get();
+    set({
+      ...store,
+      debts: store.debts.filter((debt: Debt) => debt.id !== id),
+      debtPayments: store.debtPayments.filter((payment: DebtPayment) => payment.debtId !== id)
+    });
+    
+    await get().saveToCloud();
+  },
+
+  makeDebtPayment: async (payment: Omit<DebtPayment, "id" | "date">) => {
+    const store = get();
+    
+    const debtIndex = store.debts.findIndex(debt => debt.id === payment.debtId);
+    if (debtIndex === -1) {
+      throw new Error("Debt not found");
+    }
+    
+    const debt = store.debts[debtIndex];
+    const newRemainingAmount = Math.max(0, debt.remainingAmount - payment.amount);
+    
+    const newDebtPayment: DebtPayment = {
+      ...payment,
+      id: generateId(),
+      date: new Date().toISOString()
+    };
+    
+    // Update debt remaining amount
+    const updatedDebts = [...store.debts];
+    updatedDebts[debtIndex] = {
+      ...debt,
+      remainingAmount: newRemainingAmount
+    };
+    
+    // Record payment as expense
+    const paymentExpense: Expense = {
+      id: generateId(),
+      description: `Debt payment: ${debt.name}`,
+      amount: payment.amount,
+      category: "Debt Payment",
+      date: new Date().toISOString(),
+    };
+    
+    // Ensure Debt Payment category exists
+    let categories = store.categories;
+    const debtCategoryExists = categories.some(cat => cat.name === "Debt Payment");
+    if (!debtCategoryExists) {
+      const debtCategory: Category = {
+        id: generateId(),
+        name: "Debt Payment",
+        color: "#EF4444",
+        budget: 0,
+        isRecurring: false,
+      };
+      categories = [...categories, debtCategory];
+    }
+    
+    set({
+      ...store,
+      debts: updatedDebts,
+      debtPayments: [...store.debtPayments, newDebtPayment],
+      expenses: [...store.expenses, paymentExpense],
+      categories: categories
+    });
+    
+    await get().saveToCloud();
+  },
+
+  getDebtPayments: (debtId: string) => {
+    const store = get();
+    return store.debtPayments.filter(payment => payment.debtId === debtId)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  },
+
+  calculateDebtStatistics: () => {
+    const store = get();
+    const totalIncome = store.monthlyBudget + 
+      (store.additionalIncomes || []).reduce((sum, income) => sum + income.amount, 0);
+    
+    const totalDebt = store.debts.reduce((sum, debt) => sum + debt.remainingAmount, 0);
+    const totalMinimumPayments = store.debts.reduce((sum, debt) => sum + debt.minimumPayment, 0);
+    
+    const totalInterest = store.debts.reduce((sum, debt) => {
+      const monthlyRate = (debt.interestRate || 0) / 100 / 12;
+      return sum + (debt.remainingAmount * monthlyRate);
+    }, 0);
+    
+    const debtToIncomeRatio = totalIncome > 0 ? (totalMinimumPayments / totalIncome) * 100 : 0;
+    
+    // Calculate payoff projections (simplified - paying minimum only)
+    const payoffProjections = store.debts.map(debt => {
+      if (debt.minimumPayment <= 0 || debt.remainingAmount <= 0) {
+        return { debtId: debt.id, monthsToPayoff: 0, totalInterest: 0 };
+      }
+      
+      const monthlyRate = (debt.interestRate || 0) / 100 / 12;
+      let balance = debt.remainingAmount;
+      let totalInterestPaid = 0;
+      let months = 0;
+      const maxMonths = 600; // 50 years max to prevent infinite loops
+      
+      while (balance > 0 && months < maxMonths) {
+        const interestPayment = balance * monthlyRate;
+        const principalPayment = Math.max(0, debt.minimumPayment - interestPayment);
+        
+        if (principalPayment <= 0) {
+          // Minimum payment doesn't cover interest - debt will never be paid off
+          return { debtId: debt.id, monthsToPayoff: -1, totalInterest: -1 };
+        }
+        
+        totalInterestPaid += interestPayment;
+        balance -= principalPayment;
+        months++;
+        
+        if (balance < 0.01) break; // Close enough to zero
+      }
+      
+      return { 
+        debtId: debt.id, 
+        monthsToPayoff: months >= maxMonths ? -1 : months, 
+        totalInterest: totalInterestPaid 
+      };
+    });
+    
+    return {
+      totalDebt,
+      totalMinimumPayments,
+      totalInterest,
+      debtToIncomeRatio,
+      payoffProjections
+    };
   },
 
   resetStore: () => {
