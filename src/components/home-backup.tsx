@@ -495,9 +495,9 @@ const Home = () => {
               <BudgetManager
                 monthlyBudget={monthlyBudget}
                 additionalIncomes={additionalIncomes}
-                onUpdateBudget={handleUpdateBudget}
+                onUpdateMonthlyBudget={handleUpdateBudget}
                 onAddIncome={handleAddIncome}
-                onDeleteIncome={handleDeleteIncome}
+                onDeleteIncome={deleteIncome}
               />
             </div>
           </DashboardCard>

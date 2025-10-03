@@ -1,30 +1,44 @@
-import React, { Suspense } from "react";
+import React, { Suspense, lazy } from "react";
 import { Toaster } from "./components/ui/toaster";
 import { useRoutes, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import Home from "./components/home";
-import Landing from "./pages/Landing";
-import Profile from "./pages/Profile";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import FAQPage from "./components/faq/FAQPage";
-import HelpCenter from "./components/help/HelpCenter";
-import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
-import TermsOfService from "./pages/legal/TermsOfService";
-import CookiePolicy from "./pages/legal/CookiePolicy";
 import Navbar from "./components/layout/Navbar";
-import Alternatives from "./pages/Alternatives";
-import Transactions from "./pages/Transactions";
-import CashFlow from "./pages/CashFlow";
-import Categories from "./pages/Categories";
-import Recurring from "./pages/Recurring";
-import Investments from "./pages/Investments";
-import AppLayout from "./components/layout/AppLayout";
 import routes from "tempo-routes";
 import "./i18n/config";
 import { AuthProvider } from "./lib/auth-context";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+
+// Eager load critical components
+import Landing from "./pages/Landing";
+
+// Lazy load heavy components
+const Home = lazy(() => import("./components/home"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const FAQPage = lazy(() => import("./components/faq/FAQPage"));
+const HelpCenter = lazy(() => import("./components/help/HelpCenter"));
+const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
+const CookiePolicy = lazy(() => import("./pages/legal/CookiePolicy"));
+const Alternatives = lazy(() => import("./pages/Alternatives"));
+const Transactions = lazy(() => import("./pages/Transactions"));
+const CashFlow = lazy(() => import("./pages/CashFlow"));
+const Categories = lazy(() => import("./pages/Categories"));
+const Recurring = lazy(() => import("./pages/Recurring"));
+const Investments = lazy(() => import("./pages/Investments"));
+const AppLayout = lazy(() => import("./components/layout/AppLayout"));
+
+// Loading component
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center gap-3">
+      <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      <p className="text-sm text-gray-600">Loading...</p>
+    </div>
+  </div>
+);
 
 function App() {
   const { t, ready } = useTranslation();
@@ -44,7 +58,8 @@ function App() {
           <Navbar />
           {/* Add tempo routes */}
           {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
-          <Routes>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
             {/* Public routes */}
             <Route path="/" element={<Landing />} />
             <Route path="/blog" element={<Blog />} />
@@ -86,7 +101,8 @@ function App() {
             
             {/* Catch all */}
             <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
+            </Routes>
+          </Suspense>
           <Toaster />
         </div>
       </AuthProvider>

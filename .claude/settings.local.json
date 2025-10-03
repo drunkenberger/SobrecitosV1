@@ -13,7 +13,10 @@
       "Bash(cp:*)",
       "Bash(npx tsc:*)",
       "Bash(npx vite build:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(awk:*)",
+      "Bash(npm install:*)"
     ],
     "deny": []
   }

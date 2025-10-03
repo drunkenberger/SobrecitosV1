@@ -1,0 +1,310 @@
+/**
+ * Custom CSS Animations for Better UX
+ * Add to your global CSS or import in main.tsx
+ */
+
+/* ============================================
+   SMOOTH TRANSITIONS
+   ============================================ */
+
+/* All interactive elements */
+button, a, input, select, textarea {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+/* Hover effects */
+.hover-lift {
+  @apply transition-transform duration-200;
+}
+
+.hover-lift:hover {
+  @apply -translate-y-1 shadow-lg;
+}
+
+/* Focus states */
+*:focus-visible {
+  @apply outline-none ring-2 ring-blue-500 ring-offset-2;
+}
+
+/* ============================================
+   LOADING ANIMATIONS
+   ============================================ */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Pulse animation for important actions */
+@keyframes pulse-success {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.pulse-success {
+  animation: pulse-success 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ============================================
+   ENTRANCE ANIMATIONS
+   ============================================ */
+
+@keyframes slide-in-bottom {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in-bottom 0.3s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out;
+}
+
+/* ============================================
+   SUCCESS/ERROR FEEDBACK
+   ============================================ */
+
+@keyframes success-check {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-success-check {
+  animation: success-check 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+.animate-shake {
+  animation: shake 0.5s;
+}
+
+/* ============================================
+   BUTTON STATES
+   ============================================ */
+
+.btn-loading {
+  @apply relative;
+  pointer-events: none;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  opacity: 0.5;
+}
+
+/* ============================================
+   SKELETON LOADING
+   ============================================ */
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton {
+  display: inline-block;
+  height: 1em;
+  position: relative;
+  overflow: hidden;
+  background-color: #f0f0f0;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.2) 20%,
+    rgba(255, 255, 255, 0.5) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: skeleton-loading 2s infinite;
+}
+
+/* ============================================
+   SMOOTH SCROLLING
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================
+   MICRO-INTERACTIONS
+   ============================================ */
+
+/* Button press effect */
+.active-press:active {
+  transform: scale(0.98);
+}
+
+/* Card hover effect */
+.card-hover {
+  @apply transition-all duration-200;
+}
+
+.card-hover:hover {
+  @apply shadow-md -translate-y-0.5;
+}
+
+/* Input focus glow */
+input:focus,
+textarea:focus,
+select:focus {
+  @apply ring-2 ring-blue-400 ring-opacity-50;
+}
+
+/* ============================================
+   PROGRESS INDICATORS
+   ============================================ */
+
+@keyframes progress-indeterminate {
+  0% {
+    left: -35%;
+    right: 100%;
+  }
+  60% {
+    left: 100%;
+    right: -90%;
+  }
+  100% {
+    left: 100%;
+    right: -90%;
+  }
+}
+
+.progress-indeterminate {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-indeterminate::before {
+  content: '';
+  position: absolute;
+  background-color: currentColor;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  will-change: left, right;
+  animation: progress-indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.transition-fast {
+  @apply transition-all duration-150 ease-in-out;
+}
+
+.transition-medium {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+.transition-slow {
+  @apply transition-all duration-500 ease-in-out;
+}
+
+.fade-in-up {
+  animation: fade-in-up 0.6s ease-out;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -22,6 +22,33 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    target: 'es2020',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-select',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-toast',
+          ],
+          'form-vendor': ['react-hook-form', '@hookform/resolvers', 'zod'],
+          'supabase': ['@supabase/supabase-js'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
+  },
   server: {
     port: Number(process.env.PORT) || 4000,
     // If the preferred port is taken, Vite will choose the next available

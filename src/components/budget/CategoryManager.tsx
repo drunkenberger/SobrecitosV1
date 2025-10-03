@@ -191,8 +191,7 @@ const CategoryManager = ({
                             onChange={(e) =>
                               onUpdateCategory(category.id, { name: e.target.value.toLowerCase().replace(/\s+/g, '') })
                             }
-                            size="sm"
-                            className="text-sm"
+                            className="text-sm h-8"
                           />
                         </div>
                         <div>
@@ -205,8 +204,7 @@ const CategoryManager = ({
                                 budget: Number(e.target.value),
                               })
                             }
-                            size="sm"
-                            className="text-sm"
+                            className="text-sm h-8"
                           />
                         </div>
                       </div>

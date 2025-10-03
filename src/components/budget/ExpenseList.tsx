@@ -21,7 +21,7 @@ interface Expense {
   amount: number;
   category: string;
   description: string;
-  date: Date;
+  date: string;
   currency?: {
     code: string;
     symbol: string;

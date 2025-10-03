@@ -156,7 +156,7 @@ export default function Investments() {
       },
       {
         name: 'Bitcoin',
-        type: 'crypto' as const,
+        type: 'bitcoin' as const,
         platform: 'Coinbase',
         currentValue: 8500,
         purchaseValue: 10000,

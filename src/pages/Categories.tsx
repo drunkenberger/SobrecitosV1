@@ -130,7 +130,18 @@ export default function Categories() {
                     <p className="text-sm text-gray-600">Organize and track your spending categories</p>
                   </div>
                 </div>
-                <TransferBalanceDialog categories={categories || []} />
+                <TransferBalanceDialog
+                  categories={categories || []}
+                  onTransfer={(fromId, toId, amount) => {
+                    // Transfer balance between categories
+                    const fromCategory = categories.find(c => c.id === fromId);
+                    const toCategory = categories.find(c => c.id === toId);
+                    if (fromCategory && toCategory) {
+                      updateCategory(fromId, { budget: fromCategory.budget - amount });
+                      updateCategory(toId, { budget: toCategory.budget + amount });
+                    }
+                  }}
+                />
               </div>
               <div className="space-y-4">
                 <CategoryManager

@@ -72,11 +72,7 @@ export function StorageSettingsDialog({
     setLoading(true);
     try {
       // Sincronizamos los datos
-      const success = await syncLocalToSupabase();
-      
-      if (success === false) {
-        throw new Error(t('errors.syncFailed'));
-      }
+      await syncLocalToSupabase();
       
       // Actualizamos la fecha de última sincronización
       const now = new Date().toISOString();

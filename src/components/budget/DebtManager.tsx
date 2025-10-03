@@ -212,12 +212,13 @@ export default function DebtManager({
                             {Math.round(progress)}% paid off
                           </span>
                         </div>
-                        <Progress 
-                          value={progress} 
-                          className="h-2"
+                        <Progress
+                          value={progress}
+                          className="h-2 [&>div]:transition-all"
                           style={{
-                            '[&>div]:backgroundColor': debt.color,
-                          }}
+                            // @ts-ignore - CSS custom property for progress bar color
+                            '--progress-background': debt.color,
+                          } as React.CSSProperties}
                         />
                         <div className="flex justify-between text-xs text-gray-500">
                           <span>Paid: {formatCurrency(debt.totalAmount - debt.remainingAmount)}</span>

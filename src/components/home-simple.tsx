@@ -27,13 +27,19 @@ export default function HomeSimple() {
     expenses,
     categories,
     savingsGoals,
+    futurePayments,
     addExpense,
-    updateBudget,
+    updateMonthlyBudget,
     addIncome,
     deleteIncome,
     addCategory,
     updateCategory,
     deleteCategory,
+    addSavingsGoal,
+    updateSavingsGoal,
+    deleteSavingsGoal,
+    addFuturePayment,
+    updateFuturePayment,
     loadFromCloud
   } = useStore();
 
@@ -66,11 +72,10 @@ export default function HomeSimple() {
   };
 
   const chartData = (categories || []).map((cat: any) => ({
-    name: cat.name,
-    value: (expenses || [])
-      .filter((exp: any) => exp.category_id === cat.id)
+    category: cat.name,
+    amount: (expenses || [])
+      .filter((exp: any) => exp.category === cat.id || exp.category === cat.name)
       .reduce((sum: any, exp: any) => sum + exp.amount, 0),
-    color: cat.color,
   }));
 
   if (isLoading) {
@@ -165,7 +170,7 @@ export default function HomeSimple() {
                 <BudgetManager
                   monthlyBudget={monthlyBudget}
                   additionalIncomes={additionalIncomes}
-                  onUpdateBudget={updateBudget}
+                  onUpdateMonthlyBudget={updateMonthlyBudget}
                   onAddIncome={addIncome}
                   onDeleteIncome={deleteIncome}
                 />
@@ -233,7 +238,12 @@ export default function HomeSimple() {
                 </div>
               </div>
               <div className="space-y-4">
-                <SavingsGoals />
+                <SavingsGoals
+                  goals={savingsGoals}
+                  onAddGoal={addSavingsGoal}
+                  onUpdateGoal={updateSavingsGoal}
+                  onDeleteGoal={deleteSavingsGoal}
+                />
               </div>
             </div>
           </Card>
@@ -251,7 +261,12 @@ export default function HomeSimple() {
                 </div>
               </div>
               <div className="space-y-4">
-                <FuturePayments />
+                <FuturePayments
+                  payments={futurePayments}
+                  categories={categories}
+                  onAddPayment={addFuturePayment}
+                  onUpdatePayment={updateFuturePayment}
+                />
               </div>
             </div>
           </Card>

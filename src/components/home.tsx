@@ -669,7 +669,7 @@ export default function Home() {
       {/* AI Chat Window - Fixed Position */}
       {showAIChat && (
         <div className="fixed bottom-6 right-6 z-50">
-          <AIChatWindow onClose={() => setShowAIChat(false)} />
+          <AIChatWindow />
         </div>
       )}
 

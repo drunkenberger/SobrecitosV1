@@ -62,7 +62,8 @@ export default function Sidebar({ accounts = [], onError }: SidebarProps) {
 
   try {
     const store = storeData;
-    const { recommendedSavings = 0, availableForSavings = 0 } = calculateRecommendedSavings();
+    const availableForSavings = calculateRecommendedSavings();
+    const recommendedSavings = availableForSavings * 0.2; // 20% of available funds
 
     // Calculate total upcoming payments
     const totalUpcomingPayments = (store.futurePayments || [])

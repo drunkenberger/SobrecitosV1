@@ -683,6 +683,10 @@ export const getSupabaseStore = async (): Promise<BudgetStore> => {
       expenses,
       savingsGoals,
       futurePayments,
+      debts: [],
+      debtPayments: [],
+      investments: [],
+      investmentTransactions: [],
       currency
     };
   } catch (error) {
