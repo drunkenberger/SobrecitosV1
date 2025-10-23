@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Setup de Recibos</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .test {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #ddd;
+            background: #f9f9f9;
+        }
+        .test h3 {
+            margin: 0 0 10px 0;
+            color: #555;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border-left-color: #28a745;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left-color: #dc3545;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left-color: #ffc107;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left-color: #17a2b8;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .instructions {
+            margin: 20px 0;
+            padding: 20px;
+            background: #e7f3ff;
+            border-radius: 5px;
+            border-left: 4px solid #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Verificación de Setup de Recibos</h1>
+
+        <div id="config-check" class="test">
+            <h3>Configuración</h3>
+            <div id="config-status">Verificando...</div>
+        </div>
+
+        <button id="runTests" onclick="runAllTests()">▶️ Ejecutar Verificación</button>
+
+        <div id="results"></div>
+
+        <div id="sql-instructions" style="display: none;" class="instructions">
+            <h3>📋 Instrucciones para crear la tabla</h3>
+            <p><strong>Necesitas ejecutar este SQL en Supabase:</strong></p>
+            <ol>
+                <li>Ve a: <a href="https://supabase.com/dashboard/project/iyrhkdrblbaiyiftgrhv/sql" target="_blank">SQL Editor</a></li>
+                <li>Copia y pega el contenido del archivo <code>COMPLETE_RECEIPTS_SETUP.sql</code></li>
+                <li>Haz clic en "Run"</li>
+                <li>Regresa aquí y vuelve a ejecutar la verificación</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Configuration from .env
+        const SUPABASE_URL = 'https://iyrhkdrblbaiyiftgrhv.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5cmhrZHJibGJhaXlpZnRncmh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYwNTgzMzMsImV4cCI6MjA2MTYzNDMzM30.xAYvRSdzj8FQbZ9kHGjYzmo710U-VnedSpy8GtVb2QM';
+
+        let supabase;
+
+        // Initialize
+        const configStatus = document.getElementById('config-status');
+        if (!SUPABASE_URL || !SUPABASE_KEY) {
+            configStatus.innerHTML = '<div class="status error">❌ Falta configuración de Supabase</div>';
+        } else {
+            configStatus.innerHTML = `
+                <div class="status success">✅ Configuración encontrada</div>
+                <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                    URL: ${SUPABASE_URL}<br>
+                    Key: ${SUPABASE_KEY.substring(0, 20)}...
+                </div>
+            `;
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        }
+
+        async function runAllTests() {
+            const button = document.getElementById('runTests');
+            const results = document.getElementById('results');
+            const sqlInstructions = document.getElementById('sql-instructions');
+
+            button.disabled = true;
+            button.textContent = '⏳ Ejecutando...';
+            results.innerHTML = '';
+            sqlInstructions.style.display = 'none';
+
+            let allPassed = true;
+
+            // Test 1: Check table exists
+            const test1 = document.createElement('div');
+            test1.className = 'test';
+            test1.innerHTML = '<h3>1️⃣ Verificando tabla receipt_uploads</h3><div id="test1-result">Ejecutando...</div>';
+            results.appendChild(test1);
+
+            try {
+                const { data, error, count } = await supabase
+                    .from('receipt_uploads')
+                    .select('id', { count: 'exact', head: true });
+
+                const test1Result = document.getElementById('test1-result');
+
+                if (error) {
+                    if (error.code === '42P01' || error.message.includes('does not exist')) {
+                        test1Result.innerHTML = `
+                            <div class="status error">❌ La tabla NO existe</div>
+                            <p style="margin-top: 10px;">Error: ${error.message}</p>
+                        `;
+                        allPassed = false;
+                        sqlInstructions.style.display = 'block';
+                    } else if (error.code === 'PGRST116') {
+                        test1Result.innerHTML = `
+                            <div class="status success">✅ Tabla existe (vacía)</div>
+                        `;
+                    } else {
+                        test1Result.innerHTML = `
+                            <div class="status error">❌ Error: ${error.message}</div>
+                            <p style="margin-top: 10px;">Código: ${error.code}</p>
+                        `;
+                        allPassed = false;
+                    }
+                } else {
+                    test1Result.innerHTML = `
+                        <div class="status success">✅ Tabla existe con ${count || 0} registros</div>
+                    `;
+                }
+            } catch (err) {
+                document.getElementById('test1-result').innerHTML = `
+                    <div class="status error">❌ Error: ${err.message}</div>
+                `;
+                allPassed = false;
+            }
+
+            // Test 2: Check storage bucket
+            const test2 = document.createElement('div');
+            test2.className = 'test';
+            test2.innerHTML = '<h3>2️⃣ Verificando bucket de storage</h3><div id="test2-result">Ejecutando...</div>';
+            results.appendChild(test2);
+
+            try {
+                const { data: buckets, error } = await supabase.storage.listBuckets();
+                const test2Result = document.getElementById('test2-result');
+
+                if (error) {
+                    test2Result.innerHTML = `
+                        <div class="status error">❌ Error: ${error.message}</div>
+                    `;
+                    allPassed = false;
+                } else {
+                    const receiptsBucket = buckets.find(b => b.id === 'receipts');
+                    if (!receiptsBucket) {
+                        test2Result.innerHTML = `
+                            <div class="status error">❌ Bucket "receipts" NO existe</div>
+                            <div class="instructions" style="margin-top: 10px;">
+                                <strong>Crear bucket:</strong><br>
+                                1. Ve a <a href="https://supabase.com/dashboard/project/iyrhkdrblbaiyiftgrhv/storage/buckets" target="_blank">Storage</a><br>
+                                2. Click "New bucket"<br>
+                                3. Nombre: receipts<br>
+                                4. Marcalo como público<br>
+                                5. Guarda
+                            </div>
+                        `;
+                        allPassed = false;
+                    } else {
+                        test2Result.innerHTML = `
+                            <div class="status success">✅ Bucket existe</div>
+                            <div class="status ${receiptsBucket.public ? 'success' : 'warning'}" style="margin-top: 10px;">
+                                ${receiptsBucket.public ? '✅' : '⚠️'} Público: ${receiptsBucket.public}
+                            </div>
+                        `;
+                        if (!receiptsBucket.public) {
+                            test2Result.innerHTML += '<p style="color: #856404; margin-top: 10px;">⚠️ El bucket debería ser público para que funcionen las URLs</p>';
+                        }
+                    }
+                }
+            } catch (err) {
+                document.getElementById('test2-result').innerHTML = `
+                    <div class="status error">❌ Error: ${err.message}</div>
+                `;
+                allPassed = false;
+            }
+
+            // Final summary
+            const summary = document.createElement('div');
+            summary.className = 'test ' + (allPassed ? 'success' : 'error');
+            summary.innerHTML = `
+                <h3>Resumen</h3>
+                <div class="status ${allPassed ? 'success' : 'error'}">
+                    ${allPassed ? '✅ Todo listo! El scanner debería funcionar.' : '❌ Hay problemas que resolver'}
+                </div>
+            `;
+            results.appendChild(summary);
+
+            button.disabled = false;
+            button.textContent = '🔄 Ejecutar de nuevo';
+        }
+
+        // Auto-run on load
+        window.addEventListener('load', () => {
+            if (supabase) {
+                setTimeout(runAllTests, 500);
+            }
+        });
+    </script>
+</body>
+</html>
